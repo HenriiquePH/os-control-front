@@ -1,0 +1,28 @@
+<section class="login-pagina">
+  <div class="login-painel-esquerdo">
+    <div class="login-conteudo">
+      <h1 class="login-titulo">Login</h1>
+
+      <form class="login-formulario" (submit)="$event.preventDefault(); entrar()">
+        <div class="login-campo">
+          <label class="login-label" for="usuario">Usuario</label>
+          <input class="login-input" id="usuario" type="text" [(ngModel)]="usuario" name="usuario" />
+        </div>
+
+        <div class="login-campo">
+          <label class="login-label" for="senha">Senha</label>
+          <input class="login-input" id="senha" type="password" [(ngModel)]="senha" name="senha" />
+        </div>
+
+        <button class="login-botao" type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="login-painel-direito">
+    <div class="login-boasvindas">
+      <h2 class="login-boasvindas-titulo">OS Control</h2>
+      <p class="login-boasvindas-texto">Bem Vindo(a)!</p>
+    </div>
+  </div>
+</section>

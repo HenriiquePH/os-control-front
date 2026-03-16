@@ -1,0 +1,29 @@
+<section class="pagina-pecas">
+  <div class="modal-pecas">
+    <a
+      class="botao-fechar"
+      routerLink="/pecas"
+      aria-label="Fechar cadastro de pecas"
+    >
+      &times;
+    </a>
+
+    <form class="formulario-pecas" (submit)="$event.preventDefault()">
+      <h1 class="titulo-modal">Cadastro de pecas</h1>
+
+      <div class="grade-campos">
+        <label class="campo-formulario campo-nome" for="peca-nome">
+          <span class="rotulo-campo">Nome</span>
+          <input class="entrada-campo" id="peca-nome" type="text" />
+        </label>
+
+        <label class="campo-formulario campo-valor" for="peca-valor">
+          <span class="rotulo-campo">Valor unitario</span>
+          <input class="entrada-campo" id="peca-valor" type="text" inputmode="decimal" />
+        </label>
+      </div>
+
+      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+    </form>
+  </div>
+</section>

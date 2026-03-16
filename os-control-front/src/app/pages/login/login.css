@@ -1,0 +1,137 @@
+.login-pagina {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f1eded;
+  color: #4e4545;
+}
+
+.login-painel-esquerdo {
+  flex: 0 0 39.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #8a8484;
+}
+
+.login-conteudo {
+  width: min(100%, 426px);
+  padding: 0 54px;
+  transform: translateY(-4.5vh);
+}
+
+.login-titulo {
+  margin: 0 0 105px;
+  text-align: center;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: 1;
+  color: #4e4545;
+}
+
+.login-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.login-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.login-label {
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: #4e4545;
+}
+
+.login-input {
+  width: 100%;
+  padding: 6px 0 8px;
+  border: none;
+  border-bottom: 1px solid #d4cccc;
+  outline: none;
+  background: transparent;
+  font-size: 20px;
+  color: #4e4545;
+}
+
+.login-input:focus {
+  border-bottom-color: #efe8e8;
+}
+
+.login-botao {
+  margin: 52px auto 0;
+  width: 283px;
+  height: 67px;
+  border: none;
+  border-radius: 15px;
+  background: #4a4545;
+  color: #d7cfcf;
+  font-size: 37px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-botao:hover {
+  background: #3f3a3a;
+}
+
+.login-painel-direito {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f1eded;
+}
+
+.login-boasvindas {
+  text-align: center;
+  transform: translate(1vw, -2vh);
+}
+
+.login-boasvindas-titulo,
+.login-boasvindas-texto {
+  margin: 0;
+  font-size: clamp(46px, 4vw, 56px);
+  font-weight: 400;
+  line-height: 1.02;
+  color: #4e4545;
+}
+
+.login-boasvindas-texto {
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .login-pagina {
+    flex-direction: column;
+  }
+
+  .login-painel-esquerdo,
+  .login-painel-direito {
+    flex: none;
+    min-height: 50vh;
+  }
+
+  .login-conteudo {
+    transform: none;
+    padding: 56px 32px;
+  }
+
+  .login-titulo {
+    margin-bottom: 72px;
+  }
+
+  .login-boasvindas {
+    transform: none;
+    padding: 32px;
+  }
+}

@@ -1,0 +1,113 @@
+<section class="pagina-servicos-lista">
+  <header class="barra-superior">
+    <span class="titulo-sistema">OS Control</span>
+    <span class="usuario-logado">{{ usuarioLogado }}</span>
+  </header>
+
+  <aside class="barra-lateral">
+    <nav class="menu-lateral">
+      <a class="item-home" routerLink="/home" routerLinkActive="item-home-ativo" [routerLinkActiveOptions]="{ exact: true }">
+        Home
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
+        <span>Or&ccedil;amentos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
+        <span>Ordens de Servi&ccedil;os</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <span>Clientes</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
+        <span>T&eacute;cnicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
+        <span>Pe&ccedil;as</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
+        <span>Servi&ccedil;os</span>
+      </a>
+      <hr class="linha-menu" />
+    </nav>
+
+    <button class="botao-sair" type="button" (click)="sair()">
+      <span class="circulo-icone-sair">
+        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+      </span>
+      <span class="texto-sair">Logout</span>
+    </button>
+  </aside>
+
+  <main class="conteudo-servicos-lista">
+    <div class="cabecalho-pagina">
+      <a class="botao-voltar" routerLink="/home" aria-label="Voltar para Home">
+        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+      </a>
+
+      <h1 class="titulo-pagina">Servi&ccedil;os</h1>
+    </div>
+
+    <section class="barra-filtros">
+      <div class="bloco-filtro bloco-filtro-nome">
+        <label class="rotulo-campo" for="filtro-nome-servico">Nome do servi&ccedil;o</label>
+        <div class="controle-pesquisa">
+          <input
+            class="entrada-campo entrada-nome"
+            id="filtro-nome-servico"
+            type="text"
+            [(ngModel)]="filtroNome"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <button class="botao-pesquisa" type="button" aria-label="Pesquisar servicos">
+            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="botao-filtro" type="button" aria-label="Filtrar servicos">
+        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+      </button>
+
+      <a class="botao-novo-item" routerLink="/servicos/novo">
+        <span>Cadastrar servi&ccedil;o</span>
+        <span class="material-symbols-outlined icone-adicionar" aria-hidden="true">add</span>
+      </a>
+    </section>
+
+    <section class="tabela-lista">
+      <div class="cabecalho-tabela">
+        <span>Id</span>
+        <span>Nome do servi&ccedil;o</span>
+        <span>Valor</span>
+      </div>
+
+      <div class="corpo-tabela">
+        <div class="linha-tabela" *ngFor="let servico of servicosFiltrados">
+          <span>{{ servico.id }}</span>
+          <span>{{ servico.nome }}</span>
+          <span>{{ servico.valor }}</span>
+        </div>
+
+        <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
+      </div>
+    </section>
+  </main>
+</section>

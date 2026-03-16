@@ -1,0 +1,866 @@
+.pagina-orcamentos {
+  min-height: 100dvh;
+  background: #f2efef;
+}
+
+.conteudo-orcamentos {
+  position: fixed;
+  top: 93px;
+  left: 228px;
+  right: 0;
+  bottom: 0;
+  padding: 18px 34px 42px;
+  background: #f2efef;
+  overflow: auto;
+}
+
+.cabecalho-pagina {
+  position: relative;
+  min-height: 92px;
+  margin-bottom: 28px;
+}
+
+.botao-voltar {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #0da206;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icone-voltar {
+  font-size: 28px;
+  color: #ffffff;
+  font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+}
+
+.titulo-pagina {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(46px, 4.8vw, 56px);
+  font-weight: 400;
+  color: #5d5454;
+}
+
+.formulario-orcamento {
+  max-width: 1088px;
+  margin: 0 auto;
+}
+
+.grade-inicial {
+  display: grid;
+  grid-template-columns: 74px minmax(360px, 1fr) minmax(242px, 0.53fr);
+  gap: 12px 16px;
+  align-items: end;
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rotulo-campo {
+  font-size: 18px;
+  color: #5d5454;
+}
+
+.entrada-campo {
+  width: 100%;
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 18px;
+  outline: none;
+  background: #f8f8f8;
+  color: #544b4b;
+  font-size: 20px;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.entrada-campo-bloqueada {
+  background: #d3d3d3;
+  color: #4d4747;
+}
+
+.entrada-campo[readonly] {
+  cursor: default;
+}
+
+.campo-data-icone {
+  position: relative;
+  display: block;
+}
+
+.campo-data-icone .entrada-campo {
+  padding-right: 50px;
+}
+
+.entrada-data {
+  cursor: pointer;
+}
+
+.botao-abrir-calendario {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.icone-calendario {
+  font-size: 22px;
+  color: #453f3f;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.abas-itens {
+  display: flex;
+  gap: 10px;
+  margin: 26px 0 6px;
+}
+
+.aba-item {
+  min-width: 132px;
+  height: 42px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 14px;
+  background: #f7f7f7;
+  color: #5d5454;
+  font-size: 24px;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.aba-ativa {
+  min-width: 214px;
+  background: #8f8a8a;
+  color: #2e2a2a;
+}
+
+.painel-itens {
+  min-height: 310px;
+  padding: 14px 30px 18px;
+  border-radius: 16px;
+  background: #fbfbfb;
+}
+
+.barra-pesquisa {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: min(100%, 228px);
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #d8d3d3;
+  text-align: left;
+  cursor: pointer;
+}
+
+.icone-pesquisa {
+  font-size: 22px;
+  color: #554f4f;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.texto-pesquisa {
+  color: #5d5454;
+  font-size: 18px;
+}
+
+.cabecalho-lista,
+.linha-item {
+  align-items: center;
+}
+
+.cabecalho-lista {
+  margin-top: 18px;
+  padding: 0 28px 10px;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.52);
+  color: #5d5454;
+  font-size: 18px;
+}
+
+.corpo-lista {
+  min-height: 220px;
+  padding-top: 6px;
+}
+
+.linha-item {
+  min-height: 46px;
+  padding: 0 28px;
+  color: #5d5454;
+  font-size: 18px;
+  border-radius: 12px;
+}
+
+.linha-item:hover {
+  background: rgba(216, 211, 211, 0.28);
+}
+
+.grade-servicos {
+  display: grid;
+  grid-template-columns: 94px minmax(0, 1fr) 224px;
+  gap: 18px;
+}
+
+.grade-pecas {
+  display: grid;
+  grid-template-columns: 94px minmax(0, 1.2fr) 90px 160px 170px;
+  gap: 18px;
+}
+
+.coluna-quantidade {
+  text-align: center;
+}
+
+.coluna-unitario {
+  text-align: right;
+}
+
+.coluna-valor {
+  text-align: right;
+}
+
+.grade-totais {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 22px;
+  margin-top: 46px;
+  align-items: end;
+}
+
+.entrada-total {
+  max-width: 244px;
+}
+
+.campo-total-orcamento {
+  justify-self: end;
+}
+
+.rodape-formulario {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 22px;
+  align-items: end;
+  margin-top: 18px;
+}
+
+.campo-observacao {
+  gap: 8px;
+}
+
+.rotulo-observacao {
+  margin-top: 2px;
+}
+
+.entrada-observacao {
+  width: 100%;
+  min-height: 98px;
+  padding: 18px 22px;
+  border: 0;
+  border-radius: 18px;
+  outline: none;
+  resize: none;
+  background: #fbfbfb;
+  color: #544b4b;
+  font-size: 18px;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.botao-confirmar {
+  min-height: 74px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 22px;
+  background: #0da206;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1.1;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+.botao-confirmar:hover {
+  background: #0a8b05;
+}
+
+.botao-confirmar:active {
+  transform: translateY(1px);
+}
+
+.sobreposicao-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(184, 184, 184, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.modal-calendario,
+.modal-pdf,
+.modal-selecao-servico,
+.modal-selecao-peca {
+  position: relative;
+  border-radius: 18px;
+  background: #f4f4f4;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.botao-fechar-modal {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #514949;
+  font-size: 58px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-calendario {
+  width: min(466px, calc(100vw - 48px));
+  padding: 24px 38px 34px;
+}
+
+.cabecalho-calendario {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.botao-navegacao-calendario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #ece8e8;
+  color: #514949;
+  cursor: pointer;
+}
+
+.botao-navegacao-calendario .material-symbols-outlined {
+  font-size: 26px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.titulo-calendario {
+  color: #5d5454;
+  font-size: 28px;
+  text-align: center;
+}
+
+.grade-semana,
+.grade-calendario {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.grade-semana {
+  margin-bottom: 10px;
+}
+
+.dia-semana,
+.dia-calendario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 54px;
+  color: #5d5454;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.dia-semana.domingo,
+.dia-domingo {
+  color: #c45855;
+}
+
+.dia-calendario {
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.dia-selecionado {
+  width: 32px;
+  min-height: 32px;
+  justify-self: center;
+  align-self: center;
+  border-radius: 6px;
+  background: #af4b47;
+  color: #1f1a1a;
+}
+
+.dia-vazio {
+  min-height: 54px;
+}
+
+.modal-pdf {
+  width: min(632px, calc(100vw - 48px));
+  min-height: 366px;
+  padding: 64px 48px 52px;
+}
+
+.titulo-modal-pdf {
+  margin: 18px 0 72px;
+  text-align: center;
+  font-size: clamp(42px, 4vw, 56px);
+  font-weight: 400;
+  color: #5d5454;
+}
+
+.botao-abrir-pdf {
+  display: block;
+  width: min(100%, 400px);
+  height: 72px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 18px;
+  background: #ece8e8;
+  color: #514949;
+  font-size: 34px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+.modal-selecao-servico {
+  width: min(1136px, calc(100vw - 48px));
+  min-height: 368px;
+  padding: 92px 86px 56px;
+}
+
+.grade-rotulos-modal-servico,
+.grade-campos-modal-servico {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) 184px;
+  gap: 20px;
+  align-items: center;
+}
+
+.grade-rotulos-modal-servico {
+  margin-bottom: 10px;
+  color: #5d5454;
+  font-size: 18px;
+}
+
+.entrada-id-modal {
+  background: #d3d3d3;
+}
+
+.grade-campos-modal-servico {
+  margin-bottom: 58px;
+}
+
+.botao-ok-modal {
+  display: block;
+  min-width: 248px;
+  height: 62px;
+  margin: 0 auto;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 18px;
+  background: #079700;
+  color: #ffffff;
+  font-size: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-selecao-peca {
+  display: flex;
+  flex-direction: column;
+  width: min(1240px, calc(100vw - 180px));
+  height: min(760px, calc(100vh - 120px));
+  max-height: calc(100vh - 120px);
+  padding: 48px 0 0;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.cabecalho-lista-modal-peca {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 88px 176px 176px;
+  gap: 24px;
+  align-items: center;
+  padding: 0 38px 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
+  color: #5d5454;
+  font-size: 20px;
+}
+
+.corpo-lista-modal-peca {
+  flex: 1;
+  min-height: 0;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
+  overflow: auto;
+}
+
+.rodape-modal-peca {
+  display: grid;
+  grid-template-columns: 78px minmax(240px, 1.1fr) 86px 148px 148px 96px;
+  gap: 16px;
+  align-items: end;
+  justify-content: center;
+  padding: 18px 32px 34px;
+}
+
+.campo-modal-peca {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #5d5454;
+  font-size: 18px;
+}
+
+.botao-fechar-modal-peca {
+  top: 6px;
+  right: 16px;
+  font-size: 48px;
+}
+
+.campo-pesquisa-modal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 18px;
+  background: #f8f8f8;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.rodape-modal-peca .entrada-campo {
+  height: 42px;
+}
+
+.campo-modal-id .entrada-campo {
+  width: 58px;
+}
+
+.campo-modal-qtd .entrada-campo {
+  width: 72px;
+  text-align: center;
+}
+
+.campo-modal-unitario .entrada-campo,
+.campo-modal-total .entrada-campo {
+  width: 140px;
+}
+
+.campo-modal-total .entrada-campo {
+  background: #d3d3d3;
+}
+
+.entrada-pesquisa-modal {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #544b4b;
+  font-size: 18px;
+}
+
+.entrada-pesquisa-modal::placeholder {
+  color: #7d7575;
+}
+
+.botao-ok-modal-peca {
+  width: 92px;
+  min-width: 92px;
+  height: 48px;
+  margin: 0 0 2px;
+  font-size: 20px;
+  justify-self: start;
+}
+
+@media (max-width: 1280px) {
+  .conteudo-orcamentos {
+    padding-inline: 28px;
+  }
+
+  .grade-inicial {
+    grid-template-columns: 74px minmax(240px, 1fr) minmax(220px, 0.52fr);
+  }
+
+  .grade-totais {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .campo-total-orcamento {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 980px) {
+  .conteudo-orcamentos {
+    left: 210px;
+    padding: 18px 24px 36px;
+  }
+
+  .cabecalho-pagina {
+    min-height: 82px;
+  }
+
+  .grade-inicial {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .campo-id {
+    grid-column: span 1;
+    max-width: 120px;
+  }
+
+  .campo-nome {
+    grid-column: span 1;
+  }
+
+  .campo-data {
+    grid-column: 1 / -1;
+    max-width: 320px;
+  }
+
+  .rodape-formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .botao-confirmar {
+    width: 100%;
+    max-width: 280px;
+    justify-self: end;
+  }
+
+  .grade-servicos {
+    grid-template-columns: 72px minmax(0, 1fr) 170px;
+  }
+
+  .grade-pecas {
+    grid-template-columns: 72px minmax(0, 1.1fr) 72px 130px 136px;
+  }
+
+  .cabecalho-lista,
+  .linha-item {
+    padding-inline: 16px;
+  }
+
+  .modal-selecao-servico {
+    padding-inline: 34px;
+  }
+
+  .modal-selecao-peca {
+    width: calc(100vw - 96px);
+    height: min(700px, calc(100vh - 96px));
+    max-height: calc(100vh - 96px);
+  }
+
+  .cabecalho-lista-modal-peca {
+    grid-template-columns: 72px minmax(0, 1fr) 74px 132px 132px;
+    gap: 14px;
+    padding-inline: 24px;
+  }
+
+  .rodape-modal-peca {
+    grid-template-columns: 70px minmax(200px, 1fr) 78px 132px 132px 92px;
+    gap: 12px;
+    padding: 16px 24px 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .titulo-pagina {
+    padding-top: 56px;
+    text-align: left;
+  }
+
+  .grade-inicial,
+  .grade-totais {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-id,
+  .campo-data,
+  .campo-total-orcamento {
+    max-width: 100%;
+    justify-self: stretch;
+  }
+
+  .abas-itens {
+    flex-wrap: wrap;
+  }
+
+  .aba-ativa,
+  .aba-item {
+    min-width: 0;
+    flex: 1 1 180px;
+  }
+
+  .entrada-total {
+    max-width: 100%;
+  }
+
+  .botao-confirmar {
+    justify-self: stretch;
+    max-width: 100%;
+  }
+
+  .painel-itens {
+    padding-inline: 16px;
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+  }
+
+  .grade-servicos {
+    grid-template-columns: 54px minmax(0, 1fr) 118px;
+  }
+
+  .grade-pecas {
+    grid-template-columns: 46px minmax(0, 1fr) 52px 90px 96px;
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  .cabecalho-lista,
+  .linha-item {
+    padding-inline: 8px;
+    font-size: 15px;
+  }
+
+  .modal-pdf {
+    padding: 56px 24px 40px;
+    min-height: auto;
+  }
+
+  .botao-abrir-pdf {
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .modal-selecao-servico {
+    padding: 86px 22px 34px;
+    min-height: auto;
+  }
+
+  .grade-rotulos-modal-servico,
+  .grade-campos-modal-servico {
+    grid-template-columns: 60px minmax(0, 1fr) 128px;
+    gap: 12px;
+  }
+
+  .grade-rotulos-modal-servico {
+    font-size: 15px;
+  }
+
+  .grade-campos-modal-servico {
+    margin-bottom: 34px;
+  }
+
+  .botao-ok-modal {
+    min-width: 180px;
+    height: 52px;
+    font-size: 24px;
+  }
+
+  .modal-selecao-peca {
+    width: calc(100vw - 32px);
+    height: auto;
+    max-height: calc(100vh - 32px);
+  }
+
+  .cabecalho-lista-modal-peca {
+    grid-template-columns: 56px minmax(0, 1fr) 56px 96px 96px;
+    gap: 10px;
+    padding-inline: 16px;
+    font-size: 15px;
+  }
+
+  .corpo-lista-modal-peca {
+    min-height: 160px;
+  }
+
+  .rodape-modal-peca {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 18px 16px 28px;
+  }
+
+  .campo-modal-id,
+  .campo-modal-qtd,
+  .campo-modal-unitario,
+  .campo-modal-total {
+    min-width: 0;
+  }
+
+  .campo-modal-nome {
+    grid-column: 1 / -1;
+  }
+
+  .botao-ok-modal-peca {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 540px) {
+  .sobreposicao-modal {
+    padding: 16px;
+  }
+
+  .modal-calendario {
+    padding: 22px 18px 24px;
+  }
+
+  .botao-fechar-modal {
+    right: 12px;
+    font-size: 48px;
+  }
+
+  .dia-semana,
+  .dia-calendario {
+    min-height: 42px;
+    font-size: 18px;
+  }
+
+  .titulo-calendario {
+    font-size: 24px;
+  }
+
+  .botao-navegacao-calendario {
+    width: 34px;
+    height: 34px;
+  }
+}

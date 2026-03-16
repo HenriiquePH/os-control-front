@@ -1,0 +1,29 @@
+<section class="pagina-servicos">
+  <div class="modal-servicos">
+    <a
+      class="botao-fechar"
+      routerLink="/servicos"
+      aria-label="Fechar cadastro de servico"
+    >
+      &times;
+    </a>
+
+    <form class="formulario-servicos" (submit)="$event.preventDefault()">
+      <h1 class="titulo-modal">Cadastrar servico</h1>
+
+      <div class="grade-campos">
+        <label class="campo-formulario campo-nome" for="servico-nome">
+          <span class="rotulo-campo">Nome</span>
+          <input class="entrada-campo" id="servico-nome" type="text" />
+        </label>
+
+        <label class="campo-formulario campo-valor" for="servico-valor">
+          <span class="rotulo-campo">Valor</span>
+          <input class="entrada-campo" id="servico-valor" type="text" inputmode="decimal" />
+        </label>
+      </div>
+
+      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+    </form>
+  </div>
+</section>

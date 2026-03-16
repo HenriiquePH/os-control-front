@@ -1,0 +1,248 @@
+.pagina-orcamentos-lista {
+  min-height: 100dvh;
+  background: #f2efef;
+}
+
+.conteudo-orcamentos-lista {
+  position: fixed;
+  top: 93px;
+  left: 228px;
+  right: 0;
+  bottom: 0;
+  padding: 26px 0 44px;
+  background: #f2efef;
+  overflow: auto;
+}
+
+.cabecalho-pagina {
+  position: relative;
+  min-height: 86px;
+  margin-bottom: 26px;
+}
+
+.botao-voltar {
+  position: absolute;
+  top: 6px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  background: #0da206;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icone-voltar {
+  font-size: 28px;
+  color: #ffffff;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+}
+
+.titulo-pagina {
+  margin: 0;
+  text-align: center;
+  font-size: 58px;
+  font-weight: 400;
+  color: #5d5454;
+}
+
+.barra-filtros {
+  display: grid;
+  grid-template-columns: 354px 90px 44px minmax(240px, 252px);
+  gap: 18px;
+  align-items: end;
+  margin: 0 16px 28px;
+}
+
+.bloco-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rotulo-campo {
+  padding-left: 14px;
+  font-size: 18px;
+  color: #5d5454;
+}
+
+.controle-pesquisa {
+  position: relative;
+}
+
+.entrada-campo {
+  width: 100%;
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  outline: none;
+  background: #f8f8f8;
+  font-size: 17px;
+  color: #5b5555;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.22);
+}
+
+.entrada-nome {
+  padding-right: 54px;
+}
+
+.entrada-id {
+  text-align: center;
+}
+
+.botao-pesquisa {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.icone-pesquisa {
+  font-size: 31px;
+  color: #4f4a4a;
+}
+
+.botao-filtro {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #f8f8f8;
+  cursor: pointer;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.22);
+}
+
+.icone-filtro {
+  font-size: 27px;
+  color: #538ef1;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.botao-novo-item {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 252px;
+  height: 44px;
+  margin-right: 24px;
+  padding: 0 22px;
+  border-radius: 14px;
+  background: #c9c9c9;
+  text-decoration: none;
+  font-size: 23px;
+  color: #4f4848;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.22);
+}
+
+.icone-adicionar {
+  font-size: 30px;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+}
+
+.cabecalho-tabela,
+.linha-tabela {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) 220px;
+  column-gap: 24px;
+  align-items: center;
+  padding: 0 32px;
+}
+
+.cabecalho-tabela {
+  min-height: 40px;
+  font-size: 17px;
+  color: #5d5454;
+}
+
+.corpo-tabela {
+  border-top: 1px solid rgba(93, 84, 84, 0.32);
+}
+
+.linha-tabela {
+  min-height: 64px;
+  font-size: 16px;
+  color: #605858;
+  border-left: 1px solid rgba(93, 84, 84, 0.18);
+  border-right: 1px solid rgba(93, 84, 84, 0.18);
+  border-bottom: 1px solid rgba(93, 84, 84, 0.18);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+}
+
+.corpo-tabela .linha-tabela:nth-child(odd) {
+  background: #ffffff;
+}
+
+.corpo-tabela .linha-tabela:nth-child(even) {
+  background: #d9d5d5;
+}
+
+.linha-vazia {
+  min-height: 62px;
+}
+
+@media (max-width: 1280px) {
+  .barra-filtros {
+    grid-template-columns: minmax(0, 1fr) 90px 44px;
+  }
+
+  .botao-novo-item {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 980px) {
+  .conteudo-orcamentos-lista {
+    left: 210px;
+  }
+
+  .titulo-pagina {
+    font-size: 46px;
+  }
+}
+
+@media (max-width: 720px) {
+  .conteudo-orcamentos-lista {
+    position: static;
+    padding-top: 128px;
+  }
+
+  .cabecalho-pagina {
+    padding-top: 48px;
+  }
+
+  .barra-filtros {
+    grid-template-columns: 1fr;
+    margin-inline: 14px;
+  }
+
+  .botao-novo-item {
+    grid-column: auto;
+    margin-right: 0;
+    justify-self: stretch;
+  }
+
+  .tabela-lista {
+    overflow-x: auto;
+  }
+
+  .cabecalho-tabela,
+  .linha-tabela {
+    min-width: 720px;
+  }
+}

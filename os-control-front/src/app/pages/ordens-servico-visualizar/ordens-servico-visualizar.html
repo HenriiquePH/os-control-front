@@ -1,0 +1,136 @@
+<section class="pagina-ordens-visualizar">
+  <header class="barra-superior">
+    <span class="titulo-sistema">OS Control</span>
+    <span class="usuario-logado">{{ usuarioLogado }}</span>
+  </header>
+
+  <aside class="barra-lateral">
+    <nav class="menu-lateral">
+      <a class="item-home" routerLink="/home" routerLinkActive="item-home-ativo" [routerLinkActiveOptions]="{ exact: true }">
+        Home
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
+        <span>Orcamentos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
+        <span>Ordens de Servicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <span>Clientes</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
+        <span>Tecnicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
+        <span>Pecas</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
+        <span>Servicos</span>
+      </a>
+      <hr class="linha-menu" />
+    </nav>
+
+    <button class="botao-sair" type="button" (click)="sair()">
+      <span class="circulo-icone-sair">
+        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+      </span>
+      <span class="texto-sair">Logout</span>
+    </button>
+  </aside>
+
+  <main class="conteudo-ordens-visualizar">
+    <div class="cabecalho-pagina">
+      <a class="botao-voltar" routerLink="/ordens-servico" aria-label="Voltar para menu de OS">
+        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+      </a>
+
+      <h1 class="titulo-pagina">Visualizar ordens de servico</h1>
+    </div>
+
+    <section class="barra-filtros">
+      <div class="bloco-filtro bloco-filtro-cliente">
+        <label class="rotulo-campo" for="filtro-cliente-os">Pesquisar por cliente</label>
+        <div class="controle-pesquisa">
+          <input
+            class="entrada-campo entrada-cliente"
+            id="filtro-cliente-os"
+            type="text"
+            [(ngModel)]="filtroCliente"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <button class="botao-pesquisa" type="button" aria-label="Pesquisar por cliente">
+            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bloco-filtro">
+        <label class="rotulo-campo" for="filtro-tecnico-os">Tecnico</label>
+        <input
+          class="entrada-campo"
+          id="filtro-tecnico-os"
+          type="text"
+          [(ngModel)]="filtroTecnico"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+
+      <div class="bloco-filtro bloco-filtro-status">
+        <label class="rotulo-campo" for="filtro-status-os">Status</label>
+        <input
+          class="entrada-campo"
+          id="filtro-status-os"
+          type="text"
+          [(ngModel)]="filtroStatus"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+
+      <button class="botao-filtro" type="button" aria-label="Filtrar ordens de servico">
+        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+      </button>
+    </section>
+
+    <section class="tabela-lista">
+      <div class="cabecalho-tabela">
+        <span>Id</span>
+        <span>Data de abertura</span>
+        <span>Cliente</span>
+        <span>Veiculo</span>
+        <span>Status</span>
+        <span>Tecnico</span>
+      </div>
+
+      <div class="corpo-tabela">
+        <div class="linha-tabela" *ngFor="let ordem of ordensFiltradas">
+          <span>{{ ordem.id }}</span>
+          <span>{{ ordem.dataAbertura }}</span>
+          <span>{{ ordem.cliente }}</span>
+          <span>{{ ordem.veiculo }}</span>
+          <span>{{ ordem.status }}</span>
+          <span>{{ ordem.tecnico }}</span>
+        </div>
+
+        <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
+      </div>
+    </section>
+  </main>
+</section>

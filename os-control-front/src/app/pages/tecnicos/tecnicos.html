@@ -1,0 +1,33 @@
+<section class="pagina-tecnicos">
+  <div class="modal-tecnicos">
+    <a
+      class="botao-fechar"
+      routerLink="/tecnicos"
+      aria-label="Fechar cadastro de tecnico"
+    >
+      &times;
+    </a>
+
+    <form class="formulario-tecnico" (submit)="$event.preventDefault()">
+      <h1 class="titulo-modal">Cadastro de Tecnico</h1>
+
+      <div class="grupo-campos">
+        <input class="entrada-campo" type="text" placeholder="Nome" />
+
+        <div class="linha-campos">
+          <input class="entrada-campo" type="text" placeholder="CPF" />
+          <input class="entrada-campo" type="text" placeholder="Telefone" />
+        </div>
+      </div>
+
+      <h2 class="titulo-secao">Login de acesso</h2>
+
+      <div class="grupo-campos grupo-login">
+        <input class="entrada-campo" type="text" placeholder="Usuario" />
+        <input class="entrada-campo" type="password" placeholder="Senha" />
+      </div>
+
+      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+    </form>
+  </div>
+</section>

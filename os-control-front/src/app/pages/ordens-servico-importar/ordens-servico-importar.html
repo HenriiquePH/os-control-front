@@ -1,0 +1,117 @@
+<section class="pagina-ordens-importar">
+  <header class="barra-superior">
+    <span class="titulo-sistema">OS Control</span>
+    <span class="usuario-logado">{{ usuarioLogado }}</span>
+  </header>
+
+  <aside class="barra-lateral">
+    <nav class="menu-lateral">
+      <a class="item-home" routerLink="/home" routerLinkActive="item-home-ativo" [routerLinkActiveOptions]="{ exact: true }">
+        Home
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
+        <span>Orcamentos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
+        <span>Ordens de Servicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <span>Clientes</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
+        <span>Tecnicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
+        <span>Pecas</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
+        <span>Servicos</span>
+      </a>
+      <hr class="linha-menu" />
+    </nav>
+
+    <button class="botao-sair" type="button" (click)="sair()">
+      <span class="circulo-icone-sair">
+        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+      </span>
+      <span class="texto-sair">Logout</span>
+    </button>
+  </aside>
+
+  <main class="conteudo-ordens-importar">
+    <div class="cabecalho-pagina">
+      <a class="botao-voltar" routerLink="/ordens-servico" aria-label="Voltar para menu de OS">
+        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+      </a>
+
+      <h1 class="titulo-pagina">Importar orcamento</h1>
+    </div>
+
+    <section class="barra-filtros">
+      <div class="bloco-filtro bloco-filtro-nome">
+        <label class="rotulo-campo" for="filtro-nome-orcamento-importar">Nome do orcamento</label>
+        <div class="controle-pesquisa">
+          <input
+            class="entrada-campo entrada-nome"
+            id="filtro-nome-orcamento-importar"
+            type="text"
+            [(ngModel)]="filtroNome"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <button class="botao-pesquisa" type="button" aria-label="Pesquisar orcamentos">
+            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bloco-filtro bloco-filtro-id">
+        <label class="rotulo-campo" for="filtro-id-orcamento-importar">Id</label>
+        <input
+          class="entrada-campo entrada-id"
+          id="filtro-id-orcamento-importar"
+          type="text"
+          [(ngModel)]="filtroId"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+
+      <button class="botao-filtro" type="button" aria-label="Filtrar orcamentos">
+        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+      </button>
+    </section>
+
+    <section class="tabela-lista">
+      <div class="cabecalho-tabela">
+        <span>Id</span>
+        <span>Nome do orcamento</span>
+      </div>
+
+      <div class="corpo-tabela">
+        <a class="linha-tabela linha-link" *ngFor="let orcamento of orcamentosFiltrados" [routerLink]="['/ordens-servico/importar', orcamento.id]">
+          <span>{{ orcamento.id }}</span>
+          <span>{{ orcamento.nome }}</span>
+        </a>
+
+        <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
+      </div>
+    </section>
+  </main>
+</section>

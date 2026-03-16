@@ -1,0 +1,158 @@
+<section class="pagina-clientes">
+  <header class="barra-superior">
+    <span class="titulo-sistema">OS Control</span>
+    <span class="usuario-logado">{{ usuarioLogado }}</span>
+  </header>
+
+  <aside class="barra-lateral">
+    <nav class="menu-lateral">
+      <a class="item-home" routerLink="/home" routerLinkActive="item-home-ativo" [routerLinkActiveOptions]="{ exact: true }">
+        Home
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
+        <span>Orcamentos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
+        <span>Ordens de Servicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <span>Clientes</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
+        <span>Tecnicos</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
+        <span>Peças</span>
+      </a>
+      <hr class="linha-menu" />
+
+      <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
+        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
+        <span>Serviços</span>
+      </a>
+      <hr class="linha-menu" />
+    </nav>
+
+    <button class="botao-sair" type="button" (click)="sair()">
+      <span class="circulo-icone-sair">
+        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+      </span>
+      <span class="texto-sair">Logout</span>
+    </button>
+  </aside>
+
+  <main class="conteudo-clientes">
+    <div class="cabecalho-pagina">
+      <a class="botao-voltar" routerLink="/clientes" aria-label="Voltar para clientes">
+        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+      </a>
+
+      <h1 class="titulo-pagina">Cadastrar cliente</h1>
+    </div>
+
+    <form class="formulario-cliente" (submit)="$event.preventDefault()">
+      <section class="secao-formulario">
+        <h2 class="titulo-secao">Dados do Cliente</h2>
+
+        <div class="grade-dados-cliente">
+          <div class="campo-formulario campo-nome">
+            <label class="rotulo-campo" for="nome-cliente">Nome</label>
+            <input class="entrada-campo" id="nome-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario campo-cpf">
+            <label class="rotulo-campo" for="cpf-cliente">CPF</label>
+            <input class="entrada-campo" id="cpf-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario campo-telefone">
+            <label class="rotulo-campo" for="telefone-cliente">Telefone</label>
+            <input class="entrada-campo entrada-campo-menor" id="telefone-cliente" type="text" />
+          </div>
+        </div>
+      </section>
+
+      <section class="secao-formulario secao-endereco">
+        <h2 class="titulo-secao">Endereço</h2>
+
+        <div class="grade-endereco">
+          <div class="campo-formulario area-rua">
+            <label class="rotulo-campo" for="rua-cliente">Rua</label>
+            <input class="entrada-campo" id="rua-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario area-bairro">
+            <label class="rotulo-campo" for="bairro-cliente">Bairro</label>
+            <input class="entrada-campo" id="bairro-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario area-cidade">
+            <label class="rotulo-campo" for="cidade-cliente">Cidade</label>
+            <input class="entrada-campo" id="cidade-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario area-estado">
+            <label class="rotulo-campo" for="estado-cliente">Estado</label>
+            <input class="entrada-campo" id="estado-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario area-cep">
+            <label class="rotulo-campo" for="cep-cliente">CEP</label>
+            <input class="entrada-campo" id="cep-cliente" type="text" />
+          </div>
+
+          <div class="campo-formulario area-complemento">
+            <label class="rotulo-campo" for="complemento-cliente">Complemento</label>
+            <input class="entrada-campo" id="complemento-cliente" type="text" />
+          </div>
+
+          <div class="area-acao-veiculo">
+            <button class="botao-veiculo" type="button" (click)="abrirCadastroVeiculo()">
+              Cadastrar Veiculo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="rodape-formulario">
+        <button class="botao-cliente" type="submit">Cadastrar cliente</button>
+      </div>
+    </form>
+  </main>
+
+  <div class="sobreposicao-modal" *ngIf="cadastroVeiculoAberto" (click)="fecharCadastroVeiculo()">
+    <div class="modal-veiculo" (click)="$event.stopPropagation()">
+      <button class="botao-fechar-modal" type="button" (click)="fecharCadastroVeiculo()" aria-label="Fechar cadastro de veiculo">
+        <span class="material-symbols-outlined icone-fechar" aria-hidden="true">close</span>
+      </button>
+
+      <form class="formulario-veiculo" (submit)="$event.preventDefault()">
+        <h2 class="titulo-modal">Cadastro de Veiculo</h2>
+
+        <div class="grade-veiculo">
+          <input class="entrada-modal" type="text" placeholder="Marca" />
+          <input class="entrada-modal" type="text" placeholder="Placa" />
+          <input class="entrada-modal" type="text" placeholder="Modelo" />
+          <input class="entrada-modal" type="text" placeholder="Ano" />
+        </div>
+
+        <button class="botao-modal" type="submit">Cadastrar</button>
+      </form>
+    </div>
+  </div>
+</section>
