@@ -1,4 +1,4 @@
-<section class="pagina-servicos-lista">
+﻿<section class="pagina-servicos-lista">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -12,37 +12,37 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
         <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
         <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
         <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
         <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
         <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
@@ -50,7 +50,7 @@
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -59,7 +59,7 @@
   <main class="conteudo-servicos-lista">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/home" aria-label="Voltar para Home">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
 
       <h1 class="titulo-pagina">Servi&ccedil;os</h1>
@@ -77,18 +77,18 @@
             [ngModelOptions]="{ standalone: true }"
           />
           <button class="botao-pesquisa" type="button" aria-label="Pesquisar servicos">
-            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+            <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           </button>
         </div>
       </div>
 
       <button class="botao-filtro" type="button" aria-label="Filtrar servicos">
-        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+        <img class="icone-svg icone-filtro" src="assets/icone-filtro.png" alt="" />
       </button>
 
       <a class="botao-novo-item" routerLink="/servicos/novo">
         <span>Cadastrar servi&ccedil;o</span>
-        <span class="material-symbols-outlined icone-adicionar" aria-hidden="true">add</span>
+        <img class="icone-svg icone-adicionar" src="assets/icone-adicionar.png" alt="" />
       </a>
     </section>
 
@@ -97,6 +97,7 @@
         <span>Id</span>
         <span>Nome do servi&ccedil;o</span>
         <span>Valor</span>
+        <span class="coluna-acoes" aria-hidden="true"></span>
       </div>
 
       <div class="corpo-tabela">
@@ -104,6 +105,16 @@
           <span>{{ servico.id }}</span>
           <span>{{ servico.nome }}</span>
           <span>{{ servico.valor }}</span>
+
+          <div class="acoes-item">
+            <a class="botao-acao botao-editar" [routerLink]="['/servicos/editar', servico.id]" aria-label="Editar servico">
+              <img class="icone-svg icone-acao" src="assets/icone-editar-lapis.png" alt="" />
+            </a>
+
+            <button class="botao-acao botao-excluir" type="button" (click)="excluirServico(servico.id)" aria-label="Excluir servico">
+              <img class="icone-svg icone-acao" src="assets/icone-lixeira-deletar.png" alt="" />
+            </button>
+          </div>
         </div>
 
         <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
@@ -111,3 +122,5 @@
     </section>
   </main>
 </section>
+
+

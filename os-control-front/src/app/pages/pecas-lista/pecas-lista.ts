@@ -20,7 +20,7 @@ export class PecasLista {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  readonly pecas = this.carregarPecas();
+  pecas = this.carregarPecas();
 
   constructor(private router: Router) {}
 
@@ -43,6 +43,18 @@ export class PecasLista {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  excluirPeca(id: string) {
+    if (!window.confirm('Deseja excluir peca?')) {
+      return;
+    }
+
+    this.pecas = this.pecas.filter((peca) => peca.id !== id);
+    localStorage.setItem(
+      'pecasCadastradas',
+      JSON.stringify(this.carregarPecasCompletas().filter((peca) => this.obterIdPeca(peca) !== id))
+    );
   }
 
   private carregarPecas(): PecaListaItem[] {
@@ -69,6 +81,27 @@ export class PecasLista {
         if (pecas.length > 0) {
           return pecas;
         }
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
+  }
+
+  private carregarPecasCompletas(): unknown[] {
+    const chaves = ['pecasCadastradas', 'pecas', 'cadastroPecas'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? dados : [];
       } catch {
         continue;
       }
@@ -106,5 +139,14 @@ export class PecasLista {
     }
 
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private obterIdPeca(item: unknown) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const registro = item as Record<string, unknown>;
+    return this.comoTexto(registro['id'] ?? registro['codigo']);
   }
 }

@@ -1,4 +1,4 @@
-<section class="pagina-ordens-importar">
+﻿<section class="pagina-ordens-importar">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -12,45 +12,45 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
-        <span>Orcamentos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
-        <span>Ordens de Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
-        <span>Tecnicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
-        <span>Pecas</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
-        <span>Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
     </nav>
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -59,10 +59,10 @@
   <main class="conteudo-ordens-importar">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/ordens-servico" aria-label="Voltar para menu de OS">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
 
-      <h1 class="titulo-pagina">Importar orcamento</h1>
+      <h1 class="titulo-pagina">Importar or&ccedil;amento</h1>
     </div>
 
     <section class="barra-filtros">
@@ -77,7 +77,7 @@
             [ngModelOptions]="{ standalone: true }"
           />
           <button class="botao-pesquisa" type="button" aria-label="Pesquisar orcamentos">
-            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+            <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           </button>
         </div>
       </div>
@@ -94,20 +94,24 @@
       </div>
 
       <button class="botao-filtro" type="button" aria-label="Filtrar orcamentos">
-        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+        <img class="icone-svg icone-filtro" src="assets/icone-filtro.png" alt="" />
       </button>
     </section>
 
     <section class="tabela-lista">
       <div class="cabecalho-tabela">
         <span>Id</span>
-        <span>Nome do orcamento</span>
+        <span>Nome do or&ccedil;amento</span>
+        <span class="coluna-acao-confirmar" aria-hidden="true"></span>
       </div>
 
       <div class="corpo-tabela">
         <a class="linha-tabela linha-link" *ngFor="let orcamento of orcamentosFiltrados" [routerLink]="['/ordens-servico/importar', orcamento.id]">
           <span>{{ orcamento.id }}</span>
           <span>{{ orcamento.nome }}</span>
+          <span class="acao-confirmar" aria-hidden="true">
+            <img class="icone-svg icone-confirmar" src="assets/icone-selecionar-ok.png" alt="" />
+          </span>
         </a>
 
         <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
@@ -115,3 +119,5 @@
     </section>
   </main>
 </section>
+
+

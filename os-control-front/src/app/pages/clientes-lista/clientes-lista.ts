@@ -22,7 +22,7 @@ export class ClientesLista {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  readonly clientes = this.carregarClientes();
+  clientes = this.carregarClientes();
 
   constructor(private router: Router) {}
 
@@ -45,6 +45,18 @@ export class ClientesLista {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  excluirCliente(id: string) {
+    if (!window.confirm('Deseja excluir cliente?')) {
+      return;
+    }
+
+    this.clientes = this.clientes.filter((cliente) => cliente.id !== id);
+    localStorage.setItem(
+      'clientesCadastrados',
+      JSON.stringify(this.carregarClientesCompletos().filter((cliente) => this.obterIdCliente(cliente) !== id))
+    );
   }
 
   private carregarClientes(): ClienteListaItem[] {
@@ -76,15 +88,28 @@ export class ClientesLista {
       }
     }
 
-    return [
-      {
-        id: '01',
-        nome: 'Joao de Souza',
-        telefone: '(45) 9495-9896',
-        cidade: 'Toledo',
-        veiculo: 'Corolla',
-      },
-    ];
+    return [];
+  }
+
+  private carregarClientesCompletos(): unknown[] {
+    const chaves = ['clientesCadastrados', 'clientes', 'cadastroClientes'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? dados : [];
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
   }
 
   private mapearCliente(item: unknown, indice: number): ClienteListaItem | null {
@@ -97,6 +122,8 @@ export class ClientesLista {
     const enderecoObjeto = endereco && typeof endereco === 'object' ? (endereco as Record<string, unknown>) : null;
     const veiculo = registro['veiculo'];
     const veiculoObjeto = veiculo && typeof veiculo === 'object' ? (veiculo as Record<string, unknown>) : null;
+    const veiculos = registro['veiculos'];
+    const veiculosLista = Array.isArray(veiculos) ? veiculos : [];
 
     const nome = this.comoTexto(registro['nome'] ?? registro['nomeCliente']);
 
@@ -109,6 +136,7 @@ export class ClientesLista {
     const cidade = this.comoTexto(registro['cidade'] ?? enderecoObjeto?.['cidade']) || '--';
     const veiculoNome =
       this.comoTexto(registro['veiculoPrincipal'] ?? registro['modeloVeiculo'] ?? registro['modelo']) ||
+      this.montarVeiculoLista(veiculosLista) ||
       this.montarVeiculo(veiculoObjeto) ||
       '--';
 
@@ -132,7 +160,30 @@ export class ClientesLista {
     return [marca, modelo].filter(Boolean).join(' ');
   }
 
+  private montarVeiculoLista(veiculos: unknown[]) {
+    const primeiroVeiculo = veiculos[0];
+
+    if (!primeiroVeiculo || typeof primeiroVeiculo !== 'object') {
+      return '';
+    }
+
+    const registro = primeiroVeiculo as Record<string, unknown>;
+    const marca = this.comoTexto(registro['marca']);
+    const modelo = this.comoTexto(registro['modelo']);
+
+    return [marca, modelo].filter(Boolean).join(' ');
+  }
+
   private comoTexto(valor: unknown): string {
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private obterIdCliente(item: unknown) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const registro = item as Record<string, unknown>;
+    return this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idCliente']);
   }
 }

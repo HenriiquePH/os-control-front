@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 type DiaCalendario = {
   data: Date;
@@ -26,14 +26,34 @@ type PecaSelecionada = {
   valorTotal: number;
 };
 
+type OrcamentoSalvo = {
+  id: string;
+  nome: string;
+  nomeOrcamento: string;
+  dataAbertura: string;
+  observacao: string;
+  servicos: ServicoSelecionado[];
+  pecas: PecaSelecionada[];
+  valorTotal: string;
+  total: number;
+  cliente: string;
+  nomeCliente: string;
+  veiculo: string;
+  modelo: string;
+};
+
 @Component({
   selector: 'app-orcamentos',
   imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './orcamentos.html',
   styleUrl: './orcamentos.css',
 })
-export class Orcamentos {
+export class Orcamentos implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  modoEdicao: boolean = false;
+  orcamentoId: string = '';
+  nomeOrcamento: string = '';
+  observacao: string = '';
 
   abaAtiva: AbaOrcamento = 'servicos';
   calendarioAberto: boolean = false;
@@ -63,8 +83,27 @@ export class Orcamentos {
     valorUnitario: '',
   };
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private route: ActivatedRoute) {
+    this.orcamentoId = this.gerarProximoId();
     this.sincronizarCalendario(this.dataSelecionada);
+  }
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('orcamentoId');
+
+    if (!id) {
+      return;
+    }
+
+    this.carregarOrcamento(id);
+  }
+
+  get tituloPagina() {
+    return this.modoEdicao ? 'Editar orcamento' : 'Novo orcamento';
+  }
+
+  get textoBotao() {
+    return this.modoEdicao ? 'Salvar orcamento' : 'Confirmar orcamento';
   }
 
   get placeholderPesquisa() {
@@ -188,11 +227,21 @@ export class Orcamentos {
     this.modalPdfAberto = true;
   }
 
+  executarAcaoPrincipal() {
+    if (this.modoEdicao) {
+      this.salvarOrcamento();
+      return;
+    }
+
+    this.abrirModalPdf();
+  }
+
   fecharModalPdf() {
     this.modalPdfAberto = false;
   }
 
   abrirPdf() {
+    this.salvarOrcamento();
     this.fecharModalPdf();
   }
 
@@ -206,6 +255,64 @@ export class Orcamentos {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  private salvarOrcamento() {
+    const nome = this.nomeOrcamento.trim();
+
+    if (!nome) {
+      return;
+    }
+
+    const orcamentos = this.carregarOrcamentos();
+    const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
+    const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
+    const total = totalServicos + totalPecas;
+
+    const orcamentoSalvo: OrcamentoSalvo = {
+      id: this.orcamentoId,
+      nome,
+      nomeOrcamento: nome,
+      dataAbertura: this.dataAbertura,
+      observacao: this.observacao.trim(),
+      servicos: this.servicosSelecionados,
+      pecas: this.pecasSelecionadas,
+      valorTotal: this.formatarMoeda(total),
+      total,
+      cliente: '',
+      nomeCliente: '',
+      veiculo: '',
+      modelo: '',
+    };
+
+    const orcamentosAtualizados = this.modoEdicao
+      ? orcamentos.map((item) => (item.id === orcamentoSalvo.id ? orcamentoSalvo : item))
+      : [...orcamentos, orcamentoSalvo];
+
+    localStorage.setItem('orcamentosCadastrados', JSON.stringify(orcamentosAtualizados));
+
+    this.router.navigate(['/orcamentos']);
+  }
+
+  private carregarOrcamento(id: string) {
+    const orcamento = this.carregarOrcamentos().find((item) => item.id === id);
+
+    if (!orcamento) {
+      return;
+    }
+
+    this.modoEdicao = true;
+    this.orcamentoId = orcamento.id;
+    this.nomeOrcamento = orcamento.nome || orcamento.nomeOrcamento || '';
+    this.observacao = orcamento.observacao || '';
+    this.servicosSelecionados = Array.isArray(orcamento.servicos) ? orcamento.servicos : [];
+    this.pecasSelecionadas = Array.isArray(orcamento.pecas) ? orcamento.pecas : [];
+
+    const data = this.converterDataTexto(orcamento.dataAbertura);
+
+    if (data) {
+      this.sincronizarCalendario(data);
+    }
   }
 
   private resetNovoServico() {
@@ -313,5 +420,50 @@ export class Orcamentos {
       dataA.getMonth() === dataB.getMonth() &&
       dataA.getFullYear() === dataB.getFullYear()
     );
+  }
+
+  private converterDataTexto(valor: string) {
+    const partes = valor.split('/');
+
+    if (partes.length !== 3) {
+      return null;
+    }
+
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]) - 1;
+    const ano = Number(partes[2]);
+    const data = new Date(ano, mes, dia);
+
+    return Number.isFinite(data.getTime()) ? data : null;
+  }
+
+  private carregarOrcamentos(): OrcamentoSalvo[] {
+    const chaves = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? (dados as OrcamentoSalvo[]) : [];
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
+  }
+
+  private gerarProximoId() {
+    const maiorId = this.carregarOrcamentos().reduce((maior, item) => {
+      const numero = Number.parseInt(item.id, 10);
+      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
+    }, 0);
+
+    return String(maiorId + 1).padStart(2, '0');
   }
 }

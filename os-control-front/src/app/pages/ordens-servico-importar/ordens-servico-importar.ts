@@ -79,18 +79,7 @@ export class OrdensServicoImportar {
       }
     }
 
-    return [
-      {
-        id: '01',
-        nome: 'Orcamento Joao de Souza Corolla',
-        cliente: 'Joao de Souza',
-        veiculo: 'Corolla',
-        dataAbertura: '14/03/2026',
-        observacao: '',
-        servicos: [{ id: '01', nome: 'Revisao geral', valor: 185 }],
-        pecas: [{ id: '01', nome: 'Filtro de oleo', quantidade: 1, valorUnitario: 150, valorTotal: 150 }],
-      },
-    ];
+    return [];
   }
 
   private mapearOrcamento(item: unknown, indice: number): OrcamentoImportacao | null {
@@ -112,12 +101,30 @@ export class OrdensServicoImportar {
       veiculo: this.comoTexto(registro['veiculo'] ?? registro['modelo']) || 'Veiculo',
       dataAbertura: this.comoTexto(registro['dataAbertura']) || '14/03/2026',
       observacao: this.comoTexto(registro['observacao']),
-      servicos: [],
-      pecas: [],
+      servicos: this.comoListaServicos(registro['servicos']),
+      pecas: this.comoListaPecas(registro['pecas']),
     };
   }
 
   private comoTexto(valor: unknown): string {
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private comoListaServicos(valor: unknown) {
+    return Array.isArray(valor)
+      ? valor.filter(
+          (item): item is { id: string; nome: string; valor: number } =>
+            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
+        )
+      : [];
+  }
+
+  private comoListaPecas(valor: unknown) {
+    return Array.isArray(valor)
+      ? valor.filter(
+          (item): item is { id: string; nome: string; quantidade: number; valorUnitario: number; valorTotal: number } =>
+            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
+        )
+      : [];
   }
 }

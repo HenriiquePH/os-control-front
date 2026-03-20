@@ -29,16 +29,16 @@
   justify-content: center;
   width: 41px;
   height: 41px;
-  border-radius: 50%;
-  background: #0da206;
+  padding: 0;
+  border: 0;
+  background: transparent;
   text-decoration: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .icone-voltar {
-  font-size: 28px;
-  color: #ffffff;
-  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  width: 100%;
+  height: 100%;
 }
 
 .titulo-pagina {
@@ -134,7 +134,7 @@
 .cabecalho-tabela,
 .linha-tabela {
   display: grid;
-  grid-template-columns: 142px minmax(0, 1fr);
+  grid-template-columns: 142px minmax(0, 1fr) 64px;
   column-gap: 24px;
   align-items: center;
   padding: 0 32px;
@@ -158,6 +158,7 @@
   border-right: 1px solid rgba(93, 84, 84, 0.18);
   border-bottom: 1px solid rgba(93, 84, 84, 0.18);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  transition: background-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
 
 .corpo-tabela .linha-tabela:nth-child(odd) {
@@ -170,6 +171,34 @@
 
 .linha-link {
   text-decoration: none;
+}
+
+.linha-link:hover,
+.linha-link:focus-visible {
+  background: #ece8e8 !important;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.coluna-acao-confirmar,
+.acao-confirmar {
+  justify-self: end;
+}
+
+.acao-confirmar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0da206;
+  color: #ffffff;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.icone-confirmar {
+  font-size: 20px;
 }
 
 .linha-vazia {
@@ -199,6 +228,6 @@
 
   .cabecalho-tabela,
   .linha-tabela {
-    min-width: 560px;
+    min-width: 620px;
   }
 }

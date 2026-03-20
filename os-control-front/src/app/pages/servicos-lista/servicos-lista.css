@@ -29,16 +29,16 @@
   justify-content: center;
   width: 41px;
   height: 41px;
-  border-radius: 50%;
-  background: #0da206;
+  padding: 0;
+  border: 0;
+  background: transparent;
   text-decoration: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .icone-voltar {
-  font-size: 28px;
-  color: #ffffff;
-  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  width: 100%;
+  height: 100%;
 }
 
 .titulo-pagina {
@@ -51,7 +51,7 @@
 
 .barra-filtros {
   display: grid;
-  grid-template-columns: 354px 44px minmax(240px, 254px);
+  grid-template-columns: 354px 44px 1fr;
   gap: 18px;
   align-items: end;
   margin: 0 16px 28px;
@@ -135,7 +135,6 @@
   gap: 10px;
   min-width: 252px;
   height: 44px;
-  margin-right: 16px;
   padding: 0 22px;
   border-radius: 14px;
   background: #c9c9c9;
@@ -153,7 +152,7 @@
 .cabecalho-tabela,
 .linha-tabela {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 220px;
+  grid-template-columns: 120px minmax(0, 1fr) 220px 88px;
   column-gap: 24px;
   align-items: center;
   padding: 0 32px;
@@ -177,6 +176,7 @@
   border-right: 1px solid rgba(93, 84, 84, 0.18);
   border-bottom: 1px solid rgba(93, 84, 84, 0.18);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  transition: box-shadow 120ms ease;
 }
 
 .corpo-tabela .linha-tabela:nth-child(odd) {
@@ -187,8 +187,54 @@
   background: #d9d5d5;
 }
 
+.linha-tabela:not(.linha-vazia):hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+}
+
 .linha-vazia {
   min-height: 62px;
+}
+
+.acoes-item {
+  display: flex;
+  justify-self: end;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.linha-tabela:not(.linha-vazia):hover .acoes-item,
+.linha-tabela:not(.linha-vazia):focus-within .acoes-item {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.botao-acao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.botao-editar {
+  background: rgba(13, 162, 6, 0.92);
+}
+
+.botao-excluir {
+  background: rgba(215, 77, 77, 0.94);
+}
+
+.icone-acao {
+  font-size: 22px;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 
 @media (max-width: 1280px) {
@@ -239,6 +285,6 @@
 
   .cabecalho-tabela,
   .linha-tabela {
-    min-width: 650px;
+    min-width: 738px;
   }
 }

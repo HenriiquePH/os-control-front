@@ -1,29 +1,35 @@
-<section class="pagina-servicos">
+﻿<section class="pagina-servicos">
   <div class="modal-servicos">
     <a
       class="botao-fechar"
       routerLink="/servicos"
       aria-label="Fechar cadastro de servico"
     >
-      &times;
+      <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
     </a>
 
-    <form class="formulario-servicos" (submit)="$event.preventDefault()">
-      <h1 class="titulo-modal">Cadastrar servico</h1>
+    <form class="formulario-servicos" (ngSubmit)="salvarServico()">
+      <h1 class="titulo-modal">{{ tituloPagina }}</h1>
 
       <div class="grade-campos">
+        <label class="campo-formulario campo-id" for="servico-id">
+          <span class="rotulo-campo">ID</span>
+          <input class="entrada-campo entrada-campo-bloqueada" id="servico-id" type="text" [value]="servicoId" readonly />
+        </label>
+
         <label class="campo-formulario campo-nome" for="servico-nome">
           <span class="rotulo-campo">Nome</span>
-          <input class="entrada-campo" id="servico-nome" type="text" />
+          <input class="entrada-campo" id="servico-nome" type="text" [(ngModel)]="servico.nome" name="servicoNome" />
         </label>
 
         <label class="campo-formulario campo-valor" for="servico-valor">
           <span class="rotulo-campo">Valor</span>
-          <input class="entrada-campo" id="servico-valor" type="text" inputmode="decimal" />
+          <input class="entrada-campo" id="servico-valor" type="text" inputmode="decimal" [(ngModel)]="servico.valor" name="servicoValor" />
         </label>
       </div>
 
-      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+      <button class="botao-cadastrar" type="submit">{{ textoBotao }}</button>
     </form>
   </div>
 </section>
+

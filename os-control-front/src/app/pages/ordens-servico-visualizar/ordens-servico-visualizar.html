@@ -1,4 +1,4 @@
-<section class="pagina-ordens-visualizar">
+﻿<section class="pagina-ordens-visualizar">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -12,45 +12,45 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
-        <span>Orcamentos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
-        <span>Ordens de Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
-        <span>Tecnicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
-        <span>Pecas</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
-        <span>Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
     </nav>
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -59,10 +59,10 @@
   <main class="conteudo-ordens-visualizar">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/ordens-servico" aria-label="Voltar para menu de OS">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
 
-      <h1 class="titulo-pagina">Visualizar ordens de servico</h1>
+      <h1 class="titulo-pagina">Visualizar ordens de servi&ccedil;o</h1>
     </div>
 
     <section class="barra-filtros">
@@ -77,13 +77,13 @@
             [ngModelOptions]="{ standalone: true }"
           />
           <button class="botao-pesquisa" type="button" aria-label="Pesquisar por cliente">
-            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+            <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           </button>
         </div>
       </div>
 
       <div class="bloco-filtro">
-        <label class="rotulo-campo" for="filtro-tecnico-os">Tecnico</label>
+        <label class="rotulo-campo" for="filtro-tecnico-os">T&eacute;cnico</label>
         <input
           class="entrada-campo"
           id="filtro-tecnico-os"
@@ -105,7 +105,7 @@
       </div>
 
       <button class="botao-filtro" type="button" aria-label="Filtrar ordens de servico">
-        <span class="material-symbols-outlined icone-filtro" aria-hidden="true">filter_alt</span>
+        <img class="icone-svg icone-filtro" src="assets/icone-filtro.png" alt="" />
       </button>
     </section>
 
@@ -114,9 +114,10 @@
         <span>Id</span>
         <span>Data de abertura</span>
         <span>Cliente</span>
-        <span>Veiculo</span>
+        <span>Ve&iacute;culo</span>
         <span>Status</span>
-        <span>Tecnico</span>
+        <span>T&eacute;cnico</span>
+        <span class="coluna-acoes" aria-hidden="true"></span>
       </div>
 
       <div class="corpo-tabela">
@@ -127,6 +128,10 @@
           <span>{{ ordem.veiculo }}</span>
           <span>{{ ordem.status }}</span>
           <span>{{ ordem.tecnico }}</span>
+
+          <a class="botao-editar-ordem" [routerLink]="['/ordens-servico/editar', ordem.id]" aria-label="Editar ordem de servico">
+            <img class="icone-svg icone-acao" src="assets/icone-editar-lapis.png" alt="" />
+          </a>
         </div>
 
         <div class="linha-tabela linha-vazia" *ngFor="let _ of linhasVazias"></div>
@@ -134,3 +139,5 @@
     </section>
   </main>
 </section>
+
+

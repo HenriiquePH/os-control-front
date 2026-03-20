@@ -1,4 +1,4 @@
-<section class="pagina-ordens-menu">
+﻿<section class="pagina-ordens-menu">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -12,45 +12,45 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
-        <span>Orcamentos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
-        <span>Ordens de Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
-        <span>Tecnicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
-        <span>Pecas</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
-        <span>Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
     </nav>
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -59,18 +59,20 @@
   <main class="conteudo-ordens-menu">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/home" aria-label="Voltar para Home">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
     </div>
 
     <section class="painel-menu">
-      <h1 class="titulo-pagina">Ordens de servico</h1>
+      <h1 class="titulo-pagina">Ordens de servi&ccedil;o</h1>
 
       <div class="acoes-menu">
         <a class="botao-menu" routerLink="/ordens-servico/criar">Criar OS</a>
-        <a class="botao-menu" routerLink="/ordens-servico/importar">Importar de orcamento</a>
-        <a class="botao-menu" routerLink="/ordens-servico/visualizar">Visualizar ordens de servico</a>
+        <a class="botao-menu" routerLink="/ordens-servico/importar">Importar de or&ccedil;amento</a>
+        <a class="botao-menu" routerLink="/ordens-servico/visualizar">Visualizar ordens de servi&ccedil;o</a>
       </div>
     </section>
   </main>
 </section>
+
+

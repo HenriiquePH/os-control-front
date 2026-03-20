@@ -1,29 +1,35 @@
-<section class="pagina-pecas">
+﻿<section class="pagina-pecas">
   <div class="modal-pecas">
     <a
       class="botao-fechar"
       routerLink="/pecas"
       aria-label="Fechar cadastro de pecas"
     >
-      &times;
+      <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
     </a>
 
-    <form class="formulario-pecas" (submit)="$event.preventDefault()">
-      <h1 class="titulo-modal">Cadastro de pecas</h1>
+    <form class="formulario-pecas" (ngSubmit)="salvarPeca()">
+      <h1 class="titulo-modal">{{ tituloPagina }}</h1>
 
       <div class="grade-campos">
+        <label class="campo-formulario campo-id" for="peca-id">
+          <span class="rotulo-campo">ID</span>
+          <input class="entrada-campo entrada-campo-bloqueada" id="peca-id" type="text" [value]="pecaId" readonly />
+        </label>
+
         <label class="campo-formulario campo-nome" for="peca-nome">
           <span class="rotulo-campo">Nome</span>
-          <input class="entrada-campo" id="peca-nome" type="text" />
+          <input class="entrada-campo" id="peca-nome" type="text" [(ngModel)]="peca.nome" name="pecaNome" />
         </label>
 
         <label class="campo-formulario campo-valor" for="peca-valor">
           <span class="rotulo-campo">Valor unitario</span>
-          <input class="entrada-campo" id="peca-valor" type="text" inputmode="decimal" />
+          <input class="entrada-campo" id="peca-valor" type="text" inputmode="decimal" [(ngModel)]="peca.valor" name="pecaValor" />
         </label>
       </div>
 
-      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+      <button class="botao-cadastrar" type="submit">{{ textoBotao }}</button>
     </form>
   </div>
 </section>
+

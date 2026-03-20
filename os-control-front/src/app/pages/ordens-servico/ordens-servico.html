@@ -1,4 +1,4 @@
-<section class="pagina-ordens-servico">
+﻿<section class="pagina-ordens-servico">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -17,45 +17,45 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
-        <span>Orcamentos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
-        <span>Ordens de Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
-        <span>Tecnicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
-        <span>Pecas</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
-        <span>Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
     </nav>
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -64,10 +64,10 @@
   <main class="conteudo-ordens-servico">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/ordens-servico" aria-label="Voltar para menu de OS">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
 
-      <h1 class="titulo-pagina">Ordens de Servicos</h1>
+      <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
     </div>
 
     <form class="formulario-os" (ngSubmit)="salvarOs()">
@@ -83,7 +83,7 @@
         </label>
 
         <label class="campo-formulario campo-veiculo" for="veiculo-os">
-          <span class="rotulo-campo">Veiculo</span>
+          <span class="rotulo-campo">Ve&iacute;culo</span>
           <input class="entrada-campo" id="veiculo-os" type="text" [(ngModel)]="veiculo" name="veiculoOs" />
         </label>
 
@@ -93,14 +93,14 @@
             <select class="entrada-campo seletor-campo" id="status-os" [(ngModel)]="statusSelecionado" name="statusOs">
               <option *ngFor="let status of opcoesStatus" [ngValue]="status">{{ status }}</option>
             </select>
-            <span class="material-symbols-outlined icone-select" aria-hidden="true">arrow_drop_down</span>
+            <img class="icone-svg icone-select" src="assets/icone-dropdown.png" alt="" />
           </span>
         </div>
       </div>
 
       <div class="grade-secundaria">
         <label class="campo-formulario campo-orcamento" for="numero-orcamento-os">
-          <span class="rotulo-campo">N&deg; Orcamento</span>
+          <span class="rotulo-campo">N&deg; Or&ccedil;amento</span>
           <input class="entrada-campo entrada-campo-bloqueada" id="numero-orcamento-os" type="text" [value]="numeroOrcamento" readonly />
         </label>
 
@@ -108,13 +108,13 @@
           <label class="rotulo-campo" for="tecnico-os">Incluir t&eacute;cnico</label>
           <span class="campo-select">
             <select class="entrada-campo seletor-campo" id="tecnico-os" [(ngModel)]="tecnicoSelecionado" name="tecnicoOs">
-              <option value="" [disabled]="tecnicosDisponiveis.length > 0">Selecione um tecnico</option>
+              <option value="" [disabled]="tecnicosDisponiveis.length > 0">Selecione um t&eacute;cnico</option>
               <option *ngFor="let tecnico of tecnicosDisponiveis" [ngValue]="tecnico">
                 {{ tecnico }}
               </option>
-              <option *ngIf="!tecnicosDisponiveis.length" value="" disabled>Nenhum tecnico cadastrado</option>
+              <option *ngIf="!tecnicosDisponiveis.length" value="" disabled>Nenhum t&eacute;cnico cadastrado</option>
             </select>
-            <span class="material-symbols-outlined icone-select" aria-hidden="true">arrow_drop_down</span>
+            <img class="icone-svg icone-select" src="assets/icone-dropdown.png" alt="" />
           </span>
         </div>
 
@@ -135,7 +135,7 @@
               (click)="abrirCalendario()"
               aria-label="Abrir calendario"
             >
-              <span class="material-symbols-outlined icone-calendario" aria-hidden="true">calendar_month</span>
+              <img class="icone-svg icone-calendario" src="assets/icone-calendario.png" alt="" />
             </button>
           </span>
         </div>
@@ -162,7 +162,7 @@
 
       <section class="painel-itens" aria-label="Itens da ordem de servico">
         <button class="barra-pesquisa" type="button" (click)="abrirModalSelecao()">
-          <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+          <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           <span class="texto-pesquisa">{{ placeholderPesquisa }}</span>
         </button>
 
@@ -231,7 +231,7 @@
           <textarea class="entrada-observacao" id="observacao-os" [(ngModel)]="observacao" name="observacaoOs"></textarea>
         </label>
 
-        <button class="botao-cadastrar-os" type="submit">Cadastrar OS</button>
+        <button class="botao-cadastrar-os" type="submit">{{ textoBotao }}</button>
       </div>
     </form>
   </main>
@@ -239,18 +239,18 @@
   <div class="sobreposicao-modal" *ngIf="calendarioAberto" (click)="fecharCalendario()">
     <div class="modal-calendario" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharCalendario()" aria-label="Fechar calendario">
-        &times;
+        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="cabecalho-calendario">
         <button class="botao-navegacao-calendario" type="button" (click)="mesAnterior()" aria-label="Mes anterior">
-          <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+          <img class="icone-svg" src="assets/icone-voltar-calendario.png" alt="" />
         </button>
 
         <div class="titulo-calendario">{{ tituloCalendario }}</div>
 
         <button class="botao-navegacao-calendario" type="button" (click)="proximoMes()" aria-label="Proximo mes">
-          <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+          <img class="icone-svg" src="assets/icone-avancar-calendario.png" alt="" />
         </button>
       </div>
 
@@ -288,7 +288,7 @@
   <div class="sobreposicao-modal" *ngIf="modalServicoAberto" (click)="fecharModalServico()">
     <div class="modal-selecao-servico" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharModalServico()" aria-label="Fechar selecao de servico">
-        &times;
+        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="grade-rotulos-modal-servico">
@@ -310,7 +310,7 @@
   <div class="sobreposicao-modal" *ngIf="modalPecaAberto" (click)="fecharModalPeca()">
     <div class="modal-selecao-peca" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal botao-fechar-modal-peca" type="button" (click)="fecharModalPeca()" aria-label="Fechar selecao de peca">
-        &times;
+        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="cabecalho-lista-modal-peca">
@@ -332,7 +332,7 @@
         <label class="campo-modal-peca campo-modal-nome">
           <span>Pesquisar</span>
           <span class="campo-pesquisa-modal">
-            <span class="material-symbols-outlined icone-pesquisa" aria-hidden="true">search</span>
+            <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
             <input class="entrada-pesquisa-modal" type="text" placeholder="Nome" [(ngModel)]="novaPeca.nome" name="osNovaPecaNome" />
           </span>
         </label>
@@ -357,3 +357,5 @@
     </div>
   </div>
 </section>
+
+

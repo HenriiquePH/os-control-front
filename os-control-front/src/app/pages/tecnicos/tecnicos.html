@@ -1,33 +1,34 @@
-<section class="pagina-tecnicos">
+﻿<section class="pagina-tecnicos">
   <div class="modal-tecnicos">
     <a
       class="botao-fechar"
       routerLink="/tecnicos"
       aria-label="Fechar cadastro de tecnico"
     >
-      &times;
+      <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
     </a>
 
-    <form class="formulario-tecnico" (submit)="$event.preventDefault()">
-      <h1 class="titulo-modal">Cadastro de Tecnico</h1>
+    <form class="formulario-tecnico" (ngSubmit)="salvarTecnico()">
+      <h1 class="titulo-modal">{{ tituloPagina }}</h1>
 
       <div class="grupo-campos">
-        <input class="entrada-campo" type="text" placeholder="Nome" />
+        <input class="entrada-campo" type="text" placeholder="Nome" [(ngModel)]="tecnico.nome" name="tecnicoNome" />
 
         <div class="linha-campos">
-          <input class="entrada-campo" type="text" placeholder="CPF" />
-          <input class="entrada-campo" type="text" placeholder="Telefone" />
+          <input class="entrada-campo" type="text" placeholder="CPF" [(ngModel)]="tecnico.cpf" name="tecnicoCpf" />
+          <input class="entrada-campo" type="text" placeholder="Telefone" [(ngModel)]="tecnico.telefone" name="tecnicoTelefone" />
         </div>
       </div>
 
       <h2 class="titulo-secao">Login de acesso</h2>
 
       <div class="grupo-campos grupo-login">
-        <input class="entrada-campo" type="text" placeholder="Usuario" />
-        <input class="entrada-campo" type="password" placeholder="Senha" />
+        <input class="entrada-campo" type="text" placeholder="Usuario" [(ngModel)]="tecnico.usuario" name="tecnicoUsuario" />
+        <input class="entrada-campo" type="password" placeholder="Senha" [(ngModel)]="tecnico.senha" name="tecnicoSenha" />
       </div>
 
-      <button class="botao-cadastrar" type="submit">Cadastrar</button>
+      <button class="botao-cadastrar" type="submit">{{ textoBotao }}</button>
     </form>
   </div>
 </section>
+

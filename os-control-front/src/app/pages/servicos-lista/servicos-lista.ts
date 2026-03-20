@@ -19,7 +19,7 @@ type ServicoListaItem = {
 export class ServicosLista {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
-  readonly servicos = this.carregarServicos();
+  servicos = this.carregarServicos();
 
   constructor(private router: Router) {}
 
@@ -36,6 +36,18 @@ export class ServicosLista {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  excluirServico(id: string) {
+    if (!window.confirm('Deseja excluir servico?')) {
+      return;
+    }
+
+    this.servicos = this.servicos.filter((servico) => servico.id !== id);
+    localStorage.setItem(
+      'servicosCadastrados',
+      JSON.stringify(this.carregarServicosCompletos().filter((servico) => this.obterIdServico(servico) !== id))
+    );
   }
 
   private carregarServicos(): ServicoListaItem[] {
@@ -62,6 +74,27 @@ export class ServicosLista {
         if (servicos.length > 0) {
           return servicos;
         }
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
+  }
+
+  private carregarServicosCompletos(): unknown[] {
+    const chaves = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? dados : [];
       } catch {
         continue;
       }
@@ -99,5 +132,14 @@ export class ServicosLista {
     }
 
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private obterIdServico(item: unknown) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const registro = item as Record<string, unknown>;
+    return this.comoTexto(registro['id'] ?? registro['codigo']);
   }
 }

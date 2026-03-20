@@ -20,7 +20,7 @@ export class OrcamentosLista {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  readonly orcamentos = this.carregarOrcamentos();
+  orcamentos = this.carregarOrcamentos();
 
   constructor(private router: Router) {}
 
@@ -43,6 +43,18 @@ export class OrcamentosLista {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  excluirOrcamento(id: string) {
+    if (!window.confirm('Deseja excluir orcamento?')) {
+      return;
+    }
+
+    this.orcamentos = this.orcamentos.filter((orcamento) => orcamento.id !== id);
+    localStorage.setItem(
+      'orcamentosCadastrados',
+      JSON.stringify(this.carregarOrcamentosCompletos().filter((orcamento) => this.obterIdOrcamento(orcamento) !== id))
+    );
   }
 
   private carregarOrcamentos(): OrcamentoListaItem[] {
@@ -74,13 +86,28 @@ export class OrcamentosLista {
       }
     }
 
-    return [
-      {
-        id: '01',
-        nome: 'Orcamento Joao de Souza Corolla',
-        valorTotal: 'R$335,00',
-      },
-    ];
+    return [];
+  }
+
+  private carregarOrcamentosCompletos(): unknown[] {
+    const chaves = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? dados : [];
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
   }
 
   private mapearOrcamento(item: unknown, indice: number): OrcamentoListaItem | null {
@@ -112,5 +139,14 @@ export class OrcamentosLista {
     }
 
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private obterIdOrcamento(item: unknown) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const registro = item as Record<string, unknown>;
+    return this.comoTexto(registro['id'] ?? registro['codigo']);
   }
 }

@@ -1,4 +1,4 @@
-<section class="pagina-clientes">
+﻿<section class="pagina-clientes">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -12,45 +12,45 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">description</span>
-        <span>Orcamentos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">handyman</span>
-        <span>Ordens de Servicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">group</span>
+        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">manage_accounts</span>
-        <span>Tecnicos</span>
+        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">settings</span>
-        <span>Peças</span>
+        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <span class="material-symbols-outlined icone-menu" aria-hidden="true">car_repair</span>
-        <span>Serviços</span>
+        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
     </nav>
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <span class="material-symbols-outlined icone-sair" aria-hidden="true">logout</span>
+        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
       <span class="texto-sair">Logout</span>
     </button>
@@ -59,78 +59,100 @@
   <main class="conteudo-clientes">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/clientes" aria-label="Voltar para clientes">
-        <span class="material-symbols-outlined icone-voltar" aria-hidden="true">arrow_back</span>
+        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
       </a>
 
-      <h1 class="titulo-pagina">Cadastrar cliente</h1>
+      <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
     </div>
 
-    <form class="formulario-cliente" (submit)="$event.preventDefault()">
+    <form class="formulario-cliente" (ngSubmit)="salvarCliente()">
       <section class="secao-formulario">
         <h2 class="titulo-secao">Dados do Cliente</h2>
 
         <div class="grade-dados-cliente">
           <div class="campo-formulario campo-nome">
             <label class="rotulo-campo" for="nome-cliente">Nome</label>
-            <input class="entrada-campo" id="nome-cliente" type="text" />
+            <input class="entrada-campo" id="nome-cliente" type="text" [(ngModel)]="cliente.nome" name="nomeCliente" />
           </div>
 
           <div class="campo-formulario campo-cpf">
             <label class="rotulo-campo" for="cpf-cliente">CPF</label>
-            <input class="entrada-campo" id="cpf-cliente" type="text" />
+            <input class="entrada-campo" id="cpf-cliente" type="text" [(ngModel)]="cliente.cpf" name="cpfCliente" />
           </div>
 
           <div class="campo-formulario campo-telefone">
             <label class="rotulo-campo" for="telefone-cliente">Telefone</label>
-            <input class="entrada-campo entrada-campo-menor" id="telefone-cliente" type="text" />
+            <input class="entrada-campo entrada-campo-menor" id="telefone-cliente" type="text" [(ngModel)]="cliente.telefone" name="telefoneCliente" />
           </div>
         </div>
       </section>
 
       <section class="secao-formulario secao-endereco">
-        <h2 class="titulo-secao">Endereço</h2>
+        <h2 class="titulo-secao">Endere&ccedil;o</h2>
 
         <div class="grade-endereco">
           <div class="campo-formulario area-rua">
             <label class="rotulo-campo" for="rua-cliente">Rua</label>
-            <input class="entrada-campo" id="rua-cliente" type="text" />
+            <input class="entrada-campo" id="rua-cliente" type="text" [(ngModel)]="cliente.rua" name="ruaCliente" />
           </div>
 
           <div class="campo-formulario area-bairro">
             <label class="rotulo-campo" for="bairro-cliente">Bairro</label>
-            <input class="entrada-campo" id="bairro-cliente" type="text" />
+            <input class="entrada-campo" id="bairro-cliente" type="text" [(ngModel)]="cliente.bairro" name="bairroCliente" />
           </div>
 
           <div class="campo-formulario area-cidade">
             <label class="rotulo-campo" for="cidade-cliente">Cidade</label>
-            <input class="entrada-campo" id="cidade-cliente" type="text" />
+            <input class="entrada-campo" id="cidade-cliente" type="text" [(ngModel)]="cliente.cidade" name="cidadeCliente" />
           </div>
 
           <div class="campo-formulario area-estado">
             <label class="rotulo-campo" for="estado-cliente">Estado</label>
-            <input class="entrada-campo" id="estado-cliente" type="text" />
+            <input class="entrada-campo" id="estado-cliente" type="text" [(ngModel)]="cliente.estado" name="estadoCliente" />
           </div>
 
           <div class="campo-formulario area-cep">
             <label class="rotulo-campo" for="cep-cliente">CEP</label>
-            <input class="entrada-campo" id="cep-cliente" type="text" />
+            <input class="entrada-campo" id="cep-cliente" type="text" [(ngModel)]="cliente.cep" name="cepCliente" />
           </div>
 
           <div class="campo-formulario area-complemento">
             <label class="rotulo-campo" for="complemento-cliente">Complemento</label>
-            <input class="entrada-campo" id="complemento-cliente" type="text" />
+            <input class="entrada-campo" id="complemento-cliente" type="text" [(ngModel)]="cliente.complemento" name="complementoCliente" />
           </div>
 
           <div class="area-acao-veiculo">
             <button class="botao-veiculo" type="button" (click)="abrirCadastroVeiculo()">
-              Cadastrar Veiculo
+              Cadastrar Ve&iacute;culo
             </button>
           </div>
         </div>
       </section>
 
+      <section class="secao-formulario secao-veiculos">
+        <div class="cabecalho-veiculos">
+          <h2 class="titulo-secao">Ve&iacute;culos cadastrados</h2>
+          <span class="texto-veiculo-apoio" *ngIf="!veiculos.length">Nenhum ve&iacute;culo cadastrado.</span>
+        </div>
+
+        <div class="lista-veiculos" *ngIf="veiculos.length">
+          <article class="cartao-veiculo" *ngFor="let veiculo of veiculos">
+            <div class="dados-veiculo">
+              <strong>{{ veiculo.modelo || 'Veiculo' }}</strong>
+              <span>Marca: {{ veiculo.marca || '--' }}</span>
+              <span>Placa: {{ veiculo.placa || '--' }}</span>
+              <span>Ano: {{ veiculo.ano || '--' }}</span>
+            </div>
+
+            <button class="botao-excluir-veiculo" type="button" (click)="excluirVeiculo(veiculo.id)">
+              Excluir ve&iacute;culo
+            </button>
+          </article>
+        </div>
+      </section>
+
       <div class="rodape-formulario">
-        <button class="botao-cliente" type="submit">Cadastrar cliente</button>
+        <button class="botao-cliente" type="submit">{{ textoBotao }}</button>
       </div>
     </form>
   </main>
@@ -138,17 +160,17 @@
   <div class="sobreposicao-modal" *ngIf="cadastroVeiculoAberto" (click)="fecharCadastroVeiculo()">
     <div class="modal-veiculo" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharCadastroVeiculo()" aria-label="Fechar cadastro de veiculo">
-        <span class="material-symbols-outlined icone-fechar" aria-hidden="true">close</span>
+        <img class="icone-svg icone-fechar" src="assets/icone-fechar.png" alt="" />
       </button>
 
-      <form class="formulario-veiculo" (submit)="$event.preventDefault()">
-        <h2 class="titulo-modal">Cadastro de Veiculo</h2>
+      <form class="formulario-veiculo" (ngSubmit)="adicionarVeiculo()">
+        <h2 class="titulo-modal">Cadastro de Veículo</h2>
 
         <div class="grade-veiculo">
-          <input class="entrada-modal" type="text" placeholder="Marca" />
-          <input class="entrada-modal" type="text" placeholder="Placa" />
-          <input class="entrada-modal" type="text" placeholder="Modelo" />
-          <input class="entrada-modal" type="text" placeholder="Ano" />
+          <input class="entrada-modal" type="text" placeholder="Marca" [(ngModel)]="novoVeiculo.marca" name="veiculoMarca" />
+          <input class="entrada-modal" type="text" placeholder="Placa" [(ngModel)]="novoVeiculo.placa" name="veiculoPlaca" />
+          <input class="entrada-modal" type="text" placeholder="Modelo" [(ngModel)]="novoVeiculo.modelo" name="veiculoModelo" />
+          <input class="entrada-modal" type="text" placeholder="Ano" [(ngModel)]="novoVeiculo.ano" name="veiculoAno" />
         </div>
 
         <button class="botao-modal" type="submit">Cadastrar</button>
@@ -156,3 +178,5 @@
     </div>
   </div>
 </section>
+
+

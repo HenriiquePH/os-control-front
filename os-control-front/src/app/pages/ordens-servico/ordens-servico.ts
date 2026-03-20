@@ -36,6 +36,21 @@ type OrcamentoImportado = {
   pecas: PecaSelecionada[];
 };
 
+type OrdemServicoSalva = {
+  id: string;
+  numeroOrcamento: string;
+  cliente: string;
+  veiculo: string;
+  status: string;
+  tecnico: string;
+  dataAbertura: string;
+  observacao: string;
+  servicos: ServicoSelecionado[];
+  pecas: PecaSelecionada[];
+  desconto: string;
+  totalOs: string;
+};
+
 @Component({
   selector: 'app-ordens-servico',
   imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
@@ -44,6 +59,7 @@ type OrcamentoImportado = {
 })
 export class OrdensServico implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  modoEdicao: boolean = false;
   numeroOs: string = '';
   numeroOrcamento: string = '';
   nomeCliente: string = '';
@@ -90,26 +106,29 @@ export class OrdensServico implements OnInit {
   }
 
   ngOnInit() {
-    this.numeroOs = this.gerarNumeroOs();
-
     this.route.paramMap.subscribe((params) => {
-      this.numeroOrcamento = '';
-      this.desconto = '';
-      this.tecnicoSelecionado = '';
-      this.statusSelecionado = 'Aberto';
-      this.abaAtiva = 'pecas';
-      this.servicosSelecionados = [];
-      this.pecasSelecionadas = [];
-      this.nomeCliente = '';
-      this.veiculo = '';
-      this.observacao = '';
+      this.reiniciarFormulario();
 
-      const id = params.get('id');
+      const ordemId = params.get('ordemId');
+      const orcamentoId = params.get('orcamentoId');
 
-      if (id) {
-        this.carregarOrcamentoImportado(id);
+      if (ordemId) {
+        this.carregarOrdemExistente(ordemId);
+        return;
+      }
+
+      if (orcamentoId) {
+        this.carregarOrcamentoImportado(orcamentoId);
       }
     });
+  }
+
+  get tituloPagina() {
+    return this.modoEdicao ? 'Editar OS' : 'Ordens de Servicos';
+  }
+
+  get textoBotao() {
+    return this.modoEdicao ? 'Salvar OS' : 'Cadastrar OS';
   }
 
   get placeholderPesquisa() {
@@ -239,7 +258,7 @@ export class OrdensServico implements OnInit {
 
   salvarOs() {
     const ordensSalvas = this.carregarOrdensSalvas();
-    const ordem = {
+    const ordem: OrdemServicoSalva = {
       id: this.numeroOs || this.gerarNumeroOs(),
       numeroOrcamento: this.numeroOrcamento,
       cliente: this.nomeCliente.trim() || 'Cliente',
@@ -254,10 +273,11 @@ export class OrdensServico implements OnInit {
       totalOs: this.totalOsFormatado,
     };
 
-    localStorage.setItem(
-      'ordensServicoCadastradas',
-      JSON.stringify([...ordensSalvas.filter((item) => item.id !== ordem.id), ordem])
-    );
+    const ordensAtualizadas = this.modoEdicao
+      ? ordensSalvas.map((item) => (item.id === ordem.id ? ordem : item))
+      : [...ordensSalvas, ordem];
+
+    localStorage.setItem('ordensServicoCadastradas', JSON.stringify(ordensAtualizadas));
 
     this.router.navigate(['/ordens-servico/visualizar']);
   }
@@ -331,6 +351,32 @@ export class OrdensServico implements OnInit {
     }
   }
 
+  private carregarOrdemExistente(id: string) {
+    const ordem = this.buscarOrdem(id);
+
+    if (!ordem) {
+      return;
+    }
+
+    this.modoEdicao = true;
+    this.numeroOs = ordem.id;
+    this.numeroOrcamento = ordem.numeroOrcamento;
+    this.nomeCliente = ordem.cliente;
+    this.veiculo = ordem.veiculo;
+    this.observacao = ordem.observacao;
+    this.statusSelecionado = ordem.status || 'Aberto';
+    this.tecnicoSelecionado = ordem.tecnico === '--' ? '' : ordem.tecnico;
+    this.desconto = ordem.desconto;
+    this.servicosSelecionados = ordem.servicos;
+    this.pecasSelecionadas = ordem.pecas;
+
+    const data = this.converterDataTexto(ordem.dataAbertura);
+
+    if (data) {
+      this.sincronizarCalendario(data);
+    }
+  }
+
   private buscarOrcamento(id: string): OrcamentoImportado | null {
     const chaves = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
 
@@ -360,17 +406,7 @@ export class OrdensServico implements OnInit {
       }
     }
 
-    return id === '01'
-      ? {
-          id: '01',
-          cliente: 'Joao de Souza',
-          veiculo: 'Corolla',
-          dataAbertura: '14/03/2026',
-          observacao: '',
-          servicos: [{ id: '01', nome: 'Revisao geral', valor: 185 }],
-          pecas: [{ id: '01', nome: 'Filtro de oleo', quantidade: 1, valorUnitario: 150, valorTotal: 150 }],
-        }
-      : null;
+    return null;
   }
 
   private mapearOrcamento(item: unknown, indice: number): OrcamentoImportado | null {
@@ -387,28 +423,59 @@ export class OrdensServico implements OnInit {
       veiculo: this.comoTexto(registro['veiculo'] ?? registro['modelo']) || 'Veiculo',
       dataAbertura: this.comoTexto(registro['dataAbertura']) || '14/03/2026',
       observacao: this.comoTexto(registro['observacao']),
-      servicos: [],
-      pecas: [],
+      servicos: this.comoListaServicos(registro['servicos']),
+      pecas: this.comoListaPecas(registro['pecas']),
     };
   }
 
-  private carregarOrdensSalvas() {
-    const valor = localStorage.getItem('ordensServicoCadastradas');
+  private buscarOrdem(id: string) {
+    return this.carregarOrdensSalvas().find((item) => item.id === id) || null;
+  }
 
-    if (!valor) {
-      return [];
+  private carregarOrdensSalvas(): OrdemServicoSalva[] {
+    const chaves = ['ordensServicoCadastradas', 'ordensServico'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? (dados as OrdemServicoSalva[]) : [];
+      } catch {
+        continue;
+      }
     }
 
-    try {
-      const dados = JSON.parse(valor);
-      return Array.isArray(dados) ? dados : [];
-    } catch {
-      return [];
-    }
+    return [];
   }
 
   private gerarNumeroOs() {
-    return String(this.carregarOrdensSalvas().length + 1).padStart(2, '0');
+    const maiorId = this.carregarOrdensSalvas().reduce((maior, item) => {
+      const numero = Number.parseInt(item.id, 10);
+      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
+    }, 0);
+
+    return String(maiorId + 1).padStart(2, '0');
+  }
+
+  private reiniciarFormulario() {
+    this.modoEdicao = false;
+    this.numeroOs = this.gerarNumeroOs();
+    this.numeroOrcamento = '';
+    this.nomeCliente = '';
+    this.veiculo = '';
+    this.observacao = '';
+    this.abaAtiva = 'pecas';
+    this.statusSelecionado = 'Aberto';
+    this.tecnicoSelecionado = '';
+    this.desconto = '';
+    this.servicosSelecionados = [];
+    this.pecasSelecionadas = [];
+    this.sincronizarCalendario(new Date());
   }
 
   private resetNovoServico() {
@@ -473,6 +540,24 @@ export class OrdensServico implements OnInit {
 
   private comoTexto(valor: unknown) {
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private comoListaServicos(valor: unknown) {
+    return Array.isArray(valor)
+      ? valor.filter(
+          (item): item is ServicoSelecionado =>
+            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
+        )
+      : [];
+  }
+
+  private comoListaPecas(valor: unknown) {
+    return Array.isArray(valor)
+      ? valor.filter(
+          (item): item is PecaSelecionada =>
+            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
+        )
+      : [];
   }
 
   private sincronizarCalendario(dataBase: Date) {

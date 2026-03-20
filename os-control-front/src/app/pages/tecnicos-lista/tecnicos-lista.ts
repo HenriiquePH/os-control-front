@@ -20,7 +20,7 @@ export class TecnicosLista {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  readonly tecnicos = this.carregarTecnicos();
+  tecnicos = this.carregarTecnicos();
 
   constructor(private router: Router) {}
 
@@ -43,6 +43,18 @@ export class TecnicosLista {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
+  }
+
+  excluirTecnico(id: string) {
+    if (!window.confirm('Deseja excluir tecnico?')) {
+      return;
+    }
+
+    this.tecnicos = this.tecnicos.filter((tecnico) => tecnico.id !== id);
+    localStorage.setItem(
+      'tecnicosCadastrados',
+      JSON.stringify(this.carregarTecnicosCompletos().filter((tecnico) => this.obterIdTecnico(tecnico) !== id))
+    );
   }
 
   private carregarTecnicos(): TecnicoListaItem[] {
@@ -74,11 +86,28 @@ export class TecnicosLista {
       }
     }
 
-    return [
-      { id: '01', nome: 'Cleber Machado', telefone: '(45) 9321-2223' },
-      { id: '02', nome: 'Gabriel Santos', telefone: '(45) 9619-7545' },
-      { id: '03', nome: 'Antonio Carlos', telefone: '(45) 9514-5223' },
-    ];
+    return [];
+  }
+
+  private carregarTecnicosCompletos(): unknown[] {
+    const chaves = ['tecnicosCadastrados', 'tecnicos', 'cadastroTecnicos'];
+
+    for (const chave of chaves) {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        continue;
+      }
+
+      try {
+        const dados = JSON.parse(valor);
+        return Array.isArray(dados) ? dados : [];
+      } catch {
+        continue;
+      }
+    }
+
+    return [];
   }
 
   private mapearTecnico(item: unknown, indice: number): TecnicoListaItem | null {
@@ -102,5 +131,14 @@ export class TecnicosLista {
 
   private comoTexto(valor: unknown): string {
     return typeof valor === 'string' ? valor.trim() : '';
+  }
+
+  private obterIdTecnico(item: unknown) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const registro = item as Record<string, unknown>;
+    return this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idTecnico']);
   }
 }
