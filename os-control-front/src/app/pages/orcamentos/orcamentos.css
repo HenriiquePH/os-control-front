@@ -165,7 +165,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  width: min(100%, 228px);
+  width: min(100%, 286px);
   height: 34px;
   padding: 0 14px;
   border: 0;
@@ -184,6 +184,7 @@
 .texto-pesquisa {
   color: #5d5454;
   font-size: 18px;
+  white-space: nowrap;
 }
 
 .cabecalho-lista,
@@ -344,7 +345,25 @@
 
 .modal-calendario {
   width: min(466px, calc(100vw - 48px));
-  padding: 24px 38px 34px;
+  padding: 58px 38px 34px;
+}
+
+.botao-fechar-calendario {
+  top: 16px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 0;
+  z-index: 1;
+}
+
+.icone-fechar-calendario {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 .cabecalho-calendario {
@@ -841,12 +860,19 @@
   }
 
   .modal-calendario {
-    padding: 22px 18px 24px;
+    padding: 54px 18px 24px;
   }
 
-  .botao-fechar-modal {
+  .botao-fechar-calendario {
+    top: 14px;
     right: 12px;
-    font-size: 48px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .icone-fechar-calendario {
+    width: 20px;
+    height: 20px;
   }
 
   .dia-semana,

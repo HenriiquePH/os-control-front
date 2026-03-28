@@ -99,7 +99,7 @@ export class Orcamentos implements OnInit {
   }
 
   get tituloPagina() {
-    return this.modoEdicao ? 'Editar orcamento' : 'Novo orcamento';
+    return this.modoEdicao ? 'Editar orcamento' : 'Novo or\u00e7amento';
   }
 
   get textoBotao() {

@@ -19,12 +19,23 @@
 
 .botao-fechar {
   position: absolute;
-  top: 10px;
+  top: 14px;
   right: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   text-decoration: none;
-  font-size: 58px;
+  font-size: 0;
   line-height: 1;
   color: #8c7878;
+}
+
+.botao-fechar .icone-svg {
+  display: block;
+  width: 22px;
+  height: 22px;
 }
 
 .formulario-tecnico {
@@ -143,7 +154,13 @@
 
   .botao-fechar {
     right: 14px;
-    font-size: 48px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .botao-fechar .icone-svg {
+    width: 20px;
+    height: 20px;
   }
 
   .entrada-campo {

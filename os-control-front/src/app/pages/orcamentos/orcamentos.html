@@ -12,7 +12,7 @@
         routerLinkActive="item-home-ativo"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-        Home
+        Início
       </a>
       <hr class="linha-menu" />
 
@@ -57,7 +57,7 @@
       <span class="circulo-icone-sair">
         <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
-      <span class="texto-sair">Logout</span>
+      <span class="texto-sair">Sair</span>
     </button>
   </aside>
 
@@ -78,7 +78,7 @@
         </label>
 
         <label class="campo-formulario campo-nome" for="orcamento-nome">
-          <span class="rotulo-campo">Nome do or&ccedil;amento</span>
+          <span class="rotulo-campo">Nome do orçamento</span>
           <input class="entrada-campo" id="orcamento-nome" type="text" [(ngModel)]="nomeOrcamento" name="orcamentoNome" />
         </label>
 
@@ -112,7 +112,7 @@
           [class.aba-ativa]="abaAtiva === 'pecas'"
           (click)="selecionarAba('pecas')"
         >
-          Pe&ccedil;as/produto
+          Peças/produto
         </button>
         <button
           class="aba-item"
@@ -120,7 +120,7 @@
           [class.aba-ativa]="abaAtiva === 'servicos'"
           (click)="selecionarAba('servicos')"
         >
-          Servi&ccedil;o
+          Serviço
         </button>
       </div>
 
@@ -197,8 +197,8 @@
 
   <div class="sobreposicao-modal" *ngIf="calendarioAberto" (click)="fecharCalendario()">
     <div class="modal-calendario" (click)="$event.stopPropagation()">
-      <button class="botao-fechar-modal" type="button" (click)="fecharCalendario()" aria-label="Fechar calendario">
-        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
+      <button class="botao-fechar-modal botao-fechar-calendario" type="button" (click)="fecharCalendario()" aria-label="Fechar calendario">
+        <img class="icone-svg icone-fechar-calendario" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="cabecalho-calendario">
@@ -276,7 +276,7 @@
         <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="novoServicoValor" />
       </div>
 
-      <button class="botao-ok-modal" type="button" (click)="confirmarServico()">OK</button>
+      <button class="botao-ok-modal" type="button" (click)="confirmarServico()">Confirmar</button>
     </div>
   </div>
 
@@ -325,10 +325,8 @@
           <input class="entrada-campo entrada-campo-bloqueada" type="text" [value]="valorTotalNovaPecaFormatado" readonly />
         </label>
 
-        <button class="botao-ok-modal botao-ok-modal-peca" type="button" (click)="confirmarPeca()">OK</button>
+        <button class="botao-ok-modal botao-ok-modal-peca" type="button" (click)="confirmarPeca()">Confirmar</button>
       </div>
     </div>
   </div>
 </section>
-
-
