@@ -70,7 +70,7 @@
       <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
     </div>
 
-    <form class="formulario-orcamento" (submit)="$event.preventDefault()">
+    <form class="formulario-orcamento" (ngSubmit)="executarAcaoPrincipal()">
       <div class="grade-inicial">
         <label class="campo-formulario campo-id" for="orcamento-id">
           <span class="rotulo-campo">ID</span>

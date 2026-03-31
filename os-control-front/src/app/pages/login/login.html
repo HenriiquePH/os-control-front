@@ -3,9 +3,9 @@
     <div class="login-conteudo">
       <h1 class="login-titulo">Acesso</h1>
 
-      <form class="login-formulario" (submit)="$event.preventDefault(); entrar()">
+      <form class="login-formulario" (ngSubmit)="entrar()">
         <div class="login-campo">
-          <label class="login-label" for="usuario">Usuario</label>
+          <label class="login-label" for="usuario">Usuário</label>
           <input class="login-input" id="usuario" type="text" [(ngModel)]="usuario" name="usuario" />
         </div>
 

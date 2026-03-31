@@ -99,11 +99,11 @@ export class Orcamentos implements OnInit {
   }
 
   get tituloPagina() {
-    return this.modoEdicao ? 'Editar orcamento' : 'Novo or\u00e7amento';
+    return this.modoEdicao ? 'Editar orçamento' : 'Novo orçamento';
   }
 
   get textoBotao() {
-    return this.modoEdicao ? 'Salvar orcamento' : 'Confirmar orcamento';
+    return this.modoEdicao ? 'Salvar orçamento' : 'Confirmar orçamento';
   }
 
   get placeholderPesquisa() {
