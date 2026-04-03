@@ -108,16 +108,9 @@ app-root {
 }
 
 .icone-menu {
-  font-size: 24px;
-  line-height: 1;
-  color: rgba(40, 33, 33, 0.82);
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-.icone-svg {
   display: block;
-  width: 1em;
-  height: 1em;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   object-fit: contain;
 }
@@ -149,22 +142,22 @@ app-root {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  border-radius: 50%;
+  width: 39px;
+  height: 39px;
+  border-radius: 55%;
   background: #e00306;
   flex-shrink: 0;
 }
 
 .icone-sair {
-  font-size: 19px;
-  line-height: 1;
-  color: #ffffff;
-  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .texto-sair {
-  font-size: 16px;
+  font-size: 23px;
   font-weight: 400;
   color: rgba(40, 33, 33, 0.82);
 }

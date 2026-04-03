@@ -3,7 +3,6 @@ import { Login } from './pages/login/login';
 import { Home } from './pages/home/home';
 import { Clientes } from './pages/clientes/clientes';
 import { ClientesLista } from './pages/clientes-lista/clientes-lista';
-import { Veiculos } from './pages/veiculos/veiculos';
 import { Pecas } from './pages/pecas/pecas';
 import { PecasLista } from './pages/pecas-lista/pecas-lista';
 import { Servicos } from './pages/servicos/servicos';
@@ -24,7 +23,6 @@ export const routes: Routes = [
   { path: 'clientes/novo', component: Clientes },
   { path: 'clientes/editar/:id', component: Clientes },
   { path: 'clientes', component: ClientesLista },
-  { path: 'veiculos', component: Veiculos },
   { path: 'tecnicos/novo', component: Tecnicos },
   { path: 'tecnicos/editar/:id', component: Tecnicos },
   { path: 'tecnicos', component: TecnicosLista },

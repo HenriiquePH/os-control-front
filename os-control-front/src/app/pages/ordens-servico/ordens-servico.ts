@@ -2,54 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-type DiaCalendario = {
-  data: Date;
-  domingo: boolean;
-  numero: number;
-  selecionado: boolean;
-} | null;
-
-type AbaOs = 'pecas' | 'servicos';
-
-type ServicoSelecionado = {
-  id: string;
-  nome: string;
-  valor: number;
-};
-
-type PecaSelecionada = {
-  id: string;
-  nome: string;
-  quantidade: number;
-  valorUnitario: number;
-  valorTotal: number;
-};
-
-type OrcamentoImportado = {
-  id: string;
-  cliente: string;
-  veiculo: string;
-  dataAbertura: string;
-  observacao: string;
-  servicos: ServicoSelecionado[];
-  pecas: PecaSelecionada[];
-};
-
-type OrdemServicoSalva = {
-  id: string;
-  numeroOrcamento: string;
-  cliente: string;
-  veiculo: string;
-  status: string;
-  tecnico: string;
-  dataAbertura: string;
-  observacao: string;
-  servicos: ServicoSelecionado[];
-  pecas: PecaSelecionada[];
-  desconto: string;
-  totalOs: string;
-};
+import { AbaOs, DiaCalendario, OrdemServicoSalva } from '../../models/ordem-servico.model';
+import { PecaSelecionada, ServicoSelecionado } from '../../models/orcamento.model';
+import { OrdensServicoService } from '../../services/ordens-servico.service';
+import { OrcamentosService } from '../../services/orcamentos.service';
+import { TecnicosService } from '../../services/tecnicos.service';
 
 @Component({
   selector: 'app-ordens-servico',
@@ -70,7 +27,7 @@ export class OrdensServico implements OnInit {
   opcoesStatus: string[] = ['Aberto', 'Em andamento', 'Fechada'];
   statusSelecionado: string = 'Aberto';
 
-  tecnicosDisponiveis: string[] = this.carregarTecnicos();
+  tecnicosDisponiveis: string[] = [];
   tecnicoSelecionado: string = '';
 
   desconto: string = '';
@@ -101,11 +58,19 @@ export class OrdensServico implements OnInit {
     valorUnitario: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private orcamentosService: OrcamentosService,
+    private ordensServicoService: OrdensServicoService,
+    private tecnicosService: TecnicosService
+  ) {
     this.sincronizarCalendario(this.dataSelecionada);
   }
 
   ngOnInit() {
+    this.tecnicosDisponiveis = this.tecnicosService.listarNomesDisponiveis();
+
     this.route.paramMap.subscribe((params) => {
       this.reiniciarFormulario();
 
@@ -257,9 +222,8 @@ export class OrdensServico implements OnInit {
   }
 
   salvarOs() {
-    const ordensSalvas = this.carregarOrdensSalvas();
     const ordem: OrdemServicoSalva = {
-      id: this.numeroOs || this.gerarNumeroOs(),
+      id: this.numeroOs || this.ordensServicoService.gerarProximoId(),
       numeroOrcamento: this.numeroOrcamento,
       cliente: this.nomeCliente.trim() || 'Cliente',
       veiculo: this.veiculo.trim() || 'Veiculo',
@@ -273,12 +237,7 @@ export class OrdensServico implements OnInit {
       totalOs: this.totalOsFormatado,
     };
 
-    const ordensAtualizadas = this.modoEdicao
-      ? ordensSalvas.map((item) => (item.id === ordem.id ? ordem : item))
-      : [...ordensSalvas, ordem];
-
-    localStorage.setItem('ordensServicoCadastradas', JSON.stringify(ordensAtualizadas));
-
+    this.ordensServicoService.salvar(ordem);
     this.router.navigate(['/ordens-servico/visualizar']);
   }
 
@@ -287,51 +246,8 @@ export class OrdensServico implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  private carregarTecnicos() {
-    const chaves = ['tecnicosCadastrados', 'tecnicos', 'cadastroTecnicos'];
-
-    for (const chave of chaves) {
-      const bruto = localStorage.getItem(chave);
-
-      if (!bruto) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(bruto);
-
-        if (!Array.isArray(dados)) {
-          continue;
-        }
-
-        const nomes = dados
-          .map((item) => {
-            if (typeof item === 'string') {
-              return item.trim();
-            }
-
-            if (item && typeof item === 'object') {
-              const candidato = item.nome || item.usuario || item.name;
-              return typeof candidato === 'string' ? candidato.trim() : '';
-            }
-
-            return '';
-          })
-          .filter((nome) => nome.length > 0);
-
-        if (nomes.length > 0) {
-          return nomes;
-        }
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
   private carregarOrcamentoImportado(id: string) {
-    const orcamento = this.buscarOrcamento(id);
+    const orcamento = this.orcamentosService.buscarParaImportacao(id);
 
     if (!orcamento) {
       return;
@@ -352,7 +268,7 @@ export class OrdensServico implements OnInit {
   }
 
   private carregarOrdemExistente(id: string) {
-    const ordem = this.buscarOrdem(id);
+    const ordem = this.ordensServicoService.buscarPorId(id);
 
     if (!ordem) {
       return;
@@ -377,94 +293,9 @@ export class OrdensServico implements OnInit {
     }
   }
 
-  private buscarOrcamento(id: string): OrcamentoImportado | null {
-    const chaves = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-
-        if (!Array.isArray(dados)) {
-          continue;
-        }
-
-        const encontrado = dados
-          .map((item, indice) => this.mapearOrcamento(item, indice))
-          .find((item) => item?.id === id);
-
-        if (encontrado) {
-          return encontrado;
-        }
-      } catch {
-        continue;
-      }
-    }
-
-    return null;
-  }
-
-  private mapearOrcamento(item: unknown, indice: number): OrcamentoImportado | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const id = this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0');
-
-    return {
-      id,
-      cliente: this.comoTexto(registro['cliente'] ?? registro['nomeCliente']) || 'Cliente',
-      veiculo: this.comoTexto(registro['veiculo'] ?? registro['modelo']) || 'Veiculo',
-      dataAbertura: this.comoTexto(registro['dataAbertura']) || '14/03/2026',
-      observacao: this.comoTexto(registro['observacao']),
-      servicos: this.comoListaServicos(registro['servicos']),
-      pecas: this.comoListaPecas(registro['pecas']),
-    };
-  }
-
-  private buscarOrdem(id: string) {
-    return this.carregarOrdensSalvas().find((item) => item.id === id) || null;
-  }
-
-  private carregarOrdensSalvas(): OrdemServicoSalva[] {
-    const chaves = ['ordensServicoCadastradas', 'ordensServico'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as OrdemServicoSalva[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private gerarNumeroOs() {
-    const maiorId = this.carregarOrdensSalvas().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
-  }
-
   private reiniciarFormulario() {
     this.modoEdicao = false;
-    this.numeroOs = this.gerarNumeroOs();
+    this.numeroOs = this.ordensServicoService.gerarProximoId();
     this.numeroOrcamento = '';
     this.nomeCliente = '';
     this.veiculo = '';
@@ -536,28 +367,6 @@ export class OrdensServico implements OnInit {
     const data = new Date(ano, mes, dia);
 
     return Number.isFinite(data.getTime()) ? data : null;
-  }
-
-  private comoTexto(valor: unknown) {
-    return typeof valor === 'string' ? valor.trim() : '';
-  }
-
-  private comoListaServicos(valor: unknown) {
-    return Array.isArray(valor)
-      ? valor.filter(
-          (item): item is ServicoSelecionado =>
-            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
-        )
-      : [];
-  }
-
-  private comoListaPecas(valor: unknown) {
-    return Array.isArray(valor)
-      ? valor.filter(
-          (item): item is PecaSelecionada =>
-            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
-        )
-      : [];
   }
 
   private sincronizarCalendario(dataBase: Date) {

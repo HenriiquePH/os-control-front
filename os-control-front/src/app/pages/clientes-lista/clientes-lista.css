@@ -111,8 +111,10 @@
 }
 
 .icone-pesquisa {
-  font-size: 31px;
-  color: #4f4a4a;
+  display: block;
+  width: 20px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .botao-filtro {
@@ -126,9 +128,10 @@
 }
 
 .icone-filtro {
-  font-size: 27px;
-  color: #538ef1;
-  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .botao-novo-cliente {
@@ -149,8 +152,10 @@
 }
 
 .icone-adicionar {
-  font-size: 30px;
-  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .tabela-clientes {
@@ -241,8 +246,10 @@
 }
 
 .icone-acao {
-  font-size: 22px;
-  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 @media (max-width: 1280px) {

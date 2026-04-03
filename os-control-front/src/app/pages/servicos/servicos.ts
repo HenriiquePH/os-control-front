@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
-type ServicoSalvo = {
-  id: string;
-  nome: string;
-  valor: string;
-  preco: number;
-};
+import { ServicoFormulario, ServicoSalvo } from '../../models/servico.model';
+import { ServicosService } from '../../services/servicos.service';
 
 @Component({
   selector: 'app-servicos',
@@ -18,12 +13,12 @@ type ServicoSalvo = {
 export class Servicos implements OnInit {
   modoEdicao: boolean = false;
   servicoId: string = '';
-  servico = {
+  servico: ServicoFormulario = {
     nome: '',
     valor: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private servicosService: ServicosService) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -37,7 +32,7 @@ export class Servicos implements OnInit {
   }
 
   get tituloPagina() {
-    return this.modoEdicao ? 'Editar servico' : 'Cadastrar servico';
+    return this.modoEdicao ? 'Editar servico' : 'Cadastrar serviço';
   }
 
   get textoBotao() {
@@ -52,8 +47,7 @@ export class Servicos implements OnInit {
       return;
     }
 
-    const servicos = this.carregarServicos();
-    const id = this.servicoId || this.gerarProximoId(servicos);
+    const id = this.servicoId || this.servicosService.gerarProximoId();
     const servicoSalvo: ServicoSalvo = {
       id,
       nome,
@@ -61,16 +55,12 @@ export class Servicos implements OnInit {
       preco: valor,
     };
 
-    const servicosAtualizados = this.modoEdicao
-      ? servicos.map((item) => (item.id === id ? servicoSalvo : item))
-      : [...servicos, servicoSalvo];
-
-    localStorage.setItem('servicosCadastrados', JSON.stringify(servicosAtualizados));
+    this.servicosService.salvar(servicoSalvo);
     this.router.navigate(['/servicos']);
   }
 
   private carregarServico(id: string) {
-    const servico = this.carregarServicos().find((item) => item.id === id);
+    const servico = this.servicosService.buscarPorId(id);
 
     if (!servico) {
       return;
@@ -85,28 +75,7 @@ export class Servicos implements OnInit {
   }
 
   private prepararNovoCadastro() {
-    this.servicoId = this.gerarProximoId(this.carregarServicos());
-  }
-
-  private carregarServicos(): ServicoSalvo[] {
-    const chaves = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as ServicoSalvo[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
+    this.servicoId = this.servicosService.gerarProximoId();
   }
 
   private converterEmNumero(valor: string) {
@@ -127,14 +96,5 @@ export class Servicos implements OnInit {
       style: 'currency',
       currency: 'BRL',
     }).format(valor);
-  }
-
-  private gerarProximoId(servicos: ServicoSalvo[]) {
-    const maiorId = servicos.reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
   }
 }

@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
-type PecaSalva = {
-  id: string;
-  nome: string;
-  valor: string;
-  valorUnitario: number;
-};
+import { PecaFormulario, PecaSalva } from '../../models/peca.model';
+import { PecasService } from '../../services/pecas.service';
 
 @Component({
   selector: 'app-pecas',
@@ -18,12 +13,12 @@ type PecaSalva = {
 export class Pecas implements OnInit {
   modoEdicao: boolean = false;
   pecaId: string = '';
-  peca = {
+  peca: PecaFormulario = {
     nome: '',
     valor: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private pecasService: PecasService) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -37,7 +32,7 @@ export class Pecas implements OnInit {
   }
 
   get tituloPagina() {
-    return this.modoEdicao ? 'Editar peca' : 'Cadastro de pecas';
+    return this.modoEdicao ? 'Editar peca' : 'Cadastro de peças';
   }
 
   get textoBotao() {
@@ -52,8 +47,7 @@ export class Pecas implements OnInit {
       return;
     }
 
-    const pecas = this.carregarPecas();
-    const id = this.pecaId || this.gerarProximoId(pecas);
+    const id = this.pecaId || this.pecasService.gerarProximoId();
     const pecaSalva: PecaSalva = {
       id,
       nome,
@@ -61,16 +55,12 @@ export class Pecas implements OnInit {
       valorUnitario: valor,
     };
 
-    const pecasAtualizadas = this.modoEdicao
-      ? pecas.map((item) => (item.id === id ? pecaSalva : item))
-      : [...pecas, pecaSalva];
-
-    localStorage.setItem('pecasCadastradas', JSON.stringify(pecasAtualizadas));
+    this.pecasService.salvar(pecaSalva);
     this.router.navigate(['/pecas']);
   }
 
   private carregarPeca(id: string) {
-    const peca = this.carregarPecas().find((item) => item.id === id);
+    const peca = this.pecasService.buscarPorId(id);
 
     if (!peca) {
       return;
@@ -85,28 +75,7 @@ export class Pecas implements OnInit {
   }
 
   private prepararNovoCadastro() {
-    this.pecaId = this.gerarProximoId(this.carregarPecas());
-  }
-
-  private carregarPecas(): PecaSalva[] {
-    const chaves = ['pecasCadastradas', 'pecas', 'cadastroPecas'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as PecaSalva[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
+    this.pecaId = this.pecasService.gerarProximoId();
   }
 
   private converterEmNumero(valor: string) {
@@ -127,14 +96,5 @@ export class Pecas implements OnInit {
       style: 'currency',
       currency: 'BRL',
     }).format(valor);
-  }
-
-  private gerarProximoId(pecas: PecaSalva[]) {
-    const maiorId = pecas.reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
   }
 }

@@ -2,45 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-type DiaCalendario = {
-  data: Date;
-  domingo: boolean;
-  numero: number;
-  selecionado: boolean;
-} | null;
-
-type AbaOrcamento = 'pecas' | 'servicos';
-
-type ServicoSelecionado = {
-  id: string;
-  nome: string;
-  valor: number;
-};
-
-type PecaSelecionada = {
-  id: string;
-  nome: string;
-  quantidade: number;
-  valorUnitario: number;
-  valorTotal: number;
-};
-
-type OrcamentoSalvo = {
-  id: string;
-  nome: string;
-  nomeOrcamento: string;
-  dataAbertura: string;
-  observacao: string;
-  servicos: ServicoSelecionado[];
-  pecas: PecaSelecionada[];
-  valorTotal: string;
-  total: number;
-  cliente: string;
-  nomeCliente: string;
-  veiculo: string;
-  modelo: string;
-};
+import {
+  AbaOrcamento,
+  DiaCalendario,
+  OrcamentoSalvo,
+  PecaSelecionada,
+  ServicoSelecionado,
+} from '../../models/orcamento.model';
+import { OrcamentosService } from '../../services/orcamentos.service';
 
 @Component({
   selector: 'app-orcamentos',
@@ -83,8 +52,8 @@ export class Orcamentos implements OnInit {
     valorUnitario: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {
-    this.orcamentoId = this.gerarProximoId();
+  constructor(private router: Router, private route: ActivatedRoute, private orcamentosService: OrcamentosService) {
+    this.orcamentoId = this.orcamentosService.gerarProximoId();
     this.sincronizarCalendario(this.dataSelecionada);
   }
 
@@ -264,7 +233,6 @@ export class Orcamentos implements OnInit {
       return;
     }
 
-    const orcamentos = this.carregarOrcamentos();
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     const total = totalServicos + totalPecas;
@@ -285,17 +253,12 @@ export class Orcamentos implements OnInit {
       modelo: '',
     };
 
-    const orcamentosAtualizados = this.modoEdicao
-      ? orcamentos.map((item) => (item.id === orcamentoSalvo.id ? orcamentoSalvo : item))
-      : [...orcamentos, orcamentoSalvo];
-
-    localStorage.setItem('orcamentosCadastrados', JSON.stringify(orcamentosAtualizados));
-
+    this.orcamentosService.salvar(orcamentoSalvo);
     this.router.navigate(['/orcamentos']);
   }
 
   private carregarOrcamento(id: string) {
-    const orcamento = this.carregarOrcamentos().find((item) => item.id === id);
+    const orcamento = this.orcamentosService.buscarPorId(id);
 
     if (!orcamento) {
       return;
@@ -435,35 +398,5 @@ export class Orcamentos implements OnInit {
     const data = new Date(ano, mes, dia);
 
     return Number.isFinite(data.getTime()) ? data : null;
-  }
-
-  private carregarOrcamentos(): OrcamentoSalvo[] {
-    const chaves = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as OrcamentoSalvo[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private gerarProximoId() {
-    const maiorId = this.carregarOrcamentos().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
   }
 }

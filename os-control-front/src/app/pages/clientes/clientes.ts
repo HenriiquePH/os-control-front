@@ -2,28 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-type VeiculoCliente = {
-  id: string;
-  marca: string;
-  placa: string;
-  modelo: string;
-  ano: string;
-};
-
-type ClienteSalvo = {
-  id: string;
-  nome: string;
-  cpf: string;
-  telefone: string;
-  rua: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
-  cep: string;
-  complemento: string;
-  veiculos: VeiculoCliente[];
-};
+import { ClienteFormulario, ClienteSalvo, NovoVeiculoFormulario, VeiculoCliente } from '../../models/cliente.model';
+import { ClientesService } from '../../services/clientes.service';
 
 @Component({
   selector: 'app-clientes',
@@ -37,7 +17,7 @@ export class Clientes implements OnInit {
   clienteId: string = '';
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   cadastroVeiculoAberto: boolean = false;
-  cliente = {
+  cliente: ClienteFormulario = {
     nome: '',
     cpf: '',
     telefone: '',
@@ -49,14 +29,14 @@ export class Clientes implements OnInit {
     complemento: '',
   };
   veiculos: VeiculoCliente[] = [];
-  novoVeiculo = {
+  novoVeiculo: NovoVeiculoFormulario = {
     marca: '',
     placa: '',
     modelo: '',
     ano: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private clientesService: ClientesService) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -115,19 +95,14 @@ export class Clientes implements OnInit {
   }
 
   salvarCliente() {
-    const clientes = this.carregarClientesSalvos();
-    const id = this.clienteId || this.gerarProximoId(clientes);
+    const id = this.clienteId || this.clientesService.gerarProximoId();
     const clienteSalvo: ClienteSalvo = {
       id,
       ...this.cliente,
       veiculos: this.veiculos,
     };
 
-    localStorage.setItem(
-      'clientesCadastrados',
-      JSON.stringify([...clientes.filter((item) => item.id !== id), clienteSalvo])
-    );
-
+    this.clientesService.salvar(clienteSalvo);
     this.router.navigate(['/clientes']);
   }
 
@@ -137,7 +112,7 @@ export class Clientes implements OnInit {
   }
 
   private carregarCliente(id: string) {
-    const cliente = this.carregarClientesSalvos().find((item) => item.id === id);
+    const cliente = this.clientesService.buscarPorId(id);
 
     if (!cliente) {
       return;
@@ -157,31 +132,6 @@ export class Clientes implements OnInit {
       complemento: cliente.complemento,
     };
     this.veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
-  }
-
-  private carregarClientesSalvos(): ClienteSalvo[] {
-    const chaves = ['clientesCadastrados', 'clientes', 'cadastroClientes'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as ClienteSalvo[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private gerarProximoId(clientes: ClienteSalvo[]) {
-    return String(clientes.length + 1).padStart(2, '0');
   }
 
   private resetNovoVeiculo() {

@@ -1,16 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-type OrdemServicoResumo = {
-  id: string;
-  dataAbertura: string;
-  cliente: string;
-  veiculo: string;
-  status: string;
-  tecnico: string;
-};
+import { OrdemServicoResumo } from '../../models/ordem-servico.model';
+import { OrdensServicoService } from '../../services/ordens-servico.service';
 
 @Component({
   selector: 'app-ordens-servico-visualizar',
@@ -19,14 +12,18 @@ type OrdemServicoResumo = {
   templateUrl: './ordens-servico-visualizar.html',
   styleUrl: './ordens-servico-visualizar.css',
 })
-export class OrdensServicoVisualizar {
+export class OrdensServicoVisualizar implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroCliente = '';
   filtroTecnico = '';
   filtroStatus = '';
-  readonly ordens = this.carregarOrdens();
+  ordens: OrdemServicoResumo[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private ordensServicoService: OrdensServicoService) {}
+
+  ngOnInit() {
+    this.ordens = this.ordensServicoService.listarParaVisualizacao();
+  }
 
   get ordensFiltradas(): OrdemServicoResumo[] {
     const cliente = this.filtroCliente.trim().toLowerCase();
@@ -49,63 +46,5 @@ export class OrdensServicoVisualizar {
   sair() {
     localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
-  }
-
-  private carregarOrdens(): OrdemServicoResumo[] {
-    const chaves = ['ordensServicoCadastradas', 'ordensServico'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-
-        if (!Array.isArray(dados)) {
-          continue;
-        }
-
-        const ordens = dados
-          .map((item) => this.mapearOrdem(item))
-          .filter((item): item is OrdemServicoResumo => item !== null);
-
-        if (ordens.length > 0) {
-          return ordens;
-        }
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearOrdem(item: unknown): OrdemServicoResumo | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const cliente = this.comoTexto(registro['cliente'] ?? registro['nomeCliente']);
-
-    if (!cliente) {
-      return null;
-    }
-
-    return {
-      id: this.comoTexto(registro['id'] ?? registro['numeroOs']) || '--',
-      dataAbertura: this.comoTexto(registro['dataAbertura']) || '--',
-      cliente,
-      veiculo: this.comoTexto(registro['veiculo']) || '--',
-      status: this.comoTexto(registro['status']) || '--',
-      tecnico: this.comoTexto(registro['tecnico']) || '--',
-    };
-  }
-
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
   }
 }

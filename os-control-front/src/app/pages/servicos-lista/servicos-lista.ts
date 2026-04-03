@@ -1,13 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-type ServicoListaItem = {
-  id: string;
-  nome: string;
-  valor: string;
-};
+import { ServicoListaItem } from '../../models/servico.model';
+import { ServicosService } from '../../services/servicos.service';
 
 @Component({
   selector: 'app-servicos-lista',
@@ -16,12 +12,16 @@ type ServicoListaItem = {
   templateUrl: './servicos-lista.html',
   styleUrl: './servicos-lista.css',
 })
-export class ServicosLista {
+export class ServicosLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
-  servicos = this.carregarServicos();
+  servicos: ServicoListaItem[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private servicosService: ServicosService) {}
+
+  ngOnInit() {
+    this.atualizarServicos();
+  }
 
   get servicosFiltrados(): ServicoListaItem[] {
     const nome = this.filtroNome.trim().toLowerCase();
@@ -43,103 +43,11 @@ export class ServicosLista {
       return;
     }
 
-    this.servicos = this.servicos.filter((servico) => servico.id !== id);
-    localStorage.setItem(
-      'servicosCadastrados',
-      JSON.stringify(this.carregarServicosCompletos().filter((servico) => this.obterIdServico(servico) !== id))
-    );
+    this.servicosService.excluir(id);
+    this.atualizarServicos();
   }
 
-  private carregarServicos(): ServicoListaItem[] {
-    const chaves = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-
-        if (!Array.isArray(dados)) {
-          continue;
-        }
-
-        const servicos = dados
-          .map((item, indice) => this.mapearServico(item, indice))
-          .filter((item): item is ServicoListaItem => item !== null);
-
-        if (servicos.length > 0) {
-          return servicos;
-        }
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private carregarServicosCompletos(): unknown[] {
-    const chaves = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearServico(item: unknown, indice: number): ServicoListaItem | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['descricao'] ?? registro['nomeServico']);
-
-    if (!nome) {
-      return null;
-    }
-
-    return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0'),
-      nome,
-      valor: this.comoValor(registro['valor'] ?? registro['preco']),
-    };
-  }
-
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
-  }
-
-  private comoValor(valor: unknown): string {
-    if (typeof valor === 'number' && Number.isFinite(valor)) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-    }
-
-    return typeof valor === 'string' ? valor.trim() : '';
-  }
-
-  private obterIdServico(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
-
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo']);
+  private atualizarServicos() {
+    this.servicos = this.servicosService.listarParaLista();
   }
 }

@@ -12,42 +12,42 @@
         routerLinkActive="item-home-ativo"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-        Início
+        Home
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-orcamentos.png" alt="" />
         <span>Or&ccedil;amentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-ordem-servico.png" alt="" />
         <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-tecnico.png" alt="" />
         <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-peca.png" alt="" />
         <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-servico.png" alt="" />
         <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
@@ -55,16 +55,16 @@
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
+        <img class="icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
-      <span class="texto-sair">Sair</span>
+      <span class="texto-sair">Logout</span>
     </button>
   </aside>
 
   <main class="conteudo-orcamentos">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/orcamentos" aria-label="Voltar para orcamentos">
-        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
+        <img class="icone-voltar" src="assets/icone-voltar.png" alt="" />
       </a>
 
       <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
@@ -99,7 +99,7 @@
               (click)="abrirCalendario()"
               aria-label="Abrir calendario"
             >
-              <img class="icone-svg icone-calendario" src="assets/icone-calendario.png" alt="" />
+              <img class="icone-calendario" src="assets/icone-calendario.png" alt="" />
             </button>
           </span>
         </div>
@@ -126,7 +126,7 @@
 
       <section class="painel-itens" aria-label="Itens do or&ccedil;amento">
         <button class="barra-pesquisa" type="button" (click)="abrirModalSelecao()">
-          <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
+          <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           <span class="texto-pesquisa">{{ placeholderPesquisa }}</span>
         </button>
 
@@ -198,18 +198,18 @@
   <div class="sobreposicao-modal" *ngIf="calendarioAberto" (click)="fecharCalendario()">
     <div class="modal-calendario" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal botao-fechar-calendario" type="button" (click)="fecharCalendario()" aria-label="Fechar calendario">
-        <img class="icone-svg icone-fechar-calendario" src="assets/icone-fechar.png" alt="" />
+        <img class="icone-fechar-calendario" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="cabecalho-calendario">
         <button class="botao-navegacao-calendario" type="button" (click)="mesAnterior()" aria-label="Mes anterior">
-          <img class="icone-svg" src="assets/icone-voltar-calendario.png" alt="" />
+          <img class="icone-navegacao-calendario" src="assets/icone-voltar-calendario.png" alt="" />
         </button>
 
         <div class="titulo-calendario">{{ tituloCalendario }}</div>
 
         <button class="botao-navegacao-calendario" type="button" (click)="proximoMes()" aria-label="Proximo mes">
-          <img class="icone-svg" src="assets/icone-avancar-calendario.png" alt="" />
+          <img class="icone-navegacao-calendario" src="assets/icone-avancar-calendario.png" alt="" />
         </button>
       </div>
 
@@ -247,7 +247,7 @@
   <div class="sobreposicao-modal" *ngIf="modalPdfAberto" (click)="fecharModalPdf()">
     <div class="modal-pdf" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharModalPdf()" aria-label="Fechar confirmacao de PDF">
-        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
+        <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <h2 class="titulo-modal-pdf">Voc&ecirc; deseja?</h2>
@@ -261,7 +261,7 @@
   <div class="sobreposicao-modal" *ngIf="modalServicoAberto" (click)="fecharModalServico()">
     <div class="modal-selecao-servico" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharModalServico()" aria-label="Fechar selecao de servico">
-        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
+        <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="grade-rotulos-modal-servico">
@@ -283,7 +283,7 @@
   <div class="sobreposicao-modal" *ngIf="modalPecaAberto" (click)="fecharModalPeca()">
     <div class="modal-selecao-peca" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal botao-fechar-modal-peca" type="button" (click)="fecharModalPeca()" aria-label="Fechar selecao de peca">
-        <img class="icone-svg" src="assets/icone-fechar.png" alt="" />
+        <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <div class="cabecalho-lista-modal-peca">
@@ -305,7 +305,7 @@
         <label class="campo-modal-peca campo-modal-nome">
           <span>Pesquisar</span>
           <span class="campo-pesquisa-modal">
-            <img class="icone-svg icone-pesquisa" src="assets/icone-lupa.png" alt="" />
+            <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
             <input class="entrada-pesquisa-modal" type="text" placeholder="Nome" [(ngModel)]="novaPeca.nome" name="novaPecaNome" />
           </span>
         </label>

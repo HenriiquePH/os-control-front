@@ -1,15 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
-type TecnicoSalvo = {
-  id: string;
-  nome: string;
-  cpf: string;
-  telefone: string;
-  usuario: string;
-  senha: string;
-};
+import { TecnicoFormulario, TecnicoSalvo } from '../../models/tecnico.model';
+import { TecnicosService } from '../../services/tecnicos.service';
 
 @Component({
   selector: 'app-tecnicos',
@@ -20,7 +13,7 @@ type TecnicoSalvo = {
 export class Tecnicos implements OnInit {
   modoEdicao: boolean = false;
   tecnicoId: string = '';
-  tecnico = {
+  tecnico: TecnicoFormulario = {
     nome: '',
     cpf: '',
     telefone: '',
@@ -28,7 +21,7 @@ export class Tecnicos implements OnInit {
     senha: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private tecnicosService: TecnicosService) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -55,8 +48,7 @@ export class Tecnicos implements OnInit {
       return;
     }
 
-    const tecnicos = this.carregarTecnicos();
-    const id = this.tecnicoId || this.gerarProximoId(tecnicos);
+    const id = this.tecnicoId || this.tecnicosService.gerarProximoId();
     const tecnicoSalvo: TecnicoSalvo = {
       id,
       nome,
@@ -66,17 +58,12 @@ export class Tecnicos implements OnInit {
       senha: this.tecnico.senha,
     };
 
-    const tecnicosAtualizados = this.modoEdicao
-      ? tecnicos.map((item) => (item.id === id ? tecnicoSalvo : item))
-      : [...tecnicos, tecnicoSalvo];
-
-    localStorage.setItem('tecnicosCadastrados', JSON.stringify(tecnicosAtualizados));
-
+    this.tecnicosService.salvar(tecnicoSalvo);
     this.router.navigate(['/tecnicos']);
   }
 
   private carregarTecnico(id: string) {
-    const tecnico = this.carregarTecnicos().find((item) => item.id === id);
+    const tecnico = this.tecnicosService.buscarPorId(id);
 
     if (!tecnico) {
       return;
@@ -91,35 +78,5 @@ export class Tecnicos implements OnInit {
       usuario: tecnico.usuario,
       senha: tecnico.senha,
     };
-  }
-
-  private carregarTecnicos(): TecnicoSalvo[] {
-    const chaves = ['tecnicosCadastrados', 'tecnicos', 'cadastroTecnicos'];
-
-    for (const chave of chaves) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as TecnicoSalvo[]) : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private gerarProximoId(tecnicos: TecnicoSalvo[]) {
-    const maiorId = tecnicos.reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
   }
 }

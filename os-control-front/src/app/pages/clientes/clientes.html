@@ -7,42 +7,42 @@
   <aside class="barra-lateral">
     <nav class="menu-lateral">
       <a class="item-home" routerLink="/home" routerLinkActive="item-home-ativo" [routerLinkActiveOptions]="{ exact: true }">
-        Início
+        Home
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/orcamentos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-orcamentos.png" alt="" />
-        <span>Or&ccedil;amentos</span>
+        <img class="icone-menu-lateral" src="assets/icone-orcamentos.png" alt="" />
+        <span>Orçamentos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/ordens-servico" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-ordem-servico.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-ordem-servico.png" alt="" />
         <span>Ordens de Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/clientes" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-cliente.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-cliente.png" alt="" />
         <span>Clientes</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/tecnicos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-tecnico.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-tecnico.png" alt="" />
         <span>T&eacute;cnicos</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/pecas" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-peca.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-peca.png" alt="" />
         <span>Pe&ccedil;as</span>
       </a>
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <img class="icone-svg icone-menu" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-servico.png" alt="" />
         <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
@@ -50,16 +50,16 @@
 
     <button class="botao-sair" type="button" (click)="sair()">
       <span class="circulo-icone-sair">
-        <img class="icone-svg icone-sair" src="assets/icone-logout.png" alt="" />
+        <img class="icone-sair" src="assets/icone-logout.png" alt="" />
       </span>
-      <span class="texto-sair">Sair</span>
+      <span class="texto-sair">Logout</span>
     </button>
   </aside>
 
   <main class="conteudo-clientes">
     <div class="cabecalho-pagina">
       <a class="botao-voltar" routerLink="/clientes" aria-label="Voltar para clientes">
-        <img class="icone-svg icone-voltar" src="assets/icone-voltar-calendario.png" alt="" />
+        <img class="icone-voltar" src="assets/icone-voltar.png" alt="" />
       </a>
 
       <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
@@ -160,7 +160,7 @@
   <div class="sobreposicao-modal" *ngIf="cadastroVeiculoAberto" (click)="fecharCadastroVeiculo()">
     <div class="modal-veiculo" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal" type="button" (click)="fecharCadastroVeiculo()" aria-label="Fechar cadastro de veiculo">
-        <img class="icone-svg icone-fechar" src="assets/icone-fechar.png" alt="" />
+        <img class="icone-fechar" src="assets/icone-fechar.png" alt="" />
       </button>
 
       <form class="formulario-veiculo" (ngSubmit)="adicionarVeiculo()">
@@ -178,5 +178,3 @@
     </div>
   </div>
 </section>
-
-
