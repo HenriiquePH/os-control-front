@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { ServicoListaItem } from '../../models/servico.model';
+import { ServicoLista } from '../../models/servico.model';
 import { ServicosService } from '../../services/servicos.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { ServicosService } from '../../services/servicos.service';
 export class ServicosLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
-  servicos: ServicoListaItem[] = [];
+  servicos: ServicoLista[] = [];
 
   constructor(private router: Router, private servicosService: ServicosService) {}
 
@@ -23,7 +23,7 @@ export class ServicosLista implements OnInit {
     this.atualizarServicos();
   }
 
-  get servicosFiltrados(): ServicoListaItem[] {
+  get servicosFiltrados(): ServicoLista[] {
     const nome = this.filtroNome.trim().toLowerCase();
 
     return this.servicos.filter((servico) => !nome || servico.nome.toLowerCase().includes(nome));
@@ -48,6 +48,6 @@ export class ServicosLista implements OnInit {
   }
 
   private atualizarServicos() {
-    this.servicos = this.servicosService.listarParaLista();
+    this.servicos = this.servicosService.listarLista();
   }
 }

@@ -334,15 +334,27 @@
 
 .botao-fechar-modal {
   position: absolute;
-  top: 10px;
+  top: 14px;
   right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border: 0;
   padding: 0;
   background: transparent;
   color: #514949;
-  font-size: 58px;
   line-height: 1;
   cursor: pointer;
+  z-index: 1;
+}
+
+.icone-fechar-modal {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .modal-calendario {
@@ -477,31 +489,66 @@
 }
 
 .modal-selecao-servico {
-  width: min(1136px, calc(100vw - 48px));
-  min-height: 368px;
-  padding: 92px 86px 56px;
+  display: flex;
+  flex-direction: column;
+  width: min(1136px, calc(100vw - 96px));
+  min-height: 460px;
+  padding: 58px 0 0;
+  overflow: hidden;
 }
 
-.grade-rotulos-modal-servico,
-.grade-campos-modal-servico {
+.cabecalho-lista-modal-servico {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr) 184px;
-  gap: 20px;
+  grid-template-columns: 78px minmax(0, 1fr) 230px;
+  gap: 24px;
   align-items: center;
+  padding: 0 42px 16px;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
+  color: #5d5454;
+  font-size: 20px;
 }
 
-.grade-rotulos-modal-servico {
-  margin-bottom: 10px;
-  color: #5d5454;
-  font-size: 18px;
+.corpo-lista-modal-servico {
+  flex: 1;
+  min-height: 0;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
 }
 
 .entrada-id-modal {
   background: #d3d3d3;
 }
 
-.grade-campos-modal-servico {
-  margin-bottom: 58px;
+.rodape-modal-servico {
+  display: grid;
+  grid-template-columns: 78px minmax(260px, 1fr) 230px 150px;
+  gap: 18px;
+  align-items: end;
+  padding: 18px 42px 34px;
+}
+
+.campo-modal-servico {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #5d5454;
+  font-size: 18px;
+}
+
+.botao-fechar-modal-servico {
+  top: 12px;
+  right: 18px;
+}
+
+.campo-modal-servico-id .entrada-campo {
+  width: 100%;
+}
+
+.rodape-modal-servico .entrada-campo {
+  height: 42px;
+}
+
+.campo-modal-servico-valor .entrada-campo {
+  width: 100%;
 }
 
 .botao-ok-modal {
@@ -517,6 +564,17 @@
   font-size: 30px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botao-ok-modal-servico {
+  width: 150px;
+  min-width: 150px;
+  height: 48px;
+  margin: 0;
+  padding: 0 18px;
+  align-self: end;
+  justify-self: end;
+  font-size: 20px;
 }
 
 .modal-selecao-peca {
@@ -567,9 +625,8 @@
 }
 
 .botao-fechar-modal-peca {
-  top: 6px;
+  top: 12px;
   right: 16px;
-  font-size: 48px;
 }
 
 .campo-pesquisa-modal {
@@ -619,12 +676,12 @@
 }
 
 .botao-ok-modal-peca {
-  width: 92px;
-  min-width: 92px;
+  width: 140px;
+  min-width: 140px;
   height: 48px;
   margin: 0 0 2px;
   font-size: 20px;
-  justify-self: start;
+  justify-self: end;
 }
 
 @media (max-width: 1280px) {
@@ -697,13 +754,26 @@
   }
 
   .modal-selecao-servico {
-    padding-inline: 34px;
+    width: calc(100vw - 72px);
   }
 
   .modal-selecao-peca {
     width: calc(100vw - 96px);
     height: min(700px, calc(100vh - 96px));
     max-height: calc(100vh - 96px);
+  }
+
+  .cabecalho-lista-modal-servico {
+    grid-template-columns: 68px minmax(0, 1fr) 190px;
+    gap: 16px;
+    padding-inline: 24px;
+    font-size: 18px;
+  }
+
+  .rodape-modal-servico {
+    grid-template-columns: 68px minmax(180px, 1fr) 190px 132px;
+    gap: 12px;
+    padding: 16px 24px 24px;
   }
 
   .cabecalho-lista-modal-peca {
@@ -791,28 +861,35 @@
   }
 
   .modal-selecao-servico {
-    padding: 86px 22px 34px;
     min-height: auto;
   }
 
-  .grade-rotulos-modal-servico,
-  .grade-campos-modal-servico {
-    grid-template-columns: 60px minmax(0, 1fr) 128px;
-    gap: 12px;
-  }
-
-  .grade-rotulos-modal-servico {
+  .cabecalho-lista-modal-servico {
+    grid-template-columns: 56px minmax(0, 1fr) 128px;
+    gap: 10px;
+    padding-inline: 16px;
     font-size: 15px;
   }
 
-  .grade-campos-modal-servico {
-    margin-bottom: 34px;
+  .corpo-lista-modal-servico {
+    min-height: 160px;
   }
 
-  .botao-ok-modal {
-    min-width: 180px;
-    height: 52px;
-    font-size: 24px;
+  .rodape-modal-servico {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 18px 16px 28px;
+  }
+
+  .campo-modal-servico-nome {
+    grid-column: 1 / -1;
+  }
+
+  .botao-ok-modal-servico {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin-top: 6px;
   }
 
   .modal-selecao-peca {

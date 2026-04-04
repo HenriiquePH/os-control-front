@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { OrdemServicoResumo, OrdemServicoSalva } from '../models/ordem-servico.model';
+import { OrdemServicoLista, OrdemServicoSalva } from '../models/ordem-servico.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +8,7 @@ import { OrdemServicoResumo, OrdemServicoSalva } from '../models/ordem-servico.m
 export class OrdensServicoService {
   private readonly chavesStorage = ['ordensServicoCadastradas', 'ordensServico'];
 
-  listarSalvas(): OrdemServicoSalva[] {
+  listar(): OrdemServicoSalva[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -27,18 +27,18 @@ export class OrdensServicoService {
     return [];
   }
 
-  listarParaVisualizacao(): OrdemServicoResumo[] {
-    return this.listarCompletas()
-      .map((item) => this.mapearParaVisualizacao(item))
-      .filter((item): item is OrdemServicoResumo => item !== null);
+  listarVisualizacao(): OrdemServicoLista[] {
+    return this.listarBrutos()
+      .map((item) => this.mapearVisualizacao(item))
+      .filter((item): item is OrdemServicoLista => item !== null);
   }
 
   buscarPorId(id: string): OrdemServicoSalva | undefined {
-    return this.listarSalvas().find((item) => item.id === id);
+    return this.listar().find((item) => item.id === id);
   }
 
   salvar(ordemServico: OrdemServicoSalva) {
-    const ordens = this.listarSalvas();
+    const ordens = this.listar();
     const ordensAtualizadas = ordens.some((item) => item.id === ordemServico.id)
       ? ordens.map((item) => (item.id === ordemServico.id ? ordemServico : item))
       : [...ordens, ordemServico];
@@ -47,7 +47,7 @@ export class OrdensServicoService {
   }
 
   gerarProximoId() {
-    const maiorId = this.listarSalvas().reduce((maior, item) => {
+    const maiorId = this.listar().reduce((maior, item) => {
       const numero = Number.parseInt(item.id, 10);
       return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
     }, 0);
@@ -55,7 +55,7 @@ export class OrdensServicoService {
     return String(maiorId + 1).padStart(2, '0');
   }
 
-  private listarCompletas(): unknown[] {
+  private listarBrutos(): unknown[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -74,7 +74,7 @@ export class OrdensServicoService {
     return [];
   }
 
-  private mapearParaVisualizacao(item: unknown): OrdemServicoResumo | null {
+  private mapearVisualizacao(item: unknown): OrdemServicoLista | null {
     if (!item || typeof item !== 'object') {
       return null;
     }

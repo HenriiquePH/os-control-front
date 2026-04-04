@@ -31,7 +31,7 @@ export class Pecas implements OnInit {
     this.carregarPeca(id);
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar peca' : 'Cadastro de peças';
   }
 

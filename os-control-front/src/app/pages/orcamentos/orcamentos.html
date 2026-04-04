@@ -67,10 +67,10 @@
         <img class="icone-voltar" src="assets/icone-voltar.png" alt="" />
       </a>
 
-      <h1 class="titulo-pagina">{{ tituloPagina }}</h1>
+      <h1 class="titulo-pagina">{{ titulo }}</h1>
     </div>
 
-    <form class="formulario-orcamento" (ngSubmit)="executarAcaoPrincipal()">
+    <form class="formulario-orcamento" (ngSubmit)="confirmar()">
       <div class="grade-inicial">
         <label class="campo-formulario campo-id" for="orcamento-id">
           <span class="rotulo-campo">ID</span>
@@ -127,7 +127,7 @@
       <section class="painel-itens" aria-label="Itens do or&ccedil;amento">
         <button class="barra-pesquisa" type="button" (click)="abrirModalSelecao()">
           <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
-          <span class="texto-pesquisa">{{ placeholderPesquisa }}</span>
+          <span class="texto-pesquisa">{{ placeholder }}</span>
         </button>
 
         <ng-container *ngIf="abaAtiva === 'servicos'; else listaPecas">
@@ -170,17 +170,17 @@
       <div class="grade-totais">
         <label class="campo-formulario" for="total-servicos">
           <span class="rotulo-campo">Valor total dos servi&ccedil;os</span>
-          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-servicos" type="text" [value]="totalServicosFormatado" readonly />
+          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-servicos" type="text" [value]="totalServicos" readonly />
         </label>
 
         <label class="campo-formulario" for="total-pecas">
           <span class="rotulo-campo">Valor total dos produtos/pe&ccedil;as</span>
-          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-pecas" type="text" [value]="totalPecasFormatado" readonly />
+          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-pecas" type="text" [value]="totalPecas" readonly />
         </label>
 
         <label class="campo-formulario campo-total-orcamento" for="total-orcamento">
           <span class="rotulo-campo">Valor total do or&ccedil;amento</span>
-          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-orcamento" type="text" [value]="totalOrcamentoFormatado" readonly />
+          <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-orcamento" type="text" [value]="totalOrcamento" readonly />
         </label>
       </div>
 
@@ -190,7 +190,7 @@
           <textarea class="entrada-observacao" id="observacao-orcamento" [(ngModel)]="observacao" name="orcamentoObservacao"></textarea>
         </label>
 
-        <button class="botao-confirmar" type="button" (click)="executarAcaoPrincipal()">{{ textoBotao }}</button>
+        <button class="botao-confirmar" type="button" (click)="confirmar()">{{ textoBotao }}</button>
       </div>
     </form>
   </main>
@@ -260,23 +260,36 @@
 
   <div class="sobreposicao-modal" *ngIf="modalServicoAberto" (click)="fecharModalServico()">
     <div class="modal-selecao-servico" (click)="$event.stopPropagation()">
-      <button class="botao-fechar-modal" type="button" (click)="fecharModalServico()" aria-label="Fechar selecao de servico">
+      <button class="botao-fechar-modal botao-fechar-modal-servico" type="button" (click)="fecharModalServico()" aria-label="Fechar selecao de servico">
         <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
       </button>
 
-      <div class="grade-rotulos-modal-servico">
+      <div class="cabecalho-lista-modal-servico">
         <span>Id</span>
         <span>Servi&ccedil;os</span>
         <span>Valor do servi&ccedil;o</span>
       </div>
 
-      <div class="grade-campos-modal-servico">
-        <input class="entrada-campo entrada-campo-bloqueada entrada-id-modal" type="text" [value]="novoServico.id" readonly />
-        <input class="entrada-campo" type="text" [(ngModel)]="novoServico.nome" name="novoServicoNome" />
-        <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="novoServicoValor" />
-      </div>
+      <div class="corpo-lista-modal-servico"></div>
 
-      <button class="botao-ok-modal" type="button" (click)="confirmarServico()">Confirmar</button>
+      <div class="rodape-modal-servico">
+        <label class="campo-modal-servico campo-modal-servico-id">
+          <span>Id</span>
+          <input class="entrada-campo entrada-campo-bloqueada entrada-id-modal" type="text" [value]="novoServico.id" readonly />
+        </label>
+
+        <label class="campo-modal-servico campo-modal-servico-nome">
+          <span>Servi&ccedil;os</span>
+          <input class="entrada-campo" type="text" [(ngModel)]="novoServico.nome" name="novoServicoNome" />
+        </label>
+
+        <label class="campo-modal-servico campo-modal-servico-valor">
+          <span>Valor do servi&ccedil;o</span>
+          <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="novoServicoValor" />
+        </label>
+
+        <button class="botao-ok-modal botao-ok-modal-servico" type="button" (click)="confirmarServico()">Confirmar</button>
+      </div>
     </div>
   </div>
 
@@ -322,7 +335,7 @@
 
         <label class="campo-modal-peca campo-modal-total">
           <span>valor total</span>
-          <input class="entrada-campo entrada-campo-bloqueada" type="text" [value]="valorTotalNovaPecaFormatado" readonly />
+          <input class="entrada-campo entrada-campo-bloqueada" type="text" [value]="totalNovaPeca" readonly />
         </label>
 
         <button class="botao-ok-modal botao-ok-modal-peca" type="button" (click)="confirmarPeca()">Confirmar</button>

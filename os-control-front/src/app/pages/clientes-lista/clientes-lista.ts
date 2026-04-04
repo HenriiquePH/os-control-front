@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { ClienteListaItem } from '../../models/cliente.model';
+import { ClienteLista } from '../../models/cliente.model';
 import { ClientesService } from '../../services/clientes.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class ClientesLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  clientes: ClienteListaItem[] = [];
+  clientes: ClienteLista[] = [];
 
   constructor(private router: Router, private clientesService: ClientesService) {}
 
@@ -24,7 +24,7 @@ export class ClientesLista implements OnInit {
     this.atualizarClientes();
   }
 
-  get clientesFiltrados(): ClienteListaItem[] {
+  get clientesFiltrados(): ClienteLista[] {
     const nome = this.filtroNome.trim().toLowerCase();
     const id = this.filtroId.trim().toLowerCase();
 
@@ -55,6 +55,6 @@ export class ClientesLista implements OnInit {
   }
 
   private atualizarClientes() {
-    this.clientes = this.clientesService.listarParaLista();
+    this.clientes = this.clientesService.listarLista();
   }
 }

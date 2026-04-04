@@ -1,4 +1,4 @@
-export interface VeiculoCliente {
+export interface Veiculo {
   id: string;
   marca: string;
   placa: string;
@@ -18,7 +18,7 @@ export interface ClienteFormulario {
   complemento: string;
 }
 
-export interface NovoVeiculoFormulario {
+export interface NovoVeiculo {
   marca: string;
   placa: string;
   modelo: string;
@@ -27,10 +27,10 @@ export interface NovoVeiculoFormulario {
 
 export interface ClienteSalvo extends ClienteFormulario {
   id: string;
-  veiculos: VeiculoCliente[];
+  veiculos: Veiculo[];
 }
 
-export interface ClienteListaItem {
+export interface ClienteLista {
   id: string;
   nome: string;
   telefone: string;

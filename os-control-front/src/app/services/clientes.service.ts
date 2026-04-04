@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ClienteListaItem, ClienteSalvo } from '../models/cliente.model';
+import { ClienteLista, ClienteSalvo } from '../models/cliente.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +8,7 @@ import { ClienteListaItem, ClienteSalvo } from '../models/cliente.model';
 export class ClientesService {
   private readonly chavesStorage = ['clientesCadastrados', 'clientes', 'cadastroClientes'];
 
-  listarSalvos(): ClienteSalvo[] {
+  listar(): ClienteSalvo[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -27,18 +27,18 @@ export class ClientesService {
     return [];
   }
 
-  listarParaLista(): ClienteListaItem[] {
-    return this.listarCompletos()
+  listarLista(): ClienteLista[] {
+    return this.listarBrutos()
       .map((item, indice) => this.mapearCliente(item, indice))
-      .filter((item): item is ClienteListaItem => item !== null);
+      .filter((item): item is ClienteLista => item !== null);
   }
 
   buscarPorId(id: string): ClienteSalvo | undefined {
-    return this.listarSalvos().find((item) => item.id === id);
+    return this.listar().find((item) => item.id === id);
   }
 
   salvar(cliente: ClienteSalvo) {
-    const clientes = this.listarSalvos();
+    const clientes = this.listar();
     const clientesAtualizados = clientes.some((item) => item.id === cliente.id)
       ? clientes.map((item) => (item.id === cliente.id ? cliente : item))
       : [...clientes, cliente];
@@ -47,15 +47,15 @@ export class ClientesService {
   }
 
   excluir(id: string) {
-    const clientesAtualizados = this.listarCompletos().filter((cliente) => this.obterIdCliente(cliente) !== id);
+    const clientesAtualizados = this.listarBrutos().filter((cliente) => this.obterId(cliente) !== id);
     localStorage.setItem('clientesCadastrados', JSON.stringify(clientesAtualizados));
   }
 
   gerarProximoId() {
-    return String(this.listarSalvos().length + 1).padStart(2, '0');
+    return String(this.listar().length + 1).padStart(2, '0');
   }
 
-  private listarCompletos(): unknown[] {
+  private listarBrutos(): unknown[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -74,7 +74,7 @@ export class ClientesService {
     return [];
   }
 
-  private mapearCliente(item: unknown, indice: number): ClienteListaItem | null {
+  private mapearCliente(item: unknown, indice: number): ClienteLista | null {
     if (!item || typeof item !== 'object') {
       return null;
     }
@@ -139,7 +139,7 @@ export class ClientesService {
     return typeof valor === 'string' ? valor.trim() : '';
   }
 
-  private obterIdCliente(item: unknown) {
+  private obterId(item: unknown) {
     if (!item || typeof item !== 'object') {
       return '';
     }

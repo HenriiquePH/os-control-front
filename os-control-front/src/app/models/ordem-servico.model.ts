@@ -26,7 +26,7 @@ export interface OrdemServicoSalva {
   totalOs: string;
 }
 
-export interface OrdemServicoResumo {
+export interface OrdemServicoLista {
   id: string;
   dataAbertura: string;
   cliente: string;

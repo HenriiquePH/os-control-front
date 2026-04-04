@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { TecnicoListaItem } from '../../models/tecnico.model';
+import { TecnicoLista } from '../../models/tecnico.model';
 import { TecnicosService } from '../../services/tecnicos.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class TecnicosLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  tecnicos: TecnicoListaItem[] = [];
+  tecnicos: TecnicoLista[] = [];
 
   constructor(private router: Router, private tecnicosService: TecnicosService) {}
 
@@ -24,7 +24,7 @@ export class TecnicosLista implements OnInit {
     this.atualizarTecnicos();
   }
 
-  get tecnicosFiltrados(): TecnicoListaItem[] {
+  get tecnicosFiltrados(): TecnicoLista[] {
     const nome = this.filtroNome.trim().toLowerCase();
     const id = this.filtroId.trim().toLowerCase();
 
@@ -55,6 +55,6 @@ export class TecnicosLista implements OnInit {
   }
 
   private atualizarTecnicos() {
-    this.tecnicos = this.tecnicosService.listarParaLista();
+    this.tecnicos = this.tecnicosService.listarLista();
   }
 }

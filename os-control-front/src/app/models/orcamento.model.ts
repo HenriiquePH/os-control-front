@@ -39,7 +39,7 @@ export interface OrcamentoSalvo {
   modelo: string;
 }
 
-export interface OrcamentoListaItem {
+export interface OrcamentoLista {
   id: string;
   nome: string;
   valorTotal: string;

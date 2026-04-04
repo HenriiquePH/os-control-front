@@ -10,7 +10,7 @@ export interface ServicoSalvo {
   preco: number;
 }
 
-export interface ServicoListaItem {
+export interface ServicoLista {
   id: string;
   nome: string;
   valor: string;

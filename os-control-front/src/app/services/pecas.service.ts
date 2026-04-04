@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { PecaListaItem, PecaSalva } from '../models/peca.model';
+import { PecaLista, PecaSalva } from '../models/peca.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +8,7 @@ import { PecaListaItem, PecaSalva } from '../models/peca.model';
 export class PecasService {
   private readonly chavesStorage = ['pecasCadastradas', 'pecas', 'cadastroPecas'];
 
-  listarSalvas(): PecaSalva[] {
+  listar(): PecaSalva[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -27,18 +27,18 @@ export class PecasService {
     return [];
   }
 
-  listarParaLista(): PecaListaItem[] {
-    return this.listarCompletas()
+  listarLista(): PecaLista[] {
+    return this.listarBrutos()
       .map((item, indice) => this.mapearPeca(item, indice))
-      .filter((item): item is PecaListaItem => item !== null);
+      .filter((item): item is PecaLista => item !== null);
   }
 
   buscarPorId(id: string): PecaSalva | undefined {
-    return this.listarSalvas().find((item) => item.id === id);
+    return this.listar().find((item) => item.id === id);
   }
 
   salvar(peca: PecaSalva) {
-    const pecas = this.listarSalvas();
+    const pecas = this.listar();
     const pecasAtualizadas = pecas.some((item) => item.id === peca.id)
       ? pecas.map((item) => (item.id === peca.id ? peca : item))
       : [...pecas, peca];
@@ -47,12 +47,12 @@ export class PecasService {
   }
 
   excluir(id: string) {
-    const pecasAtualizadas = this.listarCompletas().filter((peca) => this.obterIdPeca(peca) !== id);
+    const pecasAtualizadas = this.listarBrutos().filter((peca) => this.obterId(peca) !== id);
     localStorage.setItem('pecasCadastradas', JSON.stringify(pecasAtualizadas));
   }
 
   gerarProximoId() {
-    const maiorId = this.listarSalvas().reduce((maior, item) => {
+    const maiorId = this.listar().reduce((maior, item) => {
       const numero = Number.parseInt(item.id, 10);
       return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
     }, 0);
@@ -60,7 +60,7 @@ export class PecasService {
     return String(maiorId + 1).padStart(2, '0');
   }
 
-  private listarCompletas(): unknown[] {
+  private listarBrutos(): unknown[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -79,7 +79,7 @@ export class PecasService {
     return [];
   }
 
-  private mapearPeca(item: unknown, indice: number): PecaListaItem | null {
+  private mapearPeca(item: unknown, indice: number): PecaLista | null {
     if (!item || typeof item !== 'object') {
       return null;
     }
@@ -110,7 +110,7 @@ export class PecasService {
     return typeof valor === 'string' ? valor.trim() : '';
   }
 
-  private obterIdPeca(item: unknown) {
+  private obterId(item: unknown) {
     if (!item || typeof item !== 'object') {
       return '';
     }

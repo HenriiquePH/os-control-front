@@ -67,7 +67,7 @@ export class Orcamentos implements OnInit {
     this.carregarOrcamento(id);
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar orçamento' : 'Novo orçamento';
   }
 
@@ -75,26 +75,26 @@ export class Orcamentos implements OnInit {
     return this.modoEdicao ? 'Salvar orçamento' : 'Confirmar orçamento';
   }
 
-  get placeholderPesquisa() {
+  get placeholder() {
     return this.abaAtiva === 'servicos' ? 'Adicionar servico' : 'Adicionar peca/produto';
   }
 
-  get valorTotalNovaPecaFormatado() {
-    const total = this.calcularValorTotalNovaPeca();
+  get totalNovaPeca() {
+    const total = this.calcularTotalNovaPeca();
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalServicosFormatado() {
+  get totalServicos() {
     const total = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalPecasFormatado() {
+  get totalPecas() {
     const total = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalOrcamentoFormatado() {
+  get totalOrcamento() {
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     const total = totalServicos + totalPecas;
@@ -116,7 +116,7 @@ export class Orcamentos implements OnInit {
 
   fecharModalServico() {
     this.modalServicoAberto = false;
-    this.resetNovoServico();
+    this.limparNovoServico();
   }
 
   confirmarServico() {
@@ -141,7 +141,7 @@ export class Orcamentos implements OnInit {
 
   fecharModalPeca() {
     this.modalPecaAberto = false;
-    this.resetNovaPeca();
+    this.limparNovaPeca();
   }
 
   confirmarPeca() {
@@ -196,7 +196,7 @@ export class Orcamentos implements OnInit {
     this.modalPdfAberto = true;
   }
 
-  executarAcaoPrincipal() {
+  confirmar() {
     if (this.modoEdicao) {
       this.salvarOrcamento();
       return;
@@ -278,7 +278,7 @@ export class Orcamentos implements OnInit {
     }
   }
 
-  private resetNovoServico() {
+  private limparNovoServico() {
     this.novoServico = {
       id: '',
       nome: '',
@@ -286,7 +286,7 @@ export class Orcamentos implements OnInit {
     };
   }
 
-  private resetNovaPeca() {
+  private limparNovaPeca() {
     this.novaPeca = {
       id: '',
       nome: '',
@@ -295,7 +295,7 @@ export class Orcamentos implements OnInit {
     };
   }
 
-  private calcularValorTotalNovaPeca() {
+  private calcularTotalNovaPeca() {
     const quantidade = Number(this.novaPeca.quantidade);
     const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
 

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { PecaListaItem } from '../../models/peca.model';
+import { PecaLista } from '../../models/peca.model';
 import { PecasService } from '../../services/pecas.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class PecasLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  pecas: PecaListaItem[] = [];
+  pecas: PecaLista[] = [];
 
   constructor(private router: Router, private pecasService: PecasService) {}
 
@@ -24,7 +24,7 @@ export class PecasLista implements OnInit {
     this.atualizarPecas();
   }
 
-  get pecasFiltradas(): PecaListaItem[] {
+  get pecasFiltradas(): PecaLista[] {
     const nome = this.filtroNome.trim().toLowerCase();
     const id = this.filtroId.trim().toLowerCase();
 
@@ -55,6 +55,6 @@ export class PecasLista implements OnInit {
   }
 
   private atualizarPecas() {
-    this.pecas = this.pecasService.listarParaLista();
+    this.pecas = this.pecasService.listarLista();
   }
 }

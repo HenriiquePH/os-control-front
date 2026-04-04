@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { OrcamentoListaItem } from '../../models/orcamento.model';
+import { OrcamentoLista } from '../../models/orcamento.model';
 import { OrcamentosService } from '../../services/orcamentos.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class OrcamentosLista implements OnInit {
   usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
   filtroNome = '';
   filtroId = '';
-  orcamentos: OrcamentoListaItem[] = [];
+  orcamentos: OrcamentoLista[] = [];
 
   constructor(private router: Router, private orcamentosService: OrcamentosService) {}
 
@@ -24,7 +24,7 @@ export class OrcamentosLista implements OnInit {
     this.atualizarOrcamentos();
   }
 
-  get orcamentosFiltrados(): OrcamentoListaItem[] {
+  get orcamentosFiltrados(): OrcamentoLista[] {
     const nome = this.filtroNome.trim().toLowerCase();
     const id = this.filtroId.trim().toLowerCase();
 
@@ -55,6 +55,6 @@ export class OrcamentosLista implements OnInit {
   }
 
   private atualizarOrcamentos() {
-    this.orcamentos = this.orcamentosService.listarParaLista();
+    this.orcamentos = this.orcamentosService.listarLista();
   }
 }

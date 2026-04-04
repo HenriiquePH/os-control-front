@@ -10,7 +10,7 @@ export interface PecaSalva {
   valorUnitario: number;
 }
 
-export interface PecaListaItem {
+export interface PecaLista {
   id: string;
   nome: string;
   valor: string;

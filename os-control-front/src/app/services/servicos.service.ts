@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ServicoListaItem, ServicoSalvo } from '../models/servico.model';
+import { ServicoLista, ServicoSalvo } from '../models/servico.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +8,7 @@ import { ServicoListaItem, ServicoSalvo } from '../models/servico.model';
 export class ServicosService {
   private readonly chavesStorage = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
 
-  listarSalvos(): ServicoSalvo[] {
+  listar(): ServicoSalvo[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -27,18 +27,18 @@ export class ServicosService {
     return [];
   }
 
-  listarParaLista(): ServicoListaItem[] {
-    return this.listarCompletos()
+  listarLista(): ServicoLista[] {
+    return this.listarBrutos()
       .map((item, indice) => this.mapearServico(item, indice))
-      .filter((item): item is ServicoListaItem => item !== null);
+      .filter((item): item is ServicoLista => item !== null);
   }
 
   buscarPorId(id: string): ServicoSalvo | undefined {
-    return this.listarSalvos().find((item) => item.id === id);
+    return this.listar().find((item) => item.id === id);
   }
 
   salvar(servico: ServicoSalvo) {
-    const servicos = this.listarSalvos();
+    const servicos = this.listar();
     const servicosAtualizados = servicos.some((item) => item.id === servico.id)
       ? servicos.map((item) => (item.id === servico.id ? servico : item))
       : [...servicos, servico];
@@ -47,12 +47,12 @@ export class ServicosService {
   }
 
   excluir(id: string) {
-    const servicosAtualizados = this.listarCompletos().filter((servico) => this.obterIdServico(servico) !== id);
+    const servicosAtualizados = this.listarBrutos().filter((servico) => this.obterId(servico) !== id);
     localStorage.setItem('servicosCadastrados', JSON.stringify(servicosAtualizados));
   }
 
   gerarProximoId() {
-    const maiorId = this.listarSalvos().reduce((maior, item) => {
+    const maiorId = this.listar().reduce((maior, item) => {
       const numero = Number.parseInt(item.id, 10);
       return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
     }, 0);
@@ -60,7 +60,7 @@ export class ServicosService {
     return String(maiorId + 1).padStart(2, '0');
   }
 
-  private listarCompletos(): unknown[] {
+  private listarBrutos(): unknown[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -79,7 +79,7 @@ export class ServicosService {
     return [];
   }
 
-  private mapearServico(item: unknown, indice: number): ServicoListaItem | null {
+  private mapearServico(item: unknown, indice: number): ServicoLista | null {
     if (!item || typeof item !== 'object') {
       return null;
     }
@@ -110,7 +110,7 @@ export class ServicosService {
     return typeof valor === 'string' ? valor.trim() : '';
   }
 
-  private obterIdServico(item: unknown) {
+  private obterId(item: unknown) {
     if (!item || typeof item !== 'object') {
       return '';
     }

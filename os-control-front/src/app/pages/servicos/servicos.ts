@@ -31,7 +31,7 @@ export class Servicos implements OnInit {
     this.carregarServico(id);
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar servico' : 'Cadastrar serviço';
   }
 

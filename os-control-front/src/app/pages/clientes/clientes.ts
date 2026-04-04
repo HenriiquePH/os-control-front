@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { ClienteFormulario, ClienteSalvo, NovoVeiculoFormulario, VeiculoCliente } from '../../models/cliente.model';
+import { ClienteFormulario, ClienteSalvo, NovoVeiculo, Veiculo } from '../../models/cliente.model';
 import { ClientesService } from '../../services/clientes.service';
 
 @Component({
@@ -28,8 +28,8 @@ export class Clientes implements OnInit {
     cep: '',
     complemento: '',
   };
-  veiculos: VeiculoCliente[] = [];
-  novoVeiculo: NovoVeiculoFormulario = {
+  veiculos: Veiculo[] = [];
+  novoVeiculo: NovoVeiculo = {
     marca: '',
     placa: '',
     modelo: '',
@@ -48,7 +48,7 @@ export class Clientes implements OnInit {
     this.carregarCliente(id);
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar cliente' : 'Cadastrar cliente';
   }
 
@@ -57,7 +57,7 @@ export class Clientes implements OnInit {
   }
 
   abrirCadastroVeiculo() {
-    this.resetNovoVeiculo();
+    this.limparNovoVeiculo();
     this.cadastroVeiculoAberto = true;
   }
 
@@ -87,7 +87,7 @@ export class Clientes implements OnInit {
     ];
 
     this.fecharCadastroVeiculo();
-    this.resetNovoVeiculo();
+    this.limparNovoVeiculo();
   }
 
   excluirVeiculo(id: string) {
@@ -134,7 +134,7 @@ export class Clientes implements OnInit {
     this.veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
   }
 
-  private resetNovoVeiculo() {
+  private limparNovoVeiculo() {
     this.novoVeiculo = {
       marca: '',
       placa: '',

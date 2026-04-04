@@ -21,7 +21,7 @@ export class OrdensServicoImportar implements OnInit {
   constructor(private router: Router, private orcamentosService: OrcamentosService) {}
 
   ngOnInit() {
-    this.orcamentos = this.orcamentosService.listarParaImportacao();
+    this.orcamentos = this.orcamentosService.listarImportacao();
   }
 
   get orcamentosFiltrados(): OrcamentoImportacao[] {

@@ -69,26 +69,26 @@ export class OrdensServico implements OnInit {
   }
 
   ngOnInit() {
-    this.tecnicosDisponiveis = this.tecnicosService.listarNomesDisponiveis();
+    this.tecnicosDisponiveis = this.tecnicosService.listarNomes();
 
     this.route.paramMap.subscribe((params) => {
-      this.reiniciarFormulario();
+      this.limparFormulario();
 
       const ordemId = params.get('ordemId');
       const orcamentoId = params.get('orcamentoId');
 
       if (ordemId) {
-        this.carregarOrdemExistente(ordemId);
+        this.carregarOrdem(ordemId);
         return;
       }
 
       if (orcamentoId) {
-        this.carregarOrcamentoImportado(orcamentoId);
+        this.carregarOrcamento(orcamentoId);
       }
     });
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar OS' : 'Ordens de Servicos';
   }
 
@@ -96,26 +96,26 @@ export class OrdensServico implements OnInit {
     return this.modoEdicao ? 'Salvar OS' : 'Cadastrar OS';
   }
 
-  get placeholderPesquisa() {
+  get placeholder() {
     return this.abaAtiva === 'servicos' ? 'Adicionar servico' : 'Adicionar peca/produto';
   }
 
-  get valorTotalNovaPecaFormatado() {
-    const total = this.calcularValorTotalNovaPeca();
+  get totalNovaPeca() {
+    const total = this.calcularTotalNovaPeca();
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalServicosFormatado() {
+  get totalServicos() {
     const total = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalPecasFormatado() {
+  get totalPecas() {
     const total = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
-  get totalOsFormatado() {
+  get totalOs() {
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     const desconto = this.converterEmNumero(this.desconto) || 0;
@@ -138,7 +138,7 @@ export class OrdensServico implements OnInit {
 
   fecharModalServico() {
     this.modalServicoAberto = false;
-    this.resetNovoServico();
+    this.limparNovoServico();
   }
 
   confirmarServico() {
@@ -163,7 +163,7 @@ export class OrdensServico implements OnInit {
 
   fecharModalPeca() {
     this.modalPecaAberto = false;
-    this.resetNovaPeca();
+    this.limparNovaPeca();
   }
 
   confirmarPeca() {
@@ -234,7 +234,7 @@ export class OrdensServico implements OnInit {
       servicos: this.servicosSelecionados,
       pecas: this.pecasSelecionadas,
       desconto: this.desconto,
-      totalOs: this.totalOsFormatado,
+      totalOs: this.totalOs,
     };
 
     this.ordensServicoService.salvar(ordem);
@@ -246,7 +246,7 @@ export class OrdensServico implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  private carregarOrcamentoImportado(id: string) {
+  private carregarOrcamento(id: string) {
     const orcamento = this.orcamentosService.buscarParaImportacao(id);
 
     if (!orcamento) {
@@ -267,7 +267,7 @@ export class OrdensServico implements OnInit {
     }
   }
 
-  private carregarOrdemExistente(id: string) {
+  private carregarOrdem(id: string) {
     const ordem = this.ordensServicoService.buscarPorId(id);
 
     if (!ordem) {
@@ -293,7 +293,7 @@ export class OrdensServico implements OnInit {
     }
   }
 
-  private reiniciarFormulario() {
+  private limparFormulario() {
     this.modoEdicao = false;
     this.numeroOs = this.ordensServicoService.gerarProximoId();
     this.numeroOrcamento = '';
@@ -309,7 +309,7 @@ export class OrdensServico implements OnInit {
     this.sincronizarCalendario(new Date());
   }
 
-  private resetNovoServico() {
+  private limparNovoServico() {
     this.novoServico = {
       id: '',
       nome: '',
@@ -317,7 +317,7 @@ export class OrdensServico implements OnInit {
     };
   }
 
-  private resetNovaPeca() {
+  private limparNovaPeca() {
     this.novaPeca = {
       id: '',
       nome: '',
@@ -326,7 +326,7 @@ export class OrdensServico implements OnInit {
     };
   }
 
-  private calcularValorTotalNovaPeca() {
+  private calcularTotalNovaPeca() {
     const quantidade = Number(this.novaPeca.quantidade);
     const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
 

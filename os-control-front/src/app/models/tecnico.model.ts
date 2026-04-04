@@ -10,7 +10,7 @@ export interface TecnicoSalvo extends TecnicoFormulario {
   id: string;
 }
 
-export interface TecnicoListaItem {
+export interface TecnicoLista {
   id: string;
   nome: string;
   telefone: string;

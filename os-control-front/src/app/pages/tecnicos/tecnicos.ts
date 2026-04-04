@@ -33,7 +33,7 @@ export class Tecnicos implements OnInit {
     this.carregarTecnico(id);
   }
 
-  get tituloPagina() {
+  get titulo() {
     return this.modoEdicao ? 'Editar Tecnico' : 'Cadastro de Tecnico';
   }
 

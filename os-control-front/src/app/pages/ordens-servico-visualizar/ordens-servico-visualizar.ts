@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { OrdemServicoResumo } from '../../models/ordem-servico.model';
+import { OrdemServicoLista } from '../../models/ordem-servico.model';
 import { OrdensServicoService } from '../../services/ordens-servico.service';
 
 @Component({
@@ -17,15 +17,15 @@ export class OrdensServicoVisualizar implements OnInit {
   filtroCliente = '';
   filtroTecnico = '';
   filtroStatus = '';
-  ordens: OrdemServicoResumo[] = [];
+  ordens: OrdemServicoLista[] = [];
 
   constructor(private router: Router, private ordensServicoService: OrdensServicoService) {}
 
   ngOnInit() {
-    this.ordens = this.ordensServicoService.listarParaVisualizacao();
+    this.ordens = this.ordensServicoService.listarVisualizacao();
   }
 
-  get ordensFiltradas(): OrdemServicoResumo[] {
+  get ordensFiltradas(): OrdemServicoLista[] {
     const cliente = this.filtroCliente.trim().toLowerCase();
     const tecnico = this.filtroTecnico.trim().toLowerCase();
     const status = this.filtroStatus.trim().toLowerCase();

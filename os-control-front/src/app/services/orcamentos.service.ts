@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import {
   OrcamentoImportacao,
-  OrcamentoListaItem,
+  OrcamentoLista,
   OrcamentoSalvo,
   PecaSelecionada,
   ServicoSelecionado,
@@ -14,7 +14,7 @@ import {
 export class OrcamentosService {
   private readonly chavesStorage = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
 
-  listarSalvos(): OrcamentoSalvo[] {
+  listar(): OrcamentoSalvo[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -33,28 +33,28 @@ export class OrcamentosService {
     return [];
   }
 
-  listarParaLista(): OrcamentoListaItem[] {
-    return this.listarCompletos()
-      .map((item, indice) => this.mapearParaLista(item, indice))
-      .filter((item): item is OrcamentoListaItem => item !== null);
+  listarLista(): OrcamentoLista[] {
+    return this.listarBrutos()
+      .map((item, indice) => this.mapearLista(item, indice))
+      .filter((item): item is OrcamentoLista => item !== null);
   }
 
-  listarParaImportacao(): OrcamentoImportacao[] {
-    return this.listarCompletos()
-      .map((item, indice) => this.mapearParaImportacao(item, indice))
+  listarImportacao(): OrcamentoImportacao[] {
+    return this.listarBrutos()
+      .map((item, indice) => this.mapearImportacao(item, indice))
       .filter((item): item is OrcamentoImportacao => item !== null);
   }
 
   buscarPorId(id: string): OrcamentoSalvo | undefined {
-    return this.listarSalvos().find((item) => item.id === id);
+    return this.listar().find((item) => item.id === id);
   }
 
   buscarParaImportacao(id: string): OrcamentoImportacao | undefined {
-    return this.listarParaImportacao().find((item) => item.id === id);
+    return this.listarImportacao().find((item) => item.id === id);
   }
 
   salvar(orcamento: OrcamentoSalvo) {
-    const orcamentos = this.listarSalvos();
+    const orcamentos = this.listar();
     const orcamentosAtualizados = orcamentos.some((item) => item.id === orcamento.id)
       ? orcamentos.map((item) => (item.id === orcamento.id ? orcamento : item))
       : [...orcamentos, orcamento];
@@ -63,12 +63,12 @@ export class OrcamentosService {
   }
 
   excluir(id: string) {
-    const orcamentosAtualizados = this.listarCompletos().filter((orcamento) => this.obterIdOrcamento(orcamento) !== id);
+    const orcamentosAtualizados = this.listarBrutos().filter((orcamento) => this.obterId(orcamento) !== id);
     localStorage.setItem('orcamentosCadastrados', JSON.stringify(orcamentosAtualizados));
   }
 
   gerarProximoId() {
-    const maiorId = this.listarSalvos().reduce((maior, item) => {
+    const maiorId = this.listar().reduce((maior, item) => {
       const numero = Number.parseInt(item.id, 10);
       return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
     }, 0);
@@ -76,7 +76,7 @@ export class OrcamentosService {
     return String(maiorId + 1).padStart(2, '0');
   }
 
-  private listarCompletos(): unknown[] {
+  private listarBrutos(): unknown[] {
     for (const chave of this.chavesStorage) {
       const valor = localStorage.getItem(chave);
 
@@ -95,7 +95,7 @@ export class OrcamentosService {
     return [];
   }
 
-  private mapearParaLista(item: unknown, indice: number): OrcamentoListaItem | null {
+  private mapearLista(item: unknown, indice: number): OrcamentoLista | null {
     if (!item || typeof item !== 'object') {
       return null;
     }
@@ -114,7 +114,7 @@ export class OrcamentosService {
     };
   }
 
-  private mapearParaImportacao(item: unknown, indice: number): OrcamentoImportacao | null {
+  private mapearImportacao(item: unknown, indice: number): OrcamentoImportacao | null {
     if (!item || typeof item !== 'object') {
       return null;
     }
@@ -168,7 +168,7 @@ export class OrcamentosService {
       : [];
   }
 
-  private obterIdOrcamento(item: unknown) {
+  private obterId(item: unknown) {
     if (!item || typeof item !== 'object') {
       return '';
     }
