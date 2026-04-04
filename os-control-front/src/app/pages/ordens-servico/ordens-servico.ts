@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AbaOs, DiaCalendario, OrdemServicoSalva } from '../../models/ordem-servico.model';
 import { PecaSelecionada, ServicoSelecionado } from '../../models/orcamento.model';
+import { AuthService } from '../../services/auth.service';
 import { OrdensServicoService } from '../../services/ordens-servico.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
 import { TecnicosService } from '../../services/tecnicos.service';
@@ -15,7 +16,7 @@ import { TecnicosService } from '../../services/tecnicos.service';
   styleUrl: './ordens-servico.css',
 })
 export class OrdensServico implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   modoEdicao: boolean = false;
   numeroOs: string = '';
   numeroOrcamento: string = '';
@@ -63,8 +64,10 @@ export class OrdensServico implements OnInit {
     private route: ActivatedRoute,
     private orcamentosService: OrcamentosService,
     private ordensServicoService: OrdensServicoService,
-    private tecnicosService: TecnicosService
+    private tecnicosService: TecnicosService,
+    private authService: AuthService
   ) {
+    this.usuarioLogado = this.authService.obterUsuario();
     this.sincronizarCalendario(this.dataSelecionada);
   }
 
@@ -242,7 +245,7 @@ export class OrdensServico implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ClienteFormulario, ClienteSalvo, NovoVeiculo, Veiculo } from '../../models/cliente.model';
+import { AuthService } from '../../services/auth.service';
 import { ClientesService } from '../../services/clientes.service';
 
 @Component({
@@ -15,7 +16,7 @@ import { ClientesService } from '../../services/clientes.service';
 export class Clientes implements OnInit {
   modoEdicao: boolean = false;
   clienteId: string = '';
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   cadastroVeiculoAberto: boolean = false;
   cliente: ClienteFormulario = {
     nome: '',
@@ -36,7 +37,14 @@ export class Clientes implements OnInit {
     ano: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute, private clientesService: ClientesService) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private clientesService: ClientesService,
+    private authService: AuthService
+  ) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -107,7 +115,7 @@ export class Clientes implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

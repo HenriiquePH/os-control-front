@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ClienteLista } from '../../models/cliente.model';
+import { AuthService } from '../../services/auth.service';
 import { ClientesService } from '../../services/clientes.service';
 
 @Component({
@@ -13,12 +14,14 @@ import { ClientesService } from '../../services/clientes.service';
   styleUrl: './clientes-lista.css',
 })
 export class ClientesLista implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
   clientes: ClienteLista[] = [];
 
-  constructor(private router: Router, private clientesService: ClientesService) {}
+  constructor(private router: Router, private clientesService: ClientesService, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.atualizarClientes();
@@ -41,7 +44,7 @@ export class ClientesLista implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

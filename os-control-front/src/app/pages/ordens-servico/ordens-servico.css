@@ -5,35 +5,22 @@
 
 .conteudo-ordens-servico {
   position: fixed;
-  top: 93px;
-  left: 228px;
-  right: 0;
-  bottom: 0;
+  inset: 93px 0 0 228px;
   padding: 18px 34px 42px;
-  background: #f2efef;
   overflow: auto;
+  background: #f2efef;
 }
 
 .cabecalho-pagina {
-  position: relative;
   min-height: 92px;
   margin-bottom: 28px;
 }
 
 .botao-voltar {
-  position: absolute;
   top: 14px;
   left: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 42px;
   height: 42px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-decoration: none;
-  box-shadow: none;
 }
 
 .icone-voltar {
@@ -42,11 +29,7 @@
 }
 
 .titulo-pagina {
-  margin: 0;
-  text-align: center;
   font-size: clamp(46px, 4.8vw, 56px);
-  font-weight: 400;
-  color: #5d5454;
 }
 
 .formulario-os {
@@ -73,29 +56,14 @@
   border-radius: 18px;
   outline: none;
   background: #f8f8f8;
-  color: #544b4b;
   font-size: 20px;
+  color: #544b4b;
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
 }
 
 .entrada-campo-bloqueada {
   background: #d3d3d3;
   color: #4d4747;
-}
-
-.grade-superior {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1.3fr) minmax(0, 0.62fr) minmax(0, 0.56fr);
-  gap: 16px 14px;
-  align-items: end;
-}
-
-.grade-secundaria {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 278px) minmax(0, 240px);
-  gap: 16px 16px;
-  margin-top: 18px;
-  align-items: end;
 }
 
 .campo-select,
@@ -112,8 +80,8 @@
 
 .icone-select {
   position: absolute;
-  right: 14px;
   top: 50%;
+  right: 14px;
   transform: translateY(-50%);
   display: block;
   width: 20px;
@@ -122,22 +90,15 @@
   pointer-events: none;
 }
 
-.icone-calendario {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: block;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  pointer-events: none;
+.entrada-data {
+  padding-right: 48px;
+  cursor: pointer;
 }
 
 .botao-abrir-calendario {
   position: absolute;
-  right: 8px;
   top: 50%;
+  right: 8px;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
@@ -150,9 +111,27 @@
   cursor: pointer;
 }
 
-.entrada-data {
-  padding-right: 48px;
-  cursor: pointer;
+.icone-calendario {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.grade-superior {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1.3fr) minmax(0, 0.62fr) minmax(0, 0.56fr);
+  gap: 16px 14px;
+  align-items: end;
+}
+
+.grade-secundaria {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 278px) minmax(0, 240px);
+  gap: 16px;
+  align-items: end;
+  margin-top: 18px;
 }
 
 .abas-itens {
@@ -168,8 +147,8 @@
   border: 0;
   border-radius: 14px;
   background: #f7f7f7;
-  color: #5d5454;
   font-size: 24px;
+  color: #5d5454;
   cursor: pointer;
   transition: background-color 120ms ease, color 120ms ease;
 }
@@ -209,8 +188,8 @@
 }
 
 .texto-pesquisa {
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
   white-space: nowrap;
 }
 
@@ -223,8 +202,8 @@
   margin-top: 18px;
   padding: 0 28px 10px;
   border-bottom: 1px solid rgba(93, 84, 84, 0.52);
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
 }
 
 .corpo-lista {
@@ -235,9 +214,9 @@
 .linha-item {
   min-height: 46px;
   padding: 0 28px;
-  color: #5d5454;
-  font-size: 18px;
   border-radius: 12px;
+  font-size: 18px;
+  color: #5d5454;
 }
 
 .linha-item:hover {
@@ -260,10 +239,7 @@
   text-align: center;
 }
 
-.coluna-unitario {
-  text-align: right;
-}
-
+.coluna-unitario,
 .coluna-valor {
   text-align: right;
 }
@@ -272,8 +248,8 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px 16px;
-  margin-top: 28px;
   align-items: end;
+  margin-top: 28px;
 }
 
 .entrada-total {
@@ -301,8 +277,8 @@
   outline: none;
   resize: none;
   background: #fbfbfb;
-  color: #544b4b;
   font-size: 18px;
+  color: #544b4b;
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -312,9 +288,9 @@
   border: 0;
   border-radius: 22px;
   background: #0da206;
-  color: #ffffff;
   font-size: 22px;
   line-height: 1.1;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
@@ -331,44 +307,56 @@
   backdrop-filter: blur(8px);
 }
 
-.modal-calendario {
+.modal-calendario,
+.modal-selecao-servico,
+.modal-selecao-peca {
   position: relative;
-  width: min(466px, calc(100vw - 48px));
-  padding: 58px 38px 34px;
   border-radius: 18px;
   background: #f4f4f4;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.botao-fechar-calendario {
-  top: 16px;
-  right: 18px;
+.botao-fechar-modal {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icone-fechar-modal {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.modal-calendario {
+  width: min(466px, calc(100vw - 48px));
+  padding: 58px 38px 34px;
+}
+
+.botao-fechar-calendario {
+  top: 16px;
+  right: 18px;
   width: 28px;
   height: 28px;
   font-size: 0;
-  z-index: 1;
 }
 
 .icone-fechar-calendario {
+  display: block;
   width: 22px;
   height: 22px;
-  display: block;
-}
-
-.botao-fechar-modal {
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: #514949;
-  font-size: 58px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .cabecalho-calendario {
@@ -398,9 +386,9 @@
 }
 
 .titulo-calendario {
-  color: #5d5454;
   font-size: 28px;
   text-align: center;
+  color: #5d5454;
 }
 
 .grade-semana,
@@ -420,9 +408,9 @@
   justify-content: center;
   width: 100%;
   min-height: 54px;
-  color: #5d5454;
   font-size: 22px;
   font-weight: 400;
+  color: #5d5454;
 }
 
 .dia-semana.domingo,
@@ -432,8 +420,8 @@
 
 .dia-calendario {
   border: 0;
-  background: transparent;
   border-radius: 10px;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -449,14 +437,6 @@
 
 .dia-vazio {
   min-height: 54px;
-}
-
-.modal-selecao-servico,
-.modal-selecao-peca {
-  position: relative;
-  border-radius: 18px;
-  background: #f4f4f4;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .modal-selecao-servico {
@@ -475,27 +455,29 @@
 
 .grade-rotulos-modal-servico {
   margin-bottom: 10px;
-  color: #5d5454;
   font-size: 18px;
-}
-
-.entrada-id-modal {
-  background: #d3d3d3;
+  color: #5d5454;
 }
 
 .grade-campos-modal-servico {
   margin-bottom: 58px;
 }
 
+.entrada-id-modal {
+  background: #d3d3d3;
+}
+
 .botao-ok-modal {
   display: block;
   min-width: 248px;
   height: 62px;
- 
-
+  margin: 0 auto;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 18px;
   background: #079700;
-  
-  font-size: 20px;
+  font-size: 30px;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -518,8 +500,8 @@
   align-items: center;
   padding: 0 38px 16px;
   border-bottom: 1px solid rgba(93, 84, 84, 0.55);
-  color: #5d5454;
   font-size: 20px;
+  color: #5d5454;
 }
 
 .corpo-lista-modal-peca {
@@ -531,7 +513,7 @@
 
 .rodape-modal-peca {
   display: grid;
-  grid-template-columns: 78px minmax(240px, 1.1fr) 86px 148px 148px 96px;
+  grid-template-columns: 78px minmax(240px, 1.1fr) 86px 148px 148px 140px;
   gap: 16px;
   align-items: end;
   justify-content: center;
@@ -542,14 +524,13 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
 }
 
 .botao-fechar-modal-peca {
-  top: 6px;
+  top: 12px;
   right: 16px;
-  font-size: 48px;
 }
 
 .campo-pesquisa-modal {
@@ -590,8 +571,8 @@
   border: 0;
   outline: none;
   background: transparent;
-  color: #544b4b;
   font-size: 18px;
+  color: #544b4b;
 }
 
 .entrada-pesquisa-modal::placeholder {
@@ -599,12 +580,12 @@
 }
 
 .botao-ok-modal-peca {
-  width: 92px;
-  min-width: 92px;
+  width: 140px;
+  min-width: 140px;
   height: 48px;
   margin: 0 0 2px;
+  justify-self: end;
   font-size: 20px;
-  justify-self: start;
 }
 
 @media (max-width: 1280px) {
@@ -627,11 +608,12 @@
 
 @media (max-width: 980px) {
   .conteudo-ordens-servico {
-    left: 210px;
+    inset-inline-start: 210px;
     padding: 18px 24px 36px;
   }
 
-  .grade-superior {
+  .grade-superior,
+  .grade-secundaria {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -641,10 +623,6 @@
 
   .campo-status {
     max-width: 280px;
-  }
-
-  .grade-secundaria {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .rodape-formulario {
@@ -687,7 +665,7 @@
   }
 
   .rodape-modal-peca {
-    grid-template-columns: 70px minmax(200px, 1fr) 78px 132px 132px 92px;
+    grid-template-columns: 70px minmax(200px, 1fr) 78px 132px 132px 132px;
     gap: 12px;
     padding: 16px 24px 24px;
   }
@@ -723,8 +701,8 @@
   }
 
   .botao-cadastrar-os {
-    justify-self: stretch;
     max-width: 100%;
+    justify-self: stretch;
   }
 
   .painel-itens {
@@ -752,8 +730,9 @@
   }
 
   .modal-selecao-servico {
-    padding: 86px 22px 34px;
+    width: calc(100vw - 32px);
     min-height: auto;
+    padding: 86px 22px 34px;
   }
 
   .grade-rotulos-modal-servico,
@@ -813,6 +792,7 @@
   .botao-ok-modal-peca {
     grid-column: 1 / -1;
     width: 100%;
+    min-width: 0;
     margin-top: 6px;
   }
 }

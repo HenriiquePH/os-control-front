@@ -9,6 +9,7 @@ import {
   PecaSelecionada,
   ServicoSelecionado,
 } from '../../models/orcamento.model';
+import { AuthService } from '../../services/auth.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
 
 @Component({
@@ -18,7 +19,7 @@ import { OrcamentosService } from '../../services/orcamentos.service';
   styleUrl: './orcamentos.css',
 })
 export class Orcamentos implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   modoEdicao: boolean = false;
   orcamentoId: string = '';
   nomeOrcamento: string = '';
@@ -52,7 +53,13 @@ export class Orcamentos implements OnInit {
     valorUnitario: '',
   };
 
-  constructor(private router: Router, private route: ActivatedRoute, private orcamentosService: OrcamentosService) {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private orcamentosService: OrcamentosService,
+    private authService: AuthService
+  ) {
+    this.usuarioLogado = this.authService.obterUsuario();
     this.orcamentoId = this.orcamentosService.gerarProximoId();
     this.sincronizarCalendario(this.dataSelecionada);
   }
@@ -222,7 +229,7 @@ export class Orcamentos implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

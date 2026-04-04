@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-ordens-servico-menu',
@@ -9,12 +10,14 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './ordens-servico-menu.css',
 })
 export class OrdensServicoMenu {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 }

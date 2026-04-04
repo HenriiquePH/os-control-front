@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -11,14 +12,14 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 export class Home implements OnInit {
   usuarioLogado: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    this.usuarioLogado = localStorage.getItem('usuario') || 'Usuario';
+    this.usuarioLogado = this.authService.obterUsuario();
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 }

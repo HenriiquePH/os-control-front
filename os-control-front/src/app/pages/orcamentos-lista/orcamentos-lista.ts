@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { OrcamentoLista } from '../../models/orcamento.model';
+import { AuthService } from '../../services/auth.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
 
 @Component({
@@ -13,12 +14,14 @@ import { OrcamentosService } from '../../services/orcamentos.service';
   styleUrl: './orcamentos-lista.css',
 })
 export class OrcamentosLista implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
   orcamentos: OrcamentoLista[] = [];
 
-  constructor(private router: Router, private orcamentosService: OrcamentosService) {}
+  constructor(private router: Router, private orcamentosService: OrcamentosService, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.atualizarOrcamentos();
@@ -41,7 +44,7 @@ export class OrcamentosLista implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

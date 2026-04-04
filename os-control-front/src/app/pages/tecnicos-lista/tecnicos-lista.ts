@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TecnicoLista } from '../../models/tecnico.model';
+import { AuthService } from '../../services/auth.service';
 import { TecnicosService } from '../../services/tecnicos.service';
 
 @Component({
@@ -13,12 +14,14 @@ import { TecnicosService } from '../../services/tecnicos.service';
   styleUrl: './tecnicos-lista.css',
 })
 export class TecnicosLista implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
   tecnicos: TecnicoLista[] = [];
 
-  constructor(private router: Router, private tecnicosService: TecnicosService) {}
+  constructor(private router: Router, private tecnicosService: TecnicosService, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.atualizarTecnicos();
@@ -41,7 +44,7 @@ export class TecnicosLista implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

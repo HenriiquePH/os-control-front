@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { PecaLista } from '../../models/peca.model';
+import { AuthService } from '../../services/auth.service';
 import { PecasService } from '../../services/pecas.service';
 
 @Component({
@@ -13,12 +14,14 @@ import { PecasService } from '../../services/pecas.service';
   styleUrl: './pecas-lista.css',
 })
 export class PecasLista implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
   pecas: PecaLista[] = [];
 
-  constructor(private router: Router, private pecasService: PecasService) {}
+  constructor(private router: Router, private pecasService: PecasService, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.atualizarPecas();
@@ -41,7 +44,7 @@ export class PecasLista implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

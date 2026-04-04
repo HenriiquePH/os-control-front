@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { OrdemServicoLista } from '../../models/ordem-servico.model';
+import { AuthService } from '../../services/auth.service';
 import { OrdensServicoService } from '../../services/ordens-servico.service';
 
 @Component({
@@ -13,13 +14,19 @@ import { OrdensServicoService } from '../../services/ordens-servico.service';
   styleUrl: './ordens-servico-visualizar.css',
 })
 export class OrdensServicoVisualizar implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroCliente = '';
   filtroTecnico = '';
   filtroStatus = '';
   ordens: OrdemServicoLista[] = [];
 
-  constructor(private router: Router, private ordensServicoService: OrdensServicoService) {}
+  constructor(
+    private router: Router,
+    private ordensServicoService: OrdensServicoService,
+    private authService: AuthService
+  ) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.ordens = this.ordensServicoService.listarVisualizacao();
@@ -44,7 +51,7 @@ export class OrdensServicoVisualizar implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 }

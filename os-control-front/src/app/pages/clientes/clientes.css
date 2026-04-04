@@ -14,43 +14,18 @@
   overflow: auto;
 }
 
-/* Cabecalho */
-
 .cabecalho-pagina {
-  position: relative;
   min-height: 74px;
   margin-bottom: 42px;
 }
 
 .botao-voltar {
-  position: absolute;
-  top: 6px;
   left: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 41px;
-  height: 41px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-decoration: none;
-  box-shadow: none;
-}
-
-.icone-voltar {
-  width: 100%;
-  height: 100%;
 }
 
 .titulo-pagina {
-  margin: 0;
-  text-align: center;
   font-size: 56px;
-  color: #5d5454;
 }
-
-/* Formulario */
 
 .formulario-cliente {
   max-width: 1032px;
@@ -59,6 +34,14 @@
 
 .secao-formulario {
   margin-bottom: 48px;
+}
+
+.secao-endereco {
+  margin-top: 10px;
+}
+
+.secao-veiculos {
+  margin-top: 4px;
 }
 
 .titulo-secao {
@@ -95,8 +78,6 @@
   max-width: 320px;
 }
 
-/* Dados do cliente */
-
 .grade-dados-cliente {
   display: grid;
   grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.86fr);
@@ -116,12 +97,6 @@
 
 .campo-telefone {
   grid-area: telefone;
-}
-
-/* Endereco */
-
-.secao-endereco {
-  margin-top: 10px;
 }
 
 .grade-endereco {
@@ -177,12 +152,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* Veiculos */
-
-.secao-veiculos {
-  margin-top: 4px;
-}
-
 .cabecalho-veiculos {
   display: flex;
   align-items: baseline;
@@ -215,8 +184,8 @@
 .dados-veiculo {
   display: grid;
   gap: 6px;
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
 }
 
 .botao-excluir-veiculo {
@@ -225,13 +194,11 @@
   border: 0;
   border-radius: 14px;
   background: #d74d4d;
-  color: #ffffff;
   font-size: 18px;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
-
-/* Rodape */
 
 .rodape-formulario {
   display: flex;
@@ -251,8 +218,6 @@
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
-
-/* Modal */
 
 .sobreposicao-modal {
   position: fixed;
@@ -341,8 +306,6 @@
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
-
-/* Responsivo */
 
 @media (max-width: 1280px) {
   .conteudo-clientes {

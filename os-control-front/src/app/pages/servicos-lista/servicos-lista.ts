@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ServicoLista } from '../../models/servico.model';
+import { AuthService } from '../../services/auth.service';
 import { ServicosService } from '../../services/servicos.service';
 
 @Component({
@@ -13,11 +14,13 @@ import { ServicosService } from '../../services/servicos.service';
   styleUrl: './servicos-lista.css',
 })
 export class ServicosLista implements OnInit {
-  usuarioLogado: string = localStorage.getItem('usuario') || 'Usuario';
+  usuarioLogado: string = 'Usuario';
   filtroNome = '';
   servicos: ServicoLista[] = [];
 
-  constructor(private router: Router, private servicosService: ServicosService) {}
+  constructor(private router: Router, private servicosService: ServicosService, private authService: AuthService) {
+    this.usuarioLogado = this.authService.obterUsuario();
+  }
 
   ngOnInit() {
     this.atualizarServicos();
@@ -34,7 +37,7 @@ export class ServicosLista implements OnInit {
   }
 
   sair() {
-    localStorage.removeItem('usuario');
+    this.authService.sair();
     this.router.navigate(['/login']);
   }
 

@@ -15,50 +15,24 @@
 }
 
 .cabecalho-pagina {
-  position: relative;
   min-height: 92px;
   margin-bottom: 28px;
 }
 
 .botao-voltar {
-  position: absolute;
   top: 14px;
   left: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 42px;
   height: 42px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-decoration: none;
-  box-shadow: none;
-}
-
-.icone-voltar {
-  width: 100%;
-  height: 100%;
 }
 
 .titulo-pagina {
-  margin: 0;
-  text-align: center;
   font-size: clamp(46px, 4.8vw, 56px);
-  font-weight: 400;
-  color: #5d5454;
 }
 
 .formulario-orcamento {
   max-width: 1088px;
   margin: 0 auto;
-}
-
-.grade-inicial {
-  display: grid;
-  grid-template-columns: 74px minmax(360px, 1fr) minmax(242px, 0.53fr);
-  gap: 12px 16px;
-  align-items: end;
 }
 
 .campo-formulario {
@@ -80,8 +54,8 @@
   border-radius: 18px;
   outline: none;
   background: #f8f8f8;
-  color: #544b4b;
   font-size: 20px;
+  color: #544b4b;
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -92,6 +66,13 @@
 
 .entrada-campo[readonly] {
   cursor: default;
+}
+
+.grade-inicial {
+  display: grid;
+  grid-template-columns: 74px minmax(360px, 1fr) minmax(242px, 0.53fr);
+  gap: 12px 16px;
+  align-items: end;
 }
 
 .campo-data-icone {
@@ -109,8 +90,8 @@
 
 .botao-abrir-calendario {
   position: absolute;
-  right: 12px;
   top: 50%;
+  right: 12px;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
@@ -143,8 +124,8 @@
   border: 0;
   border-radius: 14px;
   background: #f7f7f7;
-  color: #5d5454;
   font-size: 24px;
+  color: #5d5454;
   cursor: pointer;
   transition: background-color 120ms ease, color 120ms ease;
 }
@@ -184,22 +165,22 @@
 }
 
 .texto-pesquisa {
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
   white-space: nowrap;
-}
-
-.cabecalho-lista,
-.linha-item {
-  align-items: center;
 }
 
 .cabecalho-lista {
   margin-top: 18px;
   padding: 0 28px 10px;
   border-bottom: 1px solid rgba(93, 84, 84, 0.52);
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
+}
+
+.cabecalho-lista,
+.linha-item {
+  align-items: center;
 }
 
 .corpo-lista {
@@ -210,9 +191,9 @@
 .linha-item {
   min-height: 46px;
   padding: 0 28px;
-  color: #5d5454;
-  font-size: 18px;
   border-radius: 12px;
+  font-size: 18px;
+  color: #5d5454;
 }
 
 .linha-item:hover {
@@ -235,10 +216,7 @@
   text-align: center;
 }
 
-.coluna-unitario {
-  text-align: right;
-}
-
+.coluna-unitario,
 .coluna-valor {
   text-align: right;
 }
@@ -247,8 +225,8 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px 22px;
-  margin-top: 46px;
   align-items: end;
+  margin-top: 46px;
 }
 
 .entrada-total {
@@ -284,8 +262,8 @@
   outline: none;
   resize: none;
   background: #fbfbfb;
-  color: #544b4b;
   font-size: 18px;
+  color: #544b4b;
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -295,9 +273,9 @@
   border: 0;
   border-radius: 22px;
   background: #0da206;
-  color: #ffffff;
   font-size: 22px;
   line-height: 1.1;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
@@ -336,18 +314,18 @@
   position: absolute;
   top: 14px;
   right: 16px;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  border: 0;
   padding: 0;
+  border: 0;
   background: transparent;
-  color: #514949;
   line-height: 1;
+  color: #514949;
   cursor: pointer;
-  z-index: 1;
 }
 
 .icone-fechar-modal {
@@ -365,19 +343,15 @@
 .botao-fechar-calendario {
   top: 16px;
   right: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 28px;
   height: 28px;
   font-size: 0;
-  z-index: 1;
 }
 
 .icone-fechar-calendario {
+  display: block;
   width: 22px;
   height: 22px;
-  display: block;
 }
 
 .cabecalho-calendario {
@@ -407,9 +381,9 @@
 }
 
 .titulo-calendario {
-  color: #5d5454;
   font-size: 28px;
   text-align: center;
+  color: #5d5454;
 }
 
 .grade-semana,
@@ -429,9 +403,9 @@
   justify-content: center;
   width: 100%;
   min-height: 54px;
-  color: #5d5454;
   font-size: 22px;
   font-weight: 400;
+  color: #5d5454;
 }
 
 .dia-semana.domingo,
@@ -441,8 +415,8 @@
 
 .dia-calendario {
   border: 0;
-  background: transparent;
   border-radius: 10px;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -482,8 +456,8 @@
   border: 0;
   border-radius: 18px;
   background: #ece8e8;
-  color: #514949;
   font-size: 34px;
+  color: #514949;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
@@ -504,18 +478,14 @@
   align-items: center;
   padding: 0 42px 16px;
   border-bottom: 1px solid rgba(93, 84, 84, 0.55);
-  color: #5d5454;
   font-size: 20px;
+  color: #5d5454;
 }
 
 .corpo-lista-modal-servico {
   flex: 1;
   min-height: 0;
   border-bottom: 1px solid rgba(93, 84, 84, 0.55);
-}
-
-.entrada-id-modal {
-  background: #d3d3d3;
 }
 
 .rodape-modal-servico {
@@ -530,8 +500,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
 }
 
 .botao-fechar-modal-servico {
@@ -539,14 +509,16 @@
   right: 18px;
 }
 
-.campo-modal-servico-id .entrada-campo {
-  width: 100%;
-}
-
 .rodape-modal-servico .entrada-campo {
   height: 42px;
 }
 
+.entrada-id-modal,
+.campo-modal-total .entrada-campo {
+  background: #d3d3d3;
+}
+
+.campo-modal-servico-id .entrada-campo,
 .campo-modal-servico-valor .entrada-campo {
   width: 100%;
 }
@@ -560,8 +532,8 @@
   border: 0;
   border-radius: 18px;
   background: #079700;
-  color: #ffffff;
   font-size: 30px;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -594,10 +566,9 @@
   gap: 24px;
   align-items: center;
   padding: 0 38px 16px;
-  padding-bottom: 16px;
   border-bottom: 1px solid rgba(93, 84, 84, 0.55);
-  color: #5d5454;
   font-size: 20px;
+  color: #5d5454;
 }
 
 .corpo-lista-modal-peca {
@@ -620,8 +591,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #5d5454;
   font-size: 18px;
+  color: #5d5454;
 }
 
 .botao-fechar-modal-peca {
@@ -658,17 +629,13 @@
   width: 140px;
 }
 
-.campo-modal-total .entrada-campo {
-  background: #d3d3d3;
-}
-
 .entrada-pesquisa-modal {
   width: 100%;
   border: 0;
   outline: none;
   background: transparent;
-  color: #544b4b;
   font-size: 18px;
+  color: #544b4b;
 }
 
 .entrada-pesquisa-modal::placeholder {
@@ -680,8 +647,8 @@
   min-width: 140px;
   height: 48px;
   margin: 0 0 2px;
-  font-size: 20px;
   justify-self: end;
+  font-size: 20px;
 }
 
 @media (max-width: 1280px) {
@@ -811,8 +778,8 @@
     flex-wrap: wrap;
   }
 
-  .aba-ativa,
-  .aba-item {
+  .aba-item,
+  .aba-ativa {
     min-width: 0;
     flex: 1 1 180px;
   }
@@ -822,8 +789,8 @@
   }
 
   .botao-confirmar {
-    justify-self: stretch;
     max-width: 100%;
+    justify-self: stretch;
   }
 
   .painel-itens {
@@ -851,8 +818,8 @@
   }
 
   .modal-pdf {
-    padding: 56px 24px 40px;
     min-height: auto;
+    padding: 56px 24px 40px;
   }
 
   .botao-abrir-pdf {
@@ -871,21 +838,25 @@
     font-size: 15px;
   }
 
-  .corpo-lista-modal-servico {
+  .corpo-lista-modal-servico,
+  .corpo-lista-modal-peca {
     min-height: 160px;
   }
 
-  .rodape-modal-servico {
+  .rodape-modal-servico,
+  .rodape-modal-peca {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
     padding: 18px 16px 28px;
   }
 
-  .campo-modal-servico-nome {
+  .campo-modal-servico-nome,
+  .campo-modal-nome {
     grid-column: 1 / -1;
   }
 
-  .botao-ok-modal-servico {
+  .botao-ok-modal-servico,
+  .botao-ok-modal-peca {
     grid-column: 1 / -1;
     width: 100%;
     min-width: 0;
@@ -905,31 +876,11 @@
     font-size: 15px;
   }
 
-  .corpo-lista-modal-peca {
-    min-height: 160px;
-  }
-
-  .rodape-modal-peca {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    padding: 18px 16px 28px;
-  }
-
   .campo-modal-id,
   .campo-modal-qtd,
   .campo-modal-unitario,
   .campo-modal-total {
     min-width: 0;
-  }
-
-  .campo-modal-nome {
-    grid-column: 1 / -1;
-  }
-
-  .botao-ok-modal-peca {
-    grid-column: 1 / -1;
-    width: 100%;
-    margin-top: 6px;
   }
 }
 
