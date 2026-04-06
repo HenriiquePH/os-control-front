@@ -28,6 +28,7 @@ export interface NovoVeiculo {
 export interface ClienteSalvo extends ClienteFormulario {
   id: string;
   veiculos: Veiculo[];
+  enderecoId?: number;
 }
 
 export interface ClienteLista {
@@ -36,4 +37,43 @@ export interface ClienteLista {
   telefone: string;
   cidade: string;
   veiculo: string;
+}
+
+export interface EstadoApi {
+  id: number;
+  nome: string;
+}
+
+export interface CidadeApi {
+  id: number;
+  nome: string;
+  estado: EstadoApi | null;
+}
+
+export interface EnderecoApi {
+  id?: number;
+  rua: string;
+  bairro: string;
+  cep: string;
+  complemento: string;
+  cidade: CidadeApi | null;
+}
+
+export interface VeiculoApi {
+  id?: number;
+  marca: string;
+  placa: string;
+  modelo: string;
+  ano: number | null;
+  cor?: string | null;
+}
+
+export interface ClienteApi {
+  id: number;
+  nome: string;
+  cpf: string;
+  telefone: string;
+  email: string;
+  endereco: EnderecoApi | null;
+  veiculos: VeiculoApi[];
 }

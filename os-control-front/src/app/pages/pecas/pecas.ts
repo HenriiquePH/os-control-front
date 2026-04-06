@@ -47,35 +47,35 @@ export class Pecas implements OnInit {
       return;
     }
 
-    const id = this.pecaId || this.pecasService.gerarProximoId();
     const pecaSalva: PecaSalva = {
-      id,
+      id: this.pecaId,
       nome,
       valor: this.formatarMoeda(valor),
       valorUnitario: valor,
     };
 
-    this.pecasService.salvar(pecaSalva);
-    this.router.navigate(['/pecas']);
+    this.pecasService.salvar(pecaSalva).subscribe({
+      next: () => this.router.navigate(['/pecas']),
+      error: (erro) => console.error('Erro ao salvar peca no backend.', erro),
+    });
   }
 
   private carregarPeca(id: string) {
-    const peca = this.pecasService.buscarPorId(id);
-
-    if (!peca) {
-      return;
-    }
-
-    this.modoEdicao = true;
-    this.pecaId = peca.id;
-    this.peca = {
-      nome: peca.nome,
-      valor: typeof peca.valorUnitario === 'number' ? String(peca.valorUnitario) : peca.valor,
-    };
+    this.pecasService.buscarPorId(id).subscribe({
+      next: (peca) => {
+        this.modoEdicao = true;
+        this.pecaId = peca.id;
+        this.peca = {
+          nome: peca.nome,
+          valor: typeof peca.valorUnitario === 'number' ? String(peca.valorUnitario) : peca.valor,
+        };
+      },
+      error: (erro) => console.error('Erro ao carregar peca do backend.', erro),
+    });
   }
 
   private prepararNovoCadastro() {
-    this.pecaId = this.pecasService.gerarProximoId();
+    this.pecaId = '';
   }
 
   private converterEmNumero(valor: string) {

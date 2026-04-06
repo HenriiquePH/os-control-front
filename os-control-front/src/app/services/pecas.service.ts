@@ -1,121 +1,86 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
-import { PecaLista, PecaSalva } from '../models/peca.model';
+import { PecaApi, PecaLista, PecaSalva } from '../models/peca.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PecasService {
-  private readonly chavesStorage = ['pecasCadastradas', 'pecas', 'cadastroPecas'];
+  private readonly apiUrl = 'http://localhost:8080/peca';
 
-  listar(): PecaSalva[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-      if (!valor) {
-        continue;
-      }
+  listar(): Observable<PecaSalva[]> {
+    return this.http.get<PecaApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((pecas) => pecas.map((peca) => this.mapearPecaSalva(peca)))
+    );
+  }
 
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as PecaSalva[]) : [];
-      } catch {
-        continue;
-      }
+  listarLista(): Observable<PecaLista[]> {
+    return this.http.get<PecaApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((pecas) => pecas.map((peca) => this.mapearPecaLista(peca)))
+    );
+  }
+
+  buscarPorId(id: string): Observable<PecaSalva> {
+    return this.http.get<PecaApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((peca) => this.mapearPecaSalva(peca))
+    );
+  }
+
+  salvar(peca: PecaSalva): Observable<PecaSalva> {
+    const dados = {
+      descricao: peca.nome,
+      valorUnitario: peca.valorUnitario,
+    };
+
+    if (!peca.id) {
+      return this.http.post<PecaApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
+        map((novaPeca) => this.mapearPecaSalva(novaPeca))
+      );
     }
 
-    return [];
+    return this.http.put<PecaApi>(`${this.apiUrl}/${peca.id}`, dados, { headers: this.obterHeaders() }).pipe(
+      map((pecaAtualizada) => this.mapearPecaSalva(pecaAtualizada))
+    );
   }
 
-  listarLista(): PecaLista[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearPeca(item, indice))
-      .filter((item): item is PecaLista => item !== null);
+  excluir(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
   }
 
-  buscarPorId(id: string): PecaSalva | undefined {
-    return this.listar().find((item) => item.id === id);
-  }
-
-  salvar(peca: PecaSalva) {
-    const pecas = this.listar();
-    const pecasAtualizadas = pecas.some((item) => item.id === peca.id)
-      ? pecas.map((item) => (item.id === peca.id ? peca : item))
-      : [...pecas, peca];
-
-    localStorage.setItem('pecasCadastradas', JSON.stringify(pecasAtualizadas));
-  }
-
-  excluir(id: string) {
-    const pecasAtualizadas = this.listarBrutos().filter((peca) => this.obterId(peca) !== id);
-    localStorage.setItem('pecasCadastradas', JSON.stringify(pecasAtualizadas));
-  }
-
-  gerarProximoId() {
-    const maiorId = this.listar().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
-  }
-
-  private listarBrutos(): unknown[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearPeca(item: unknown, indice: number): PecaLista | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['descricao']);
-
-    if (!nome) {
-      return null;
-    }
-
+  private mapearPecaSalva(peca: PecaApi): PecaSalva {
     return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0'),
-      nome,
-      valor: this.comoValor(registro['valor'] ?? registro['valorUnitario'] ?? registro['preco']),
+      id: String(peca.id).padStart(2, '0'),
+      nome: peca.descricao,
+      valor: this.formatarMoeda(peca.valorUnitario),
+      valorUnitario: peca.valorUnitario,
     };
   }
 
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
+  private mapearPecaLista(peca: PecaApi): PecaLista {
+    return {
+      id: String(peca.id).padStart(2, '0'),
+      nome: peca.descricao,
+      valor: this.formatarMoeda(peca.valorUnitario),
+    };
   }
 
-  private comoValor(valor: unknown): string {
-    if (typeof valor === 'number' && Number.isFinite(valor)) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-    }
-
-    return typeof valor === 'string' ? valor.trim() : '';
+  private formatarMoeda(valor: number) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(valor);
   }
 
-  private obterId(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
-
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo']);
+  private obterHeaders() {
+    // Por enquanto o token vai direto no service. Depois, o ponto certo para
+    // centralizar isso no projeto inteiro e um interceptor.
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.authService.obterToken()}`,
+    });
   }
 }

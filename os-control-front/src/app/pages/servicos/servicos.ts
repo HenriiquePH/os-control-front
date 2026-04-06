@@ -47,35 +47,35 @@ export class Servicos implements OnInit {
       return;
     }
 
-    const id = this.servicoId || this.servicosService.gerarProximoId();
     const servicoSalvo: ServicoSalvo = {
-      id,
+      id: this.servicoId,
       nome,
       valor: this.formatarMoeda(valor),
       preco: valor,
     };
 
-    this.servicosService.salvar(servicoSalvo);
-    this.router.navigate(['/servicos']);
+    this.servicosService.salvar(servicoSalvo).subscribe({
+      next: () => this.router.navigate(['/servicos']),
+      error: (erro) => console.error('Erro ao salvar servico no backend.', erro),
+    });
   }
 
   private carregarServico(id: string) {
-    const servico = this.servicosService.buscarPorId(id);
-
-    if (!servico) {
-      return;
-    }
-
-    this.modoEdicao = true;
-    this.servicoId = servico.id;
-    this.servico = {
-      nome: servico.nome,
-      valor: typeof servico.preco === 'number' ? String(servico.preco) : servico.valor,
-    };
+    this.servicosService.buscarPorId(id).subscribe({
+      next: (servico) => {
+        this.modoEdicao = true;
+        this.servicoId = servico.id;
+        this.servico = {
+          nome: servico.nome,
+          valor: typeof servico.preco === 'number' ? String(servico.preco) : servico.valor,
+        };
+      },
+      error: (erro) => console.error('Erro ao carregar servico do backend.', erro),
+    });
   }
 
   private prepararNovoCadastro() {
-    this.servicoId = this.servicosService.gerarProximoId();
+    this.servicoId = '';
   }
 
   private converterEmNumero(valor: string) {

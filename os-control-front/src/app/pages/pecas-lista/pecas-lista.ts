@@ -53,11 +53,21 @@ export class PecasLista implements OnInit {
       return;
     }
 
-    this.pecasService.excluir(id);
-    this.atualizarPecas();
+    this.pecasService.excluir(id).subscribe({
+      next: () => this.atualizarPecas(),
+      error: (erro) => console.error('Erro ao excluir peca no backend.', erro),
+    });
   }
 
   private atualizarPecas() {
-    this.pecas = this.pecasService.listarLista();
+    this.pecasService.listarLista().subscribe({
+      next: (pecas) => {
+        this.pecas = pecas;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar pecas do backend.', erro);
+        this.pecas = [];
+      },
+    });
   }
 }

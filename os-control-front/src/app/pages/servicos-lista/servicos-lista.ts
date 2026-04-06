@@ -46,11 +46,21 @@ export class ServicosLista implements OnInit {
       return;
     }
 
-    this.servicosService.excluir(id);
-    this.atualizarServicos();
+    this.servicosService.excluir(id).subscribe({
+      next: () => this.atualizarServicos(),
+      error: (erro) => console.error('Erro ao excluir servico no backend.', erro),
+    });
   }
 
   private atualizarServicos() {
-    this.servicos = this.servicosService.listarLista();
+    this.servicosService.listarLista().subscribe({
+      next: (servicos) => {
+        this.servicos = servicos;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar servicos do backend.', erro);
+        this.servicos = [];
+      },
+    });
   }
 }

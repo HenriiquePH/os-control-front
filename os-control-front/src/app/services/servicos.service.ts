@@ -1,121 +1,86 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
-import { ServicoLista, ServicoSalvo } from '../models/servico.model';
+import { ServicoApi, ServicoLista, ServicoSalvo } from '../models/servico.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServicosService {
-  private readonly chavesStorage = ['servicosCadastrados', 'servicos', 'cadastroServicos'];
+  private readonly apiUrl = 'http://localhost:8080/servico';
 
-  listar(): ServicoSalvo[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-      if (!valor) {
-        continue;
-      }
+  listar(): Observable<ServicoSalvo[]> {
+    return this.http.get<ServicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((servicos) => servicos.map((servico) => this.mapearServicoSalvo(servico)))
+    );
+  }
 
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as ServicoSalvo[]) : [];
-      } catch {
-        continue;
-      }
+  listarLista(): Observable<ServicoLista[]> {
+    return this.http.get<ServicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((servicos) => servicos.map((servico) => this.mapearServicoLista(servico)))
+    );
+  }
+
+  buscarPorId(id: string): Observable<ServicoSalvo> {
+    return this.http.get<ServicoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((servico) => this.mapearServicoSalvo(servico))
+    );
+  }
+
+  salvar(servico: ServicoSalvo): Observable<ServicoSalvo> {
+    const dados = {
+      descricao: servico.nome,
+      valor: servico.preco,
+    };
+
+    if (!servico.id) {
+      return this.http.post<ServicoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
+        map((novoServico) => this.mapearServicoSalvo(novoServico))
+      );
     }
 
-    return [];
+    return this.http.put<ServicoApi>(`${this.apiUrl}/${servico.id}`, dados, { headers: this.obterHeaders() }).pipe(
+      map((servicoAtualizado) => this.mapearServicoSalvo(servicoAtualizado))
+    );
   }
 
-  listarLista(): ServicoLista[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearServico(item, indice))
-      .filter((item): item is ServicoLista => item !== null);
+  excluir(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
   }
 
-  buscarPorId(id: string): ServicoSalvo | undefined {
-    return this.listar().find((item) => item.id === id);
-  }
-
-  salvar(servico: ServicoSalvo) {
-    const servicos = this.listar();
-    const servicosAtualizados = servicos.some((item) => item.id === servico.id)
-      ? servicos.map((item) => (item.id === servico.id ? servico : item))
-      : [...servicos, servico];
-
-    localStorage.setItem('servicosCadastrados', JSON.stringify(servicosAtualizados));
-  }
-
-  excluir(id: string) {
-    const servicosAtualizados = this.listarBrutos().filter((servico) => this.obterId(servico) !== id);
-    localStorage.setItem('servicosCadastrados', JSON.stringify(servicosAtualizados));
-  }
-
-  gerarProximoId() {
-    const maiorId = this.listar().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
-  }
-
-  private listarBrutos(): unknown[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearServico(item: unknown, indice: number): ServicoLista | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['descricao'] ?? registro['nomeServico']);
-
-    if (!nome) {
-      return null;
-    }
-
+  private mapearServicoSalvo(servico: ServicoApi): ServicoSalvo {
     return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0'),
-      nome,
-      valor: this.comoValor(registro['valor'] ?? registro['preco']),
+      id: String(servico.id).padStart(2, '0'),
+      nome: servico.descricao,
+      valor: this.formatarMoeda(servico.valor),
+      preco: servico.valor,
     };
   }
 
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
+  private mapearServicoLista(servico: ServicoApi): ServicoLista {
+    return {
+      id: String(servico.id).padStart(2, '0'),
+      nome: servico.descricao,
+      valor: this.formatarMoeda(servico.valor),
+    };
   }
 
-  private comoValor(valor: unknown): string {
-    if (typeof valor === 'number' && Number.isFinite(valor)) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-    }
-
-    return typeof valor === 'string' ? valor.trim() : '';
+  private formatarMoeda(valor: number) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(valor);
   }
 
-  private obterId(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
-
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo']);
+  private obterHeaders() {
+    // Por enquanto o token vai direto no service. Depois, o ponto certo para
+    // centralizar isso no projeto inteiro e um interceptor.
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.authService.obterToken()}`,
+    });
   }
 }

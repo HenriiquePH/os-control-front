@@ -3,6 +3,12 @@ export interface ServicoFormulario {
   valor: string;
 }
 
+export interface ServicoApi {
+  id: number;
+  descricao: string;
+  valor: number;
+}
+
 export interface ServicoSalvo {
   id: string;
   nome: string;

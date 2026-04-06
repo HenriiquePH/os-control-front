@@ -1,150 +1,175 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, map, of, switchMap } from 'rxjs';
 
-import { ClienteLista, ClienteSalvo } from '../models/cliente.model';
+import { AuthService } from './auth.service';
+import {
+  CidadeApi,
+  ClienteApi,
+  ClienteLista,
+  ClienteSalvo,
+  Veiculo,
+  VeiculoApi,
+} from '../models/cliente.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientesService {
-  private readonly chavesStorage = ['clientesCadastrados', 'clientes', 'cadastroClientes'];
+  private readonly apiUrl = 'http://localhost:8080/cliente';
+  private readonly cidadesUrl = 'http://localhost:8080/cidade';
 
-  listar(): ClienteSalvo[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-      if (!valor) {
-        continue;
-      }
+  listar(): Observable<ClienteSalvo[]> {
+    return this.http.get<ClienteApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((clientes) => clientes.map((cliente) => this.mapearCliente(cliente)))
+    );
+  }
 
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as ClienteSalvo[]) : [];
-      } catch {
-        continue;
-      }
+  listarLista(): Observable<ClienteLista[]> {
+    return this.listar().pipe(map((clientes) => clientes.map((cliente) => this.mapearLista(cliente))));
+  }
+
+  buscarPorId(id: string): Observable<ClienteSalvo> {
+    return this.http.get<ClienteApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((cliente) => this.mapearCliente(cliente))
+    );
+  }
+
+  salvar(cliente: ClienteSalvo): Observable<ClienteSalvo> {
+    return this.montarPayload(cliente).pipe(
+      switchMap((dados) => {
+        if (!cliente.id) {
+          return this.http.post<ClienteApi>(this.apiUrl, dados, { headers: this.obterHeaders() });
+        }
+
+        return this.http.put<ClienteApi>(`${this.apiUrl}/${cliente.id}`, dados, { headers: this.obterHeaders() });
+      }),
+      map((clienteSalvo) => this.mapearCliente(clienteSalvo))
+    );
+  }
+
+  excluir(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
+  }
+
+  private montarPayload(cliente: ClienteSalvo): Observable<Omit<ClienteApi, 'id'>> {
+    return this.resolverCidade(cliente.cidade, cliente.estado).pipe(
+      map((cidade) => ({
+        nome: cliente.nome.trim(),
+        cpf: cliente.cpf.trim(),
+        telefone: cliente.telefone.trim(),
+        email: '',
+        endereco: {
+          ...(cliente.enderecoId ? { id: cliente.enderecoId } : {}),
+          rua: cliente.rua.trim(),
+          bairro: cliente.bairro.trim(),
+          cep: cliente.cep.trim(),
+          complemento: cliente.complemento.trim(),
+          cidade,
+        },
+        veiculos: cliente.veiculos.map((veiculo) => this.mapearVeiculoApi(veiculo)),
+      }))
+    );
+  }
+
+  private resolverCidade(nomeCidade: string, nomeEstado: string): Observable<CidadeApi | null> {
+    const cidade = nomeCidade.trim();
+    const estado = nomeEstado.trim();
+
+    if (!cidade) {
+      return of(null);
     }
 
-    return [];
+    // Cliente no backend precisa receber a cidade pelo id. Aqui o service
+    // procura a cidade cadastrada antes de montar o payload final.
+    return this.http.get<CidadeApi[]>(this.cidadesUrl, { headers: this.obterHeaders() }).pipe(
+      map((cidades) => {
+        const cidadeEncontrada = cidades.find((item) => {
+          const mesmoNome = this.normalizar(item.nome) === this.normalizar(cidade);
+          const mesmoEstado =
+            !estado || this.normalizar(item.estado?.nome) === this.normalizar(estado);
+
+          return mesmoNome && mesmoEstado;
+        });
+
+        if (!cidadeEncontrada) {
+          throw new Error('Cidade não encontrada no backend.');
+        }
+
+        return cidadeEncontrada;
+      })
+    );
   }
 
-  listarLista(): ClienteLista[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearCliente(item, indice))
-      .filter((item): item is ClienteLista => item !== null);
-  }
-
-  buscarPorId(id: string): ClienteSalvo | undefined {
-    return this.listar().find((item) => item.id === id);
-  }
-
-  salvar(cliente: ClienteSalvo) {
-    const clientes = this.listar();
-    const clientesAtualizados = clientes.some((item) => item.id === cliente.id)
-      ? clientes.map((item) => (item.id === cliente.id ? cliente : item))
-      : [...clientes, cliente];
-
-    localStorage.setItem('clientesCadastrados', JSON.stringify(clientesAtualizados));
-  }
-
-  excluir(id: string) {
-    const clientesAtualizados = this.listarBrutos().filter((cliente) => this.obterId(cliente) !== id);
-    localStorage.setItem('clientesCadastrados', JSON.stringify(clientesAtualizados));
-  }
-
-  gerarProximoId() {
-    return String(this.listar().length + 1).padStart(2, '0');
-  }
-
-  private listarBrutos(): unknown[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearCliente(item: unknown, indice: number): ClienteLista | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const endereco = registro['endereco'];
-    const enderecoObjeto = endereco && typeof endereco === 'object' ? (endereco as Record<string, unknown>) : null;
-    const veiculo = registro['veiculo'];
-    const veiculoObjeto = veiculo && typeof veiculo === 'object' ? (veiculo as Record<string, unknown>) : null;
-    const veiculos = registro['veiculos'];
-    const veiculosLista = Array.isArray(veiculos) ? veiculos : [];
-    const nome = this.comoTexto(registro['nome'] ?? registro['nomeCliente']);
-
-    if (!nome) {
-      return null;
-    }
-
-    const id = this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idCliente']) || String(indice + 1).padStart(2, '0');
-    const telefone = this.comoTexto(registro['telefone'] ?? registro['celular'] ?? registro['fone']) || '--';
-    const cidade = this.comoTexto(registro['cidade'] ?? enderecoObjeto?.['cidade']) || '--';
-    const veiculoNome =
-      this.comoTexto(registro['veiculoPrincipal'] ?? registro['modeloVeiculo'] ?? registro['modelo']) ||
-      this.montarVeiculoLista(veiculosLista) ||
-      this.montarVeiculo(veiculoObjeto) ||
-      '--';
-
+  private mapearCliente(cliente: ClienteApi): ClienteSalvo {
     return {
-      id,
-      nome,
-      telefone,
-      cidade,
-      veiculo: veiculoNome,
+      id: String(cliente.id).padStart(2, '0'),
+      nome: cliente.nome ?? '',
+      cpf: cliente.cpf ?? '',
+      telefone: cliente.telefone ?? '',
+      rua: cliente.endereco?.rua ?? '',
+      bairro: cliente.endereco?.bairro ?? '',
+      cidade: cliente.endereco?.cidade?.nome ?? '',
+      estado: cliente.endereco?.cidade?.estado?.nome ?? '',
+      cep: cliente.endereco?.cep ?? '',
+      complemento: cliente.endereco?.complemento ?? '',
+      veiculos: Array.isArray(cliente.veiculos) ? cliente.veiculos.map((veiculo) => this.mapearVeiculo(veiculo)) : [],
+      enderecoId: cliente.endereco?.id,
     };
   }
 
-  private montarVeiculo(veiculo: Record<string, unknown> | null): string {
-    if (!veiculo) {
-      return '';
-    }
+  private mapearLista(cliente: ClienteSalvo): ClienteLista {
+    const primeiroVeiculo = cliente.veiculos[0];
+    const veiculo = primeiroVeiculo ? [primeiroVeiculo.marca, primeiroVeiculo.modelo].filter(Boolean).join(' ') : '--';
 
-    const marca = this.comoTexto(veiculo['marca']);
-    const modelo = this.comoTexto(veiculo['modelo']);
-
-    return [marca, modelo].filter(Boolean).join(' ');
+    return {
+      id: cliente.id,
+      nome: cliente.nome || '--',
+      telefone: cliente.telefone || '--',
+      cidade: cliente.cidade || '--',
+      veiculo: veiculo || '--',
+    };
   }
 
-  private montarVeiculoLista(veiculos: unknown[]) {
-    const primeiroVeiculo = veiculos[0];
-
-    if (!primeiroVeiculo || typeof primeiroVeiculo !== 'object') {
-      return '';
-    }
-
-    const registro = primeiroVeiculo as Record<string, unknown>;
-    const marca = this.comoTexto(registro['marca']);
-    const modelo = this.comoTexto(registro['modelo']);
-
-    return [marca, modelo].filter(Boolean).join(' ');
+  private mapearVeiculo(veiculo: VeiculoApi): Veiculo {
+    return {
+      id: veiculo.id ? String(veiculo.id) : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      marca: veiculo.marca ?? '',
+      placa: veiculo.placa ?? '',
+      modelo: veiculo.modelo ?? '',
+      ano: veiculo.ano ? String(veiculo.ano) : '',
+    };
   }
 
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
+  private mapearVeiculoApi(veiculo: Veiculo): VeiculoApi {
+    const id = Number(veiculo.id);
+    const ano = Number(veiculo.ano);
+
+    return {
+      ...(Number.isInteger(id) ? { id } : {}),
+      marca: veiculo.marca.trim(),
+      placa: veiculo.placa.trim(),
+      modelo: veiculo.modelo.trim(),
+      ano: Number.isInteger(ano) ? ano : null,
+      cor: null,
+    };
   }
 
-  private obterId(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
+  private normalizar(valor?: string | null) {
+    return (valor ?? '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
 
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idCliente']);
+  private obterHeaders() {
+    // Por enquanto o token vai direto no service. Depois, o ponto certo para
+    // centralizar isso no projeto inteiro e um interceptor.
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.authService.obterToken()}`,
+    });
   }
 }

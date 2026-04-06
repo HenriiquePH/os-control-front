@@ -3,6 +3,12 @@ export interface PecaFormulario {
   valor: string;
 }
 
+export interface PecaApi {
+  id: number;
+  descricao: string;
+  valorUnitario: number;
+}
+
 export interface PecaSalva {
   id: string;
   nome: string;

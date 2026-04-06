@@ -16,6 +16,7 @@ import { ClientesService } from '../../services/clientes.service';
 export class Clientes implements OnInit {
   modoEdicao: boolean = false;
   clienteId: string = '';
+  clienteEnderecoId?: number;
   usuarioLogado: string = 'Usuario';
   cadastroVeiculoAberto: boolean = false;
   cliente: ClienteFormulario = {
@@ -103,15 +104,20 @@ export class Clientes implements OnInit {
   }
 
   salvarCliente() {
-    const id = this.clienteId || this.clientesService.gerarProximoId();
     const clienteSalvo: ClienteSalvo = {
-      id,
+      id: this.clienteId,
       ...this.cliente,
       veiculos: this.veiculos,
+      enderecoId: this.modoEdicao ? this.clienteEnderecoId : undefined,
     };
 
-    this.clientesService.salvar(clienteSalvo);
-    this.router.navigate(['/clientes']);
+    this.clientesService.salvar(clienteSalvo).subscribe({
+      next: () => this.router.navigate(['/clientes']),
+      error: (erro) => {
+        console.error('Não foi possível salvar o cliente.', erro);
+        window.alert('Não foi possível salvar o cliente. Verifique se a cidade e o estado existem no backend.');
+      },
+    });
   }
 
   sair() {
@@ -120,26 +126,28 @@ export class Clientes implements OnInit {
   }
 
   private carregarCliente(id: string) {
-    const cliente = this.clientesService.buscarPorId(id);
-
-    if (!cliente) {
-      return;
-    }
-
-    this.modoEdicao = true;
-    this.clienteId = cliente.id;
-    this.cliente = {
-      nome: cliente.nome,
-      cpf: cliente.cpf,
-      telefone: cliente.telefone,
-      rua: cliente.rua,
-      bairro: cliente.bairro,
-      cidade: cliente.cidade,
-      estado: cliente.estado,
-      cep: cliente.cep,
-      complemento: cliente.complemento,
-    };
-    this.veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
+    this.clientesService.buscarPorId(id).subscribe({
+      next: (cliente) => {
+        this.modoEdicao = true;
+        this.clienteId = cliente.id;
+        this.clienteEnderecoId = cliente.enderecoId;
+        this.cliente = {
+          nome: cliente.nome,
+          cpf: cliente.cpf,
+          telefone: cliente.telefone,
+          rua: cliente.rua,
+          bairro: cliente.bairro,
+          cidade: cliente.cidade,
+          estado: cliente.estado,
+          cep: cliente.cep,
+          complemento: cliente.complemento,
+        };
+        this.veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar o cliente.', erro);
+      },
+    });
   }
 
   private limparNovoVeiculo() {
