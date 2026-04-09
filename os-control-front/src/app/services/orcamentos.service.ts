@@ -1,179 +1,223 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, map } from 'rxjs';
 
 import {
+  OrcamentoApi,
   OrcamentoImportacao,
   OrcamentoLista,
+  OrcamentoPecaApi,
   OrcamentoSalvo,
+  OrcamentoServicoApi,
   PecaSelecionada,
   ServicoSelecionado,
 } from '../models/orcamento.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrcamentosService {
-  private readonly chavesStorage = ['orcamentosCadastrados', 'orcamentos', 'cadastroOrcamentos'];
+  private readonly apiUrl = 'http://localhost:8080/orcamentos';
 
-  listar(): OrcamentoSalvo[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-      if (!valor) {
-        continue;
-      }
+  listar(): Observable<OrcamentoSalvo[]> {
+    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((orcamentos) => orcamentos.map((orcamento) => this.mapearOrcamentoSalvo(orcamento)))
+    );
+  }
 
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as OrcamentoSalvo[]) : [];
-      } catch {
-        continue;
-      }
+  listarLista(): Observable<OrcamentoLista[]> {
+    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((orcamentos) => orcamentos.map((orcamento) => this.mapearLista(orcamento)))
+    );
+  }
+
+  listarImportacao(): Observable<OrcamentoImportacao[]> {
+    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((orcamentos) => orcamentos.map((orcamento) => this.mapearImportacao(orcamento)))
+    );
+  }
+
+  buscarPorId(id: string): Observable<OrcamentoSalvo> {
+    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((orcamento) => this.mapearOrcamentoSalvo(orcamento))
+    );
+  }
+
+  buscarParaImportacao(id: string): Observable<OrcamentoImportacao> {
+    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((orcamento) => this.mapearImportacao(orcamento))
+    );
+  }
+
+  salvar(orcamento: OrcamentoSalvo): Observable<OrcamentoSalvo> {
+    const dados = {
+      nomeOrcamento: orcamento.nomeOrcamento,
+      dataCriacao: this.converterDataParaApi(orcamento.dataAbertura),
+      observacao: orcamento.observacao,
+      itensPecas: orcamento.pecas.map((peca) => this.mapearPecaParaApi(peca)),
+      itensServicos: orcamento.servicos.map((servico) => this.mapearServicoParaApi(servico)),
+    };
+
+    if (!orcamento.id) {
+      return this.http.post<OrcamentoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
+        map((novoOrcamento) => this.mapearOrcamentoSalvo(novoOrcamento))
+      );
     }
 
-    return [];
+    return this.http.put<OrcamentoApi>(`${this.apiUrl}/${orcamento.id}`, dados, { headers: this.obterHeaders() }).pipe(
+      map((orcamentoAtualizado) => this.mapearOrcamentoSalvo(orcamentoAtualizado))
+    );
   }
 
-  listarLista(): OrcamentoLista[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearLista(item, indice))
-      .filter((item): item is OrcamentoLista => item !== null);
+  excluir(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
   }
 
-  listarImportacao(): OrcamentoImportacao[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearImportacao(item, indice))
-      .filter((item): item is OrcamentoImportacao => item !== null);
-  }
-
-  buscarPorId(id: string): OrcamentoSalvo | undefined {
-    return this.listar().find((item) => item.id === id);
-  }
-
-  buscarParaImportacao(id: string): OrcamentoImportacao | undefined {
-    return this.listarImportacao().find((item) => item.id === id);
-  }
-
-  salvar(orcamento: OrcamentoSalvo) {
-    const orcamentos = this.listar();
-    const orcamentosAtualizados = orcamentos.some((item) => item.id === orcamento.id)
-      ? orcamentos.map((item) => (item.id === orcamento.id ? orcamento : item))
-      : [...orcamentos, orcamento];
-
-    localStorage.setItem('orcamentosCadastrados', JSON.stringify(orcamentosAtualizados));
-  }
-
-  excluir(id: string) {
-    const orcamentosAtualizados = this.listarBrutos().filter((orcamento) => this.obterId(orcamento) !== id);
-    localStorage.setItem('orcamentosCadastrados', JSON.stringify(orcamentosAtualizados));
-  }
-
-  gerarProximoId() {
-    const maiorId = this.listar().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
-  }
-
-  private listarBrutos(): unknown[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
-    }
-
-    return [];
-  }
-
-  private mapearLista(item: unknown, indice: number): OrcamentoLista | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['nomeOrcamento'] ?? registro['descricao']);
-
-    if (!nome) {
-      return null;
-    }
+  private mapearOrcamentoSalvo(orcamento: OrcamentoApi): OrcamentoSalvo {
+    const nome = orcamento.nomeOrcamento?.trim() || '';
+    const total = orcamento.valorTotal ?? 0;
 
     return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0'),
+      id: String(orcamento.id).padStart(2, '0'),
       nome,
-      valorTotal: this.comoValor(registro['valorTotal'] ?? registro['total'] ?? registro['valor']),
+      nomeOrcamento: nome,
+      dataAbertura: this.formatarData(orcamento.dataCriacao),
+      observacao: orcamento.observacao?.trim() || '',
+      servicos: this.mapearListaServicos(orcamento.itensServicos),
+      pecas: this.mapearListaPecas(orcamento.itensPecas),
+      valorTotal: this.formatarMoeda(total),
+      total,
+      cliente: '',
+      nomeCliente: '',
+      veiculo: '',
+      modelo: '',
     };
   }
 
-  private mapearImportacao(item: unknown, indice: number): OrcamentoImportacao | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
-
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['nomeOrcamento'] ?? registro['descricao']);
-
-    if (!nome) {
-      return null;
-    }
-
+  private mapearLista(orcamento: OrcamentoApi): OrcamentoLista {
     return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo']) || String(indice + 1).padStart(2, '0'),
-      nome,
-      cliente: this.comoTexto(registro['cliente'] ?? registro['nomeCliente']) || 'Cliente',
-      veiculo: this.comoTexto(registro['veiculo'] ?? registro['modelo']) || 'Veiculo',
-      dataAbertura: this.comoTexto(registro['dataAbertura']) || '14/03/2026',
-      observacao: this.comoTexto(registro['observacao']),
-      servicos: this.comoListaServicos(registro['servicos']),
-      pecas: this.comoListaPecas(registro['pecas']),
+      id: String(orcamento.id).padStart(2, '0'),
+      nome: orcamento.nomeOrcamento?.trim() || '',
+      valorTotal: this.formatarMoeda(orcamento.valorTotal ?? 0),
     };
   }
 
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
+  private mapearImportacao(orcamento: OrcamentoApi): OrcamentoImportacao {
+    return {
+      id: String(orcamento.id).padStart(2, '0'),
+      nome: orcamento.nomeOrcamento?.trim() || '',
+      cliente: 'Cliente',
+      veiculo: 'Veiculo',
+      dataAbertura: this.formatarData(orcamento.dataCriacao),
+      observacao: orcamento.observacao?.trim() || '',
+      servicos: this.mapearListaServicos(orcamento.itensServicos),
+      pecas: this.mapearListaPecas(orcamento.itensPecas),
+    };
   }
 
-  private comoValor(valor: unknown): string {
-    if (typeof valor === 'number' && Number.isFinite(valor)) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+  private mapearListaServicos(itens: OrcamentoServicoApi[] | null): ServicoSelecionado[] {
+    if (!Array.isArray(itens)) {
+      return [];
     }
 
-    return typeof valor === 'string' ? valor.trim() : '';
+    return itens
+      .filter((item) => item.servico?.id != null)
+      .map((item) => ({
+        id: String(item.servico!.id).padStart(2, '0'),
+        itemId: item.id,
+        nome: item.servico?.descricao?.trim() || '',
+        valor: item.valorTotal ?? item.valorUnitario ?? 0,
+      }));
   }
 
-  private comoListaServicos(valor: unknown) {
-    return Array.isArray(valor)
-      ? valor.filter(
-          (item): item is ServicoSelecionado =>
-            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
-        )
-      : [];
+  private mapearListaPecas(itens: OrcamentoPecaApi[] | null): PecaSelecionada[] {
+    if (!Array.isArray(itens)) {
+      return [];
+    }
+
+    return itens
+      .filter((item) => item.peca?.id != null)
+      .map((item) => ({
+        id: String(item.peca!.id).padStart(2, '0'),
+        itemId: item.id,
+        nome: item.peca?.descricao?.trim() || '',
+        quantidade: item.quantidade ?? 0,
+        valorUnitario: item.valorUnitario ?? 0,
+        valorTotal: item.valorTotal ?? 0,
+      }));
   }
 
-  private comoListaPecas(valor: unknown) {
-    return Array.isArray(valor)
-      ? valor.filter(
-          (item): item is PecaSelecionada =>
-            !!item && typeof item === 'object' && typeof (item as { nome?: unknown }).nome === 'string'
-        )
-      : [];
+  private mapearPecaParaApi(peca: PecaSelecionada) {
+    return {
+      ...(peca.itemId ? { id: peca.itemId } : {}),
+      valorUnitario: peca.valorUnitario,
+      quantidade: peca.quantidade,
+      valorTotal: peca.valorTotal,
+      peca: {
+        id: Number.parseInt(peca.id, 10),
+      },
+    };
   }
 
-  private obterId(item: unknown) {
-    if (!item || typeof item !== 'object') {
+  private mapearServicoParaApi(servico: ServicoSelecionado) {
+    return {
+      ...(servico.itemId ? { id: servico.itemId } : {}),
+      quantidade: 1,
+      valorUnitario: servico.valor,
+      valorTotal: servico.valor,
+      servico: {
+        id: Number.parseInt(servico.id, 10),
+      },
+    };
+  }
+
+  private converterDataParaApi(valor: string) {
+    const partes = valor.split('/');
+
+    if (partes.length !== 3) {
+      return null;
+    }
+
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]);
+    const ano = Number(partes[2]);
+
+    if (!Number.isFinite(dia) || !Number.isFinite(mes) || !Number.isFinite(ano)) {
+      return null;
+    }
+
+    return `${String(ano).padStart(4, '0')}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}T00:00:00`;
+  }
+
+  private formatarData(valor: string) {
+    const data = new Date(valor);
+
+    if (!Number.isFinite(data.getTime())) {
       return '';
     }
 
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo']);
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(data);
+  }
+
+  private formatarMoeda(valor: number) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(valor);
+  }
+
+  private obterHeaders() {
+    // Por enquanto o token vai direto no service. Depois, o ponto certo para
+    // centralizar isso no projeto inteiro e um interceptor.
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.authService.obterToken()}`,
+    });
   }
 }

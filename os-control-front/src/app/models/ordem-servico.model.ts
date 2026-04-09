@@ -14,10 +14,13 @@ export type AbaOs = 'pecas' | 'servicos';
 export interface OrdemServicoSalva {
   id: string;
   numeroOrcamento: string;
-  cliente: string;
-  veiculo: string;
+  clienteId: string;
+  clienteNome: string;
+  veiculoId: string;
+  veiculoNome: string;
   status: string;
-  tecnico: string;
+  tecnicoId: string;
+  tecnicoNome: string;
   dataAbertura: string;
   observacao: string;
   servicos: ServicoSelecionado[];
@@ -33,4 +36,44 @@ export interface OrdemServicoLista {
   veiculo: string;
   status: string;
   tecnico: string;
+}
+
+export interface OsPecaApi {
+  id?: number;
+  pecaId: number | null;
+  descricaoPeca: string | null;
+  quantidade: number | null;
+  valorUnitario: number | null;
+  valorTotal: number | null;
+}
+
+export interface OsServicoApi {
+  id?: number;
+  servicoId: number | null;
+  descricaoServico: string | null;
+  quantidade: number | null;
+  valorUnitario: number | null;
+  valorTotal: number | null;
+}
+
+export interface OrdemServicoApi {
+  id: number;
+  dataAbertura: string | null;
+  dataFechamento: string | null;
+  statusOs: string | null;
+  observacoes: string | null;
+  orcamentoId?: number | null;
+  desconto?: number | null;
+  valorTotalPecas: number | null;
+  valorTotalServico: number | null;
+  valorTotal: number | null;
+  clienteId: number | null;
+  clienteNome: string | null;
+  veiculoId: number | null;
+  veiculoPlaca: string | null;
+  veiculoModelo: string | null;
+  tecnicoResponsavelId: number | null;
+  tecnicoResponsavelNome: string | null;
+  pecas: OsPecaApi[] | null;
+  servicos: OsServicoApi[] | null;
 }

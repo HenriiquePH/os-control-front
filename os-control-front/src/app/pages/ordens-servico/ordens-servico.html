@@ -77,15 +77,46 @@
           <input class="entrada-campo entrada-campo-bloqueada" id="numero-os" type="text" [value]="numeroOs" readonly />
         </label>
 
-        <label class="campo-formulario campo-cliente" for="nome-cliente-os">
-          <span class="rotulo-campo">Nome do cliente</span>
-          <input class="entrada-campo" id="nome-cliente-os" type="text" [(ngModel)]="nomeCliente" name="nomeClienteOs" />
-        </label>
+        <div class="campo-formulario campo-cliente">
+          <label class="rotulo-campo" for="nome-cliente-os">Nome do cliente</label>
+          <span class="campo-select">
+            <select
+              class="entrada-campo seletor-campo"
+              id="nome-cliente-os"
+              [(ngModel)]="clienteId"
+              name="nomeClienteOs"
+              (ngModelChange)="selecionarCliente($event)"
+            >
+              <option value="" [disabled]="clientesDisponiveis.length > 0">Selecione um cliente</option>
+              <option *ngFor="let cliente of clientesDisponiveis" [ngValue]="cliente.id">
+                {{ cliente.nome }}
+              </option>
+              <option *ngIf="!clientesDisponiveis.length" value="" disabled>Nenhum cliente cadastrado</option>
+            </select>
+            <img class="icone-select" src="assets/icone-dropdown.png" alt="" />
+          </span>
+        </div>
 
-        <label class="campo-formulario campo-veiculo" for="veiculo-os">
-          <span class="rotulo-campo">Ve&iacute;culo</span>
-          <input class="entrada-campo" id="veiculo-os" type="text" [(ngModel)]="veiculo" name="veiculoOs" />
-        </label>
+        <div class="campo-formulario campo-veiculo">
+          <label class="rotulo-campo" for="veiculo-os">Ve&iacute;culo</label>
+          <span class="campo-select">
+            <select
+              class="entrada-campo seletor-campo"
+              id="veiculo-os"
+              [(ngModel)]="veiculoId"
+              name="veiculoOs"
+              [disabled]="!veiculosDisponiveis.length"
+              (ngModelChange)="selecionarVeiculo($event)"
+            >
+              <option value="" [disabled]="veiculosDisponiveis.length > 0">Selecione um ve&iacute;culo</option>
+              <option *ngFor="let veiculoItem of veiculosDisponiveis" [ngValue]="veiculoItem.id">
+                {{ veiculoItem.marca }} - {{ veiculoItem.modelo }} - {{ veiculoItem.placa }}
+              </option>
+              <option *ngIf="!veiculosDisponiveis.length" value="" disabled>Nenhum ve&iacute;culo dispon&iacute;vel</option>
+            </select>
+            <img class="icone-select" src="assets/icone-dropdown.png" alt="" />
+          </span>
+        </div>
 
         <div class="campo-formulario campo-status">
           <label class="rotulo-campo" for="status-os">Status</label>
@@ -107,10 +138,10 @@
         <div class="campo-formulario campo-tecnico">
           <label class="rotulo-campo" for="tecnico-os">Incluir t&eacute;cnico</label>
           <span class="campo-select">
-            <select class="entrada-campo seletor-campo" id="tecnico-os" [(ngModel)]="tecnicoSelecionado" name="tecnicoOs">
+            <select class="entrada-campo seletor-campo" id="tecnico-os" [(ngModel)]="tecnicoId" name="tecnicoOs">
               <option value="" [disabled]="tecnicosDisponiveis.length > 0">Selecione um t&eacute;cnico</option>
-              <option *ngFor="let tecnico of tecnicosDisponiveis" [ngValue]="tecnico">
-                {{ tecnico }}
+              <option *ngFor="let tecnico of tecnicosDisponiveis" [ngValue]="tecnico.id">
+                {{ tecnico.nome }}
               </option>
               <option *ngIf="!tecnicosDisponiveis.length" value="" disabled>Nenhum t&eacute;cnico cadastrado</option>
             </select>
@@ -291,19 +322,43 @@
         <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
       </button>
 
-      <div class="grade-rotulos-modal-servico">
+      <div class="cabecalho-lista-modal-servico">
         <span>Id</span>
         <span>Servi&ccedil;os</span>
         <span>Valor do servi&ccedil;o</span>
       </div>
 
-      <div class="grade-campos-modal-servico">
-        <input class="entrada-campo entrada-campo-bloqueada entrada-id-modal" type="text" [value]="novoServico.id" readonly />
-        <input class="entrada-campo" type="text" [(ngModel)]="novoServico.nome" name="osNovoServicoNome" />
-        <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="osNovoServicoValor" />
+      <div class="corpo-lista-modal-servico">
+        <button
+          class="linha-modal grade-modal-servico"
+          type="button"
+          *ngFor="let item of servicosDisponiveisFiltrados"
+          (click)="selecionarServico(item)"
+        >
+          <span>{{ item.id }}</span>
+          <span>{{ item.nome }}</span>
+          <span class="coluna-valor">{{ item.valor }}</span>
+        </button>
       </div>
 
-      <button class="botao-ok-modal" type="button" (click)="confirmarServico()">Confirmar</button>
+      <div class="rodape-modal-servico">
+        <label class="campo-modal-servico campo-modal-servico-id">
+          <span>Id</span>
+          <input class="entrada-campo entrada-campo-bloqueada entrada-id-modal" type="text" [value]="novoServico.id" readonly />
+        </label>
+
+        <label class="campo-modal-servico campo-modal-servico-nome">
+          <span>Servi&ccedil;os</span>
+          <input class="entrada-campo" type="text" [(ngModel)]="novoServico.nome" name="osNovoServicoNome" />
+        </label>
+
+        <label class="campo-modal-servico campo-modal-servico-valor">
+          <span>Valor do servi&ccedil;o</span>
+          <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="osNovoServicoValor" />
+        </label>
+
+        <button class="botao-ok-modal botao-ok-modal-servico" type="button" (click)="confirmarServico()">Confirmar</button>
+      </div>
     </div>
   </div>
 
@@ -321,7 +376,20 @@
         <span>Valor total</span>
       </div>
 
-      <div class="corpo-lista-modal-peca"></div>
+      <div class="corpo-lista-modal-peca">
+        <button
+          class="linha-modal grade-modal-peca"
+          type="button"
+          *ngFor="let item of pecasDisponiveisFiltradas"
+          (click)="selecionarPeca(item)"
+        >
+          <span>{{ item.id }}</span>
+          <span>{{ item.nome }}</span>
+          <span class="coluna-quantidade">--</span>
+          <span class="coluna-unitario">{{ item.valor }}</span>
+          <span class="coluna-valor">--</span>
+        </button>
+      </div>
 
       <div class="rodape-modal-peca">
         <label class="campo-modal-peca campo-modal-id">

@@ -9,8 +9,12 @@ import {
   PecaSelecionada,
   ServicoSelecionado,
 } from '../../models/orcamento.model';
+import { PecaSalva } from '../../models/peca.model';
+import { ServicoSalvo } from '../../models/servico.model';
 import { AuthService } from '../../services/auth.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
+import { PecasService } from '../../services/pecas.service';
+import { ServicosService } from '../../services/servicos.service';
 
 @Component({
   selector: 'app-orcamentos',
@@ -27,7 +31,6 @@ export class Orcamentos implements OnInit {
 
   abaAtiva: AbaOrcamento = 'servicos';
   calendarioAberto: boolean = false;
-  modalPdfAberto: boolean = false;
   modalServicoAberto: boolean = false;
   modalPecaAberto: boolean = false;
 
@@ -39,6 +42,8 @@ export class Orcamentos implements OnInit {
 
   servicosSelecionados: ServicoSelecionado[] = [];
   pecasSelecionadas: PecaSelecionada[] = [];
+  servicosDisponiveis: ServicoSalvo[] = [];
+  pecasDisponiveis: PecaSalva[] = [];
 
   novoServico = {
     id: '',
@@ -57,14 +62,17 @@ export class Orcamentos implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private orcamentosService: OrcamentosService,
+    private pecasService: PecasService,
+    private servicosService: ServicosService,
     private authService: AuthService
   ) {
     this.usuarioLogado = this.authService.obterUsuario();
-    this.orcamentoId = this.orcamentosService.gerarProximoId();
     this.sincronizarCalendario(this.dataSelecionada);
   }
 
   ngOnInit() {
+    this.carregarCatalogos();
+
     const id = this.route.snapshot.paramMap.get('orcamentoId');
 
     if (!id) {
@@ -108,6 +116,22 @@ export class Orcamentos implements OnInit {
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
+  get servicosDisponiveisFiltrados() {
+    const termo = this.novoServico.nome.trim().toLowerCase();
+
+    return this.servicosDisponiveis.filter((servico) => {
+      return !termo || servico.nome.toLowerCase().includes(termo) || servico.id.toLowerCase().includes(termo);
+    });
+  }
+
+  get pecasDisponiveisFiltradas() {
+    const termo = this.novaPeca.nome.trim().toLowerCase();
+
+    return this.pecasDisponiveis.filter((peca) => {
+      return !termo || peca.nome.toLowerCase().includes(termo) || peca.id.toLowerCase().includes(termo);
+    });
+  }
+
   selecionarAba(aba: AbaOrcamento) {
     this.abaAtiva = aba;
   }
@@ -126,18 +150,27 @@ export class Orcamentos implements OnInit {
     this.limparNovoServico();
   }
 
+  selecionarServico(servico: ServicoSalvo) {
+    this.novoServico = {
+      id: servico.id,
+      nome: servico.nome,
+      valor: String(servico.preco),
+    };
+  }
+
   confirmarServico() {
+    const id = Number.parseInt(this.novoServico.id.trim(), 10);
     const nome = this.novoServico.nome.trim();
     const valor = this.converterEmNumero(this.novoServico.valor);
 
-    if (!nome || valor === null) {
+    if (!Number.isFinite(id) || !nome || valor === null) {
       return;
     }
 
     this.servicosSelecionados = [
       ...this.servicosSelecionados,
       {
-        id: this.novoServico.id.trim() || '--',
+        id: String(id).padStart(2, '0'),
         nome,
         valor,
       },
@@ -151,19 +184,29 @@ export class Orcamentos implements OnInit {
     this.limparNovaPeca();
   }
 
+  selecionarPeca(peca: PecaSalva) {
+    this.novaPeca = {
+      ...this.novaPeca,
+      id: peca.id,
+      nome: peca.nome,
+      valorUnitario: String(peca.valorUnitario),
+    };
+  }
+
   confirmarPeca() {
+    const id = Number.parseInt(this.novaPeca.id.trim(), 10);
     const nome = this.novaPeca.nome.trim();
     const quantidade = Number(this.novaPeca.quantidade);
     const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
 
-    if (!nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
+    if (!Number.isFinite(id) || !nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return;
     }
 
     this.pecasSelecionadas = [
       ...this.pecasSelecionadas,
       {
-        id: this.novaPeca.id.trim() || '--',
+        id: String(id).padStart(2, '0'),
         nome,
         quantidade,
         valorUnitario,
@@ -199,26 +242,8 @@ export class Orcamentos implements OnInit {
     this.atualizarCalendario();
   }
 
-  abrirModalPdf() {
-    this.modalPdfAberto = true;
-  }
-
   confirmar() {
-    if (this.modoEdicao) {
-      this.salvarOrcamento();
-      return;
-    }
-
-    this.abrirModalPdf();
-  }
-
-  fecharModalPdf() {
-    this.modalPdfAberto = false;
-  }
-
-  abrirPdf() {
     this.salvarOrcamento();
-    this.fecharModalPdf();
   }
 
   formatarMoeda(valor: number) {
@@ -260,29 +285,58 @@ export class Orcamentos implements OnInit {
       modelo: '',
     };
 
-    this.orcamentosService.salvar(orcamentoSalvo);
-    this.router.navigate(['/orcamentos']);
+    this.orcamentosService.salvar(orcamentoSalvo).subscribe({
+      next: () => {
+        this.router.navigate(['/orcamentos']);
+      },
+      error: (erro) => {
+        console.error('Não foi possível salvar o orçamento.', erro);
+      },
+    });
+  }
+
+  private carregarCatalogos() {
+    this.servicosService.listar().subscribe({
+      next: (servicos) => {
+        this.servicosDisponiveis = servicos;
+      },
+      error: (erro) => {
+        console.error('NÃ£o foi possÃ­vel carregar os serviÃ§os.', erro);
+        this.servicosDisponiveis = [];
+      },
+    });
+
+    this.pecasService.listar().subscribe({
+      next: (pecas) => {
+        this.pecasDisponiveis = pecas;
+      },
+      error: (erro) => {
+        console.error('NÃ£o foi possÃ­vel carregar as peÃ§as.', erro);
+        this.pecasDisponiveis = [];
+      },
+    });
   }
 
   private carregarOrcamento(id: string) {
-    const orcamento = this.orcamentosService.buscarPorId(id);
+    this.orcamentosService.buscarPorId(id).subscribe({
+      next: (orcamento) => {
+        this.modoEdicao = true;
+        this.orcamentoId = orcamento.id;
+        this.nomeOrcamento = orcamento.nome || orcamento.nomeOrcamento || '';
+        this.observacao = orcamento.observacao || '';
+        this.servicosSelecionados = Array.isArray(orcamento.servicos) ? orcamento.servicos : [];
+        this.pecasSelecionadas = Array.isArray(orcamento.pecas) ? orcamento.pecas : [];
 
-    if (!orcamento) {
-      return;
-    }
+        const data = this.converterDataTexto(orcamento.dataAbertura);
 
-    this.modoEdicao = true;
-    this.orcamentoId = orcamento.id;
-    this.nomeOrcamento = orcamento.nome || orcamento.nomeOrcamento || '';
-    this.observacao = orcamento.observacao || '';
-    this.servicosSelecionados = Array.isArray(orcamento.servicos) ? orcamento.servicos : [];
-    this.pecasSelecionadas = Array.isArray(orcamento.pecas) ? orcamento.pecas : [];
-
-    const data = this.converterDataTexto(orcamento.dataAbertura);
-
-    if (data) {
-      this.sincronizarCalendario(data);
-    }
+        if (data) {
+          this.sincronizarCalendario(data);
+        }
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar o orçamento.', erro);
+      },
+    });
   }
 
   private limparNovoServico() {

@@ -15,3 +15,12 @@ export interface TecnicoLista {
   nome: string;
   telefone: string;
 }
+
+export interface TecnicoApi {
+  id: number;
+  nome: string;
+  cpf: string;
+  telefone: string;
+  login: string;
+  perfil: string;
+}

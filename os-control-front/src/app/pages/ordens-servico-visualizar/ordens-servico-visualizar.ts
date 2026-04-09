@@ -29,7 +29,15 @@ export class OrdensServicoVisualizar implements OnInit {
   }
 
   ngOnInit() {
-    this.ordens = this.ordensServicoService.listarVisualizacao();
+    this.ordensServicoService.listarVisualizacao().subscribe({
+      next: (ordens) => {
+        this.ordens = ordens;
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar as ordens de servico.', erro);
+        this.ordens = [];
+      },
+    });
   }
 
   get ordensFiltradas(): OrdemServicoLista[] {

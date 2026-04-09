@@ -1,128 +1,108 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, map } from 'rxjs';
 
-import { TecnicoLista, TecnicoSalvo } from '../models/tecnico.model';
+import { TecnicoApi, TecnicoLista, TecnicoSalvo } from '../models/tecnico.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TecnicosService {
-  private readonly chavesStorage = ['tecnicosCadastrados', 'tecnicos', 'cadastroTecnicos'];
+  private readonly apiUrl = 'http://localhost:8080/usuario';
 
-  listar(): TecnicoSalvo[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-      if (!valor) {
-        continue;
-      }
+  listar(): Observable<TecnicoSalvo[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((usuarios) =>
+        usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoSalvo(usuario))
+      )
+    );
+  }
 
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? (dados as TecnicoSalvo[]) : [];
-      } catch {
-        continue;
-      }
+  listarLista(): Observable<TecnicoLista[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((usuarios) =>
+        usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoLista(usuario))
+      )
+    );
+  }
+
+  listarNomes(): Observable<string[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+      map((usuarios) =>
+        usuarios
+          .filter((usuario) => this.ehTecnico(usuario))
+          .map((usuario) => usuario.nome.trim())
+          .filter((nome) => nome.length > 0)
+      )
+    );
+  }
+
+  buscarPorId(id: string): Observable<TecnicoSalvo> {
+    return this.http.get<TecnicoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
+      map((usuario) => this.mapearTecnicoSalvo(usuario))
+    );
+  }
+
+  salvar(tecnico: TecnicoSalvo): Observable<TecnicoSalvo> {
+    const senha = tecnico.senha.trim();
+    const dados: Record<string, unknown> = {
+      nome: tecnico.nome,
+      cpf: tecnico.cpf,
+      telefone: tecnico.telefone,
+      login: tecnico.usuario,
+      perfil: 'ROLE_USUARIO',
+    };
+
+    if (!tecnico.id || senha) {
+      dados['senha'] = senha;
     }
 
-    return [];
-  }
-
-  listarLista(): TecnicoLista[] {
-    return this.listarBrutos()
-      .map((item, indice) => this.mapearTecnico(item, indice))
-      .filter((item): item is TecnicoLista => item !== null);
-  }
-
-  listarNomes(): string[] {
-    return this.listarBrutos()
-      .map((item) => this.mapearNomeTecnico(item))
-      .filter((nome) => nome.length > 0);
-  }
-
-  buscarPorId(id: string): TecnicoSalvo | undefined {
-    return this.listar().find((item) => item.id === id);
-  }
-
-  salvar(tecnico: TecnicoSalvo) {
-    const tecnicos = this.listar();
-    const tecnicosAtualizados = tecnicos.some((item) => item.id === tecnico.id)
-      ? tecnicos.map((item) => (item.id === tecnico.id ? tecnico : item))
-      : [...tecnicos, tecnico];
-
-    localStorage.setItem('tecnicosCadastrados', JSON.stringify(tecnicosAtualizados));
-  }
-
-  excluir(id: string) {
-    const tecnicosAtualizados = this.listarBrutos().filter((tecnico) => this.obterId(tecnico) !== id);
-    localStorage.setItem('tecnicosCadastrados', JSON.stringify(tecnicosAtualizados));
-  }
-
-  gerarProximoId() {
-    const maiorId = this.listar().reduce((maior, item) => {
-      const numero = Number.parseInt(item.id, 10);
-      return Number.isFinite(numero) ? Math.max(maior, numero) : maior;
-    }, 0);
-
-    return String(maiorId + 1).padStart(2, '0');
-  }
-
-  private listarBrutos(): unknown[] {
-    for (const chave of this.chavesStorage) {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        continue;
-      }
-
-      try {
-        const dados = JSON.parse(valor);
-        return Array.isArray(dados) ? dados : [];
-      } catch {
-        continue;
-      }
+    if (!tecnico.id) {
+      return this.http.post<TecnicoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
+        map((novoTecnico) => this.mapearTecnicoSalvo(novoTecnico))
+      );
     }
 
-    return [];
+    return this.http.put<TecnicoApi>(`${this.apiUrl}/${tecnico.id}`, dados, { headers: this.obterHeaders() }).pipe(
+      map((tecnicoAtualizado) => this.mapearTecnicoSalvo(tecnicoAtualizado))
+    );
   }
 
-  private mapearTecnico(item: unknown, indice: number): TecnicoLista | null {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
+  excluir(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
+  }
 
-    const registro = item as Record<string, unknown>;
-    const nome = this.comoTexto(registro['nome'] ?? registro['nomeTecnico']);
-
-    if (!nome) {
-      return null;
-    }
-
+  private mapearTecnicoSalvo(usuario: TecnicoApi): TecnicoSalvo {
     return {
-      id: this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idTecnico']) || String(indice + 1).padStart(2, '0'),
-      nome,
-      telefone: this.comoTexto(registro['telefone'] ?? registro['celular'] ?? registro['fone']) || '--',
+      id: String(usuario.id).padStart(2, '0'),
+      nome: usuario.nome,
+      cpf: usuario.cpf,
+      telefone: usuario.telefone,
+      usuario: usuario.login,
+      senha: '',
     };
   }
 
-  private comoTexto(valor: unknown): string {
-    return typeof valor === 'string' ? valor.trim() : '';
+  private mapearTecnicoLista(usuario: TecnicoApi): TecnicoLista {
+    return {
+      id: String(usuario.id).padStart(2, '0'),
+      nome: usuario.nome,
+      telefone: usuario.telefone || '--',
+    };
   }
 
-  private mapearNomeTecnico(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
-
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['nome'] ?? registro['usuario'] ?? registro['name']);
+  private ehTecnico(usuario: TecnicoApi) {
+    return usuario.perfil === 'ROLE_USUARIO';
   }
 
-  private obterId(item: unknown) {
-    if (!item || typeof item !== 'object') {
-      return '';
-    }
-
-    const registro = item as Record<string, unknown>;
-    return this.comoTexto(registro['id'] ?? registro['codigo'] ?? registro['idTecnico']);
+  private obterHeaders() {
+    // Por enquanto o token vai direto no service. Depois, o ponto certo para
+    // centralizar isso no projeto inteiro e um interceptor.
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.authService.obterToken()}`,
+    });
   }
 }

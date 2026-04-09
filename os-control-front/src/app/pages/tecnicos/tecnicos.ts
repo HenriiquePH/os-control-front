@@ -48,9 +48,8 @@ export class Tecnicos implements OnInit {
       return;
     }
 
-    const id = this.tecnicoId || this.tecnicosService.gerarProximoId();
     const tecnicoSalvo: TecnicoSalvo = {
-      id,
+      id: this.tecnicoId,
       nome,
       cpf: this.tecnico.cpf.trim(),
       telefone: this.tecnico.telefone.trim(),
@@ -58,25 +57,30 @@ export class Tecnicos implements OnInit {
       senha: this.tecnico.senha,
     };
 
-    this.tecnicosService.salvar(tecnicoSalvo);
-    this.router.navigate(['/tecnicos']);
+    this.tecnicosService.salvar(tecnicoSalvo).subscribe({
+      next: () => this.router.navigate(['/tecnicos']),
+      error: (erro) => {
+        console.error('Não foi possível salvar o técnico.', erro);
+      },
+    });
   }
 
   private carregarTecnico(id: string) {
-    const tecnico = this.tecnicosService.buscarPorId(id);
-
-    if (!tecnico) {
-      return;
-    }
-
-    this.modoEdicao = true;
-    this.tecnicoId = tecnico.id;
-    this.tecnico = {
-      nome: tecnico.nome,
-      cpf: tecnico.cpf,
-      telefone: tecnico.telefone,
-      usuario: tecnico.usuario,
-      senha: tecnico.senha,
-    };
+    this.tecnicosService.buscarPorId(id).subscribe({
+      next: (tecnico) => {
+        this.modoEdicao = true;
+        this.tecnicoId = tecnico.id;
+        this.tecnico = {
+          nome: tecnico.nome,
+          cpf: tecnico.cpf,
+          telefone: tecnico.telefone,
+          usuario: tecnico.usuario,
+          senha: '',
+        };
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar o técnico.', erro);
+      },
+    });
   }
 }

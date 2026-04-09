@@ -53,11 +53,25 @@ export class OrcamentosLista implements OnInit {
       return;
     }
 
-    this.orcamentosService.excluir(id);
-    this.atualizarOrcamentos();
+    this.orcamentosService.excluir(id).subscribe({
+      next: () => {
+        this.atualizarOrcamentos();
+      },
+      error: (erro) => {
+        console.error('Não foi possível excluir o orçamento.', erro);
+      },
+    });
   }
 
   private atualizarOrcamentos() {
-    this.orcamentos = this.orcamentosService.listarLista();
+    this.orcamentosService.listarLista().subscribe({
+      next: (orcamentos) => {
+        this.orcamentos = orcamentos;
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar os orçamentos.', erro);
+        this.orcamentos = [];
+      },
+    });
   }
 }

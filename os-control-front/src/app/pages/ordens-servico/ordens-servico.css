@@ -440,31 +440,72 @@
 }
 
 .modal-selecao-servico {
-  width: min(1136px, calc(100vw - 48px));
-  min-height: 368px;
-  padding: 92px 86px 56px;
+  display: flex;
+  flex-direction: column;
+  width: min(1136px, calc(100vw - 96px));
+  min-height: 460px;
+  padding: 58px 0 0;
+  overflow: hidden;
 }
 
-.grade-rotulos-modal-servico,
-.grade-campos-modal-servico {
+.cabecalho-lista-modal-servico {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr) 184px;
-  gap: 20px;
+  grid-template-columns: 78px minmax(0, 1fr) 230px;
+  gap: 24px;
   align-items: center;
-}
-
-.grade-rotulos-modal-servico {
-  margin-bottom: 10px;
-  font-size: 18px;
+  padding: 0 42px 16px;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
+  font-size: 20px;
   color: #5d5454;
-}
-
-.grade-campos-modal-servico {
-  margin-bottom: 58px;
 }
 
 .entrada-id-modal {
   background: #d3d3d3;
+}
+
+.corpo-lista-modal-servico {
+  flex: 1;
+  min-height: 0;
+  border-bottom: 1px solid rgba(93, 84, 84, 0.55);
+  overflow: auto;
+}
+
+.rodape-modal-servico {
+  display: grid;
+  grid-template-columns: 78px minmax(260px, 1fr) 230px 150px;
+  gap: 18px;
+  align-items: end;
+  padding: 18px 42px 34px;
+}
+
+.campo-modal-servico {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 18px;
+  color: #5d5454;
+}
+
+.linha-modal {
+  width: 100%;
+  padding: 12px 38px;
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  color: #5d5454;
+  text-align: left;
+  cursor: pointer;
+}
+
+.linha-modal:hover {
+  background: rgba(216, 211, 211, 0.28);
+}
+
+.grade-modal-servico {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) 230px;
+  gap: 24px;
+  align-items: center;
 }
 
 .botao-ok-modal {
@@ -480,6 +521,17 @@
   color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botao-ok-modal-servico {
+  width: 150px;
+  min-width: 150px;
+  height: 48px;
+  margin: 0;
+  padding: 0 18px;
+  align-self: end;
+  justify-self: end;
+  font-size: 20px;
 }
 
 .modal-selecao-peca {
@@ -509,6 +561,13 @@
   min-height: 0;
   border-bottom: 1px solid rgba(93, 84, 84, 0.55);
   overflow: auto;
+}
+
+.grade-modal-peca {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 88px 176px 176px;
+  gap: 24px;
+  align-items: center;
 }
 
 .rodape-modal-peca {
@@ -602,7 +661,29 @@
   }
 
   .modal-selecao-servico {
-    padding-inline: 34px;
+    width: calc(100vw - 72px);
+  }
+
+  .cabecalho-lista-modal-servico {
+    grid-template-columns: 68px minmax(0, 1fr) 190px;
+    gap: 16px;
+    padding-inline: 24px;
+    font-size: 18px;
+  }
+
+  .rodape-modal-servico {
+    grid-template-columns: 68px minmax(180px, 1fr) 190px 132px;
+    gap: 12px;
+    padding: 16px 24px 24px;
+  }
+
+  .linha-modal {
+    padding-inline: 24px;
+  }
+
+  .grade-modal-servico {
+    grid-template-columns: 68px minmax(0, 1fr) 190px;
+    gap: 16px;
   }
 }
 
@@ -662,6 +743,11 @@
     grid-template-columns: 72px minmax(0, 1fr) 74px 132px 132px;
     gap: 14px;
     padding-inline: 24px;
+  }
+
+  .grade-modal-peca {
+    grid-template-columns: 72px minmax(0, 1fr) 74px 132px 132px;
+    gap: 14px;
   }
 
   .rodape-modal-peca {
@@ -730,29 +816,42 @@
   }
 
   .modal-selecao-servico {
-    width: calc(100vw - 32px);
     min-height: auto;
-    padding: 86px 22px 34px;
-  }
-
-  .grade-rotulos-modal-servico,
-  .grade-campos-modal-servico {
-    grid-template-columns: 60px minmax(0, 1fr) 128px;
-    gap: 12px;
-  }
-
-  .grade-rotulos-modal-servico {
-    font-size: 15px;
-  }
-
-  .grade-campos-modal-servico {
-    margin-bottom: 34px;
   }
 
   .botao-ok-modal {
     min-width: 180px;
     height: 52px;
     font-size: 24px;
+  }
+
+  .cabecalho-lista-modal-servico {
+    grid-template-columns: 56px minmax(0, 1fr) 128px;
+    gap: 10px;
+    padding-inline: 16px;
+    font-size: 15px;
+  }
+
+  .corpo-lista-modal-servico,
+  .corpo-lista-modal-peca {
+    min-height: 160px;
+  }
+
+  .rodape-modal-servico,
+  .rodape-modal-peca {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 18px 16px 28px;
+  }
+
+  .linha-modal {
+    padding-inline: 16px;
+    font-size: 15px;
+  }
+
+  .grade-modal-servico {
+    grid-template-columns: 56px minmax(0, 1fr) 128px;
+    gap: 10px;
   }
 
   .modal-selecao-peca {
@@ -768,16 +867,6 @@
     font-size: 15px;
   }
 
-  .corpo-lista-modal-peca {
-    min-height: 160px;
-  }
-
-  .rodape-modal-peca {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    padding: 18px 16px 28px;
-  }
-
   .campo-modal-id,
   .campo-modal-qtd,
   .campo-modal-unitario,
@@ -785,15 +874,22 @@
     min-width: 0;
   }
 
+  .campo-modal-servico-nome,
   .campo-modal-nome {
     grid-column: 1 / -1;
   }
 
+  .botao-ok-modal-servico,
   .botao-ok-modal-peca {
     grid-column: 1 / -1;
     width: 100%;
     min-width: 0;
     margin-top: 6px;
+  }
+
+  .grade-modal-peca {
+    grid-template-columns: 56px minmax(0, 1fr) 56px 96px 96px;
+    gap: 10px;
   }
 }
 

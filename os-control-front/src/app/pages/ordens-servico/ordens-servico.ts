@@ -3,10 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AbaOs, DiaCalendario, OrdemServicoSalva } from '../../models/ordem-servico.model';
+import { ClienteSalvo, Veiculo } from '../../models/cliente.model';
+import { PecaSalva } from '../../models/peca.model';
+import { ServicoSalvo } from '../../models/servico.model';
 import { PecaSelecionada, ServicoSelecionado } from '../../models/orcamento.model';
 import { AuthService } from '../../services/auth.service';
+import { ClientesService } from '../../services/clientes.service';
 import { OrdensServicoService } from '../../services/ordens-servico.service';
-import { OrcamentosService } from '../../services/orcamentos.service';
+import { PecasService } from '../../services/pecas.service';
+import { ServicosService } from '../../services/servicos.service';
 import { TecnicosService } from '../../services/tecnicos.service';
 
 @Component({
@@ -20,16 +25,21 @@ export class OrdensServico implements OnInit {
   modoEdicao: boolean = false;
   numeroOs: string = '';
   numeroOrcamento: string = '';
+  clienteId: string = '';
   nomeCliente: string = '';
+  clientesDisponiveis: ClienteSalvo[] = [];
+  veiculoId: string = '';
   veiculo: string = '';
+  veiculosDisponiveis: Veiculo[] = [];
   observacao: string = '';
   abaAtiva: AbaOs = 'pecas';
 
   opcoesStatus: string[] = ['Aberto', 'Em andamento', 'Fechada'];
   statusSelecionado: string = 'Aberto';
 
-  tecnicosDisponiveis: string[] = [];
-  tecnicoSelecionado: string = '';
+  tecnicosDisponiveis: { id: string; nome: string }[] = [];
+  tecnicoId: string = '';
+  tecnicoNome: string = '';
 
   desconto: string = '';
 
@@ -45,6 +55,8 @@ export class OrdensServico implements OnInit {
 
   servicosSelecionados: ServicoSelecionado[] = [];
   pecasSelecionadas: PecaSelecionada[] = [];
+  servicosDisponiveis: ServicoSalvo[] = [];
+  pecasDisponiveis: PecaSalva[] = [];
 
   novoServico = {
     id: '',
@@ -62,8 +74,10 @@ export class OrdensServico implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private orcamentosService: OrcamentosService,
+    private clientesService: ClientesService,
     private ordensServicoService: OrdensServicoService,
+    private pecasService: PecasService,
+    private servicosService: ServicosService,
     private tecnicosService: TecnicosService,
     private authService: AuthService
   ) {
@@ -72,7 +86,7 @@ export class OrdensServico implements OnInit {
   }
 
   ngOnInit() {
-    this.tecnicosDisponiveis = this.tecnicosService.listarNomes();
+    this.carregarCatalogos();
 
     this.route.paramMap.subscribe((params) => {
       this.limparFormulario();
@@ -126,8 +140,34 @@ export class OrdensServico implements OnInit {
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
+  get servicosDisponiveisFiltrados() {
+    const termo = this.novoServico.nome.trim().toLowerCase();
+
+    return this.servicosDisponiveis.filter((servico) => {
+      return !termo || servico.nome.toLowerCase().includes(termo) || servico.id.toLowerCase().includes(termo);
+    });
+  }
+
+  get pecasDisponiveisFiltradas() {
+    const termo = this.novaPeca.nome.trim().toLowerCase();
+
+    return this.pecasDisponiveis.filter((peca) => {
+      return !termo || peca.nome.toLowerCase().includes(termo) || peca.id.toLowerCase().includes(termo);
+    });
+  }
+
   selecionarAba(aba: AbaOs) {
     this.abaAtiva = aba;
+  }
+
+  selecionarCliente(clienteId: string) {
+    this.clienteId = clienteId;
+    this.sincronizarClienteSelecionado(false);
+  }
+
+  selecionarVeiculo(veiculoId: string) {
+    this.veiculoId = veiculoId;
+    this.sincronizarVeiculoSelecionado();
   }
 
   abrirModalSelecao() {
@@ -144,18 +184,27 @@ export class OrdensServico implements OnInit {
     this.limparNovoServico();
   }
 
+  selecionarServico(servico: ServicoSalvo) {
+    this.novoServico = {
+      id: servico.id,
+      nome: servico.nome,
+      valor: String(servico.preco),
+    };
+  }
+
   confirmarServico() {
+    const id = Number.parseInt(this.novoServico.id.trim(), 10);
     const nome = this.novoServico.nome.trim();
     const valor = this.converterEmNumero(this.novoServico.valor);
 
-    if (!nome || valor === null) {
+    if (!Number.isFinite(id) || !nome || valor === null) {
       return;
     }
 
     this.servicosSelecionados = [
       ...this.servicosSelecionados,
       {
-        id: this.novoServico.id.trim() || '--',
+        id: String(id).padStart(2, '0'),
         nome,
         valor,
       },
@@ -169,19 +218,29 @@ export class OrdensServico implements OnInit {
     this.limparNovaPeca();
   }
 
+  selecionarPeca(peca: PecaSalva) {
+    this.novaPeca = {
+      ...this.novaPeca,
+      id: peca.id,
+      nome: peca.nome,
+      valorUnitario: String(peca.valorUnitario),
+    };
+  }
+
   confirmarPeca() {
+    const id = Number.parseInt(this.novaPeca.id.trim(), 10);
     const nome = this.novaPeca.nome.trim();
     const quantidade = Number(this.novaPeca.quantidade);
     const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
 
-    if (!nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
+    if (!Number.isFinite(id) || !nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return;
     }
 
     this.pecasSelecionadas = [
       ...this.pecasSelecionadas,
       {
-        id: this.novaPeca.id.trim() || '--',
+        id: String(id).padStart(2, '0'),
         nome,
         quantidade,
         valorUnitario,
@@ -226,12 +285,15 @@ export class OrdensServico implements OnInit {
 
   salvarOs() {
     const ordem: OrdemServicoSalva = {
-      id: this.numeroOs || this.ordensServicoService.gerarProximoId(),
+      id: this.numeroOs,
       numeroOrcamento: this.numeroOrcamento,
-      cliente: this.nomeCliente.trim() || 'Cliente',
-      veiculo: this.veiculo.trim() || 'Veiculo',
+      clienteId: this.clienteId,
+      clienteNome: this.nomeCliente.trim(),
+      veiculoId: this.veiculoId,
+      veiculoNome: this.veiculo.trim(),
       status: this.statusSelecionado,
-      tecnico: this.tecnicoSelecionado || '--',
+      tecnicoId: this.tecnicoId,
+      tecnicoNome: this.obterNomeTecnicoSelecionado(),
       dataAbertura: this.dataAbertura,
       observacao: this.observacao.trim(),
       servicos: this.servicosSelecionados,
@@ -240,8 +302,14 @@ export class OrdensServico implements OnInit {
       totalOs: this.totalOs,
     };
 
-    this.ordensServicoService.salvar(ordem);
-    this.router.navigate(['/ordens-servico/visualizar']);
+    this.ordensServicoService.salvar(ordem).subscribe({
+      next: () => {
+        this.router.navigate(['/ordens-servico/visualizar']);
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel salvar a OS.', erro);
+      },
+    });
   }
 
   sair() {
@@ -249,66 +317,125 @@ export class OrdensServico implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  private carregarCatalogos() {
+    this.clientesService.listar().subscribe({
+      next: (clientes) => {
+        this.clientesDisponiveis = clientes;
+        this.sincronizarClienteSelecionado(true);
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar os clientes.', erro);
+        this.clientesDisponiveis = [];
+        this.veiculosDisponiveis = [];
+      },
+    });
+
+    this.tecnicosService.listar().subscribe({
+      next: (tecnicos) => {
+        this.tecnicosDisponiveis = tecnicos.map((tecnico) => ({
+          id: tecnico.id,
+          nome: tecnico.nome,
+        }));
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar os tecnicos.', erro);
+        this.tecnicosDisponiveis = [];
+      },
+    });
+
+    this.servicosService.listar().subscribe({
+      next: (servicos) => {
+        this.servicosDisponiveis = servicos;
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar os servicos.', erro);
+        this.servicosDisponiveis = [];
+      },
+    });
+
+    this.pecasService.listar().subscribe({
+      next: (pecas) => {
+        this.pecasDisponiveis = pecas;
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar as pecas.', erro);
+        this.pecasDisponiveis = [];
+      },
+    });
+  }
+
   private carregarOrcamento(id: string) {
-    const orcamento = this.orcamentosService.buscarParaImportacao(id);
+    this.ordensServicoService.buscarParaImportacao(id).subscribe({
+      next: (ordem) => {
+        this.numeroOrcamento = ordem.numeroOrcamento || id.padStart(2, '0');
+        this.statusSelecionado = ordem.status || 'Aberto';
+        this.observacao = ordem.observacao;
+        this.desconto = ordem.desconto;
+        this.servicosSelecionados = ordem.servicos;
+        this.pecasSelecionadas = ordem.pecas;
 
-    if (!orcamento) {
-      return;
-    }
+        const data = this.converterDataTexto(ordem.dataAbertura);
 
-    this.numeroOrcamento = orcamento.id;
-    this.nomeCliente = orcamento.cliente;
-    this.veiculo = orcamento.veiculo;
-    this.observacao = orcamento.observacao;
-    this.servicosSelecionados = orcamento.servicos;
-    this.pecasSelecionadas = orcamento.pecas;
-
-    const data = this.converterDataTexto(orcamento.dataAbertura);
-
-    if (data) {
-      this.sincronizarCalendario(data);
-    }
+        if (data) {
+          this.sincronizarCalendario(data);
+        }
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar o orcamento para importacao.', erro);
+      },
+    });
   }
 
   private carregarOrdem(id: string) {
-    const ordem = this.ordensServicoService.buscarPorId(id);
+    this.ordensServicoService.buscarPorId(id).subscribe({
+      next: (ordem) => {
+        this.modoEdicao = true;
+        this.numeroOs = ordem.id;
+        this.numeroOrcamento = ordem.numeroOrcamento;
+        this.clienteId = ordem.clienteId;
+        this.nomeCliente = ordem.clienteNome;
+        this.veiculoId = ordem.veiculoId;
+        this.veiculo = ordem.veiculoNome;
+        this.observacao = ordem.observacao;
+        this.statusSelecionado = ordem.status || 'Aberto';
+        this.tecnicoId = ordem.tecnicoId;
+        this.tecnicoNome = ordem.tecnicoNome;
+        this.desconto = ordem.desconto;
+        this.servicosSelecionados = ordem.servicos;
+        this.pecasSelecionadas = ordem.pecas;
+        this.sincronizarClienteSelecionado(true);
 
-    if (!ordem) {
-      return;
-    }
+        const data = this.converterDataTexto(ordem.dataAbertura);
 
-    this.modoEdicao = true;
-    this.numeroOs = ordem.id;
-    this.numeroOrcamento = ordem.numeroOrcamento;
-    this.nomeCliente = ordem.cliente;
-    this.veiculo = ordem.veiculo;
-    this.observacao = ordem.observacao;
-    this.statusSelecionado = ordem.status || 'Aberto';
-    this.tecnicoSelecionado = ordem.tecnico === '--' ? '' : ordem.tecnico;
-    this.desconto = ordem.desconto;
-    this.servicosSelecionados = ordem.servicos;
-    this.pecasSelecionadas = ordem.pecas;
-
-    const data = this.converterDataTexto(ordem.dataAbertura);
-
-    if (data) {
-      this.sincronizarCalendario(data);
-    }
+        if (data) {
+          this.sincronizarCalendario(data);
+        }
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel carregar a ordem de servico.', erro);
+      },
+    });
   }
 
   private limparFormulario() {
     this.modoEdicao = false;
-    this.numeroOs = this.ordensServicoService.gerarProximoId();
+    this.numeroOs = '';
     this.numeroOrcamento = '';
+    this.clienteId = '';
     this.nomeCliente = '';
+    this.veiculoId = '';
     this.veiculo = '';
+    this.veiculosDisponiveis = [];
     this.observacao = '';
     this.abaAtiva = 'pecas';
     this.statusSelecionado = 'Aberto';
-    this.tecnicoSelecionado = '';
+    this.tecnicoId = '';
+    this.tecnicoNome = '';
     this.desconto = '';
     this.servicosSelecionados = [];
     this.pecasSelecionadas = [];
+    this.limparNovoServico();
+    this.limparNovaPeca();
     this.sincronizarCalendario(new Date());
   }
 
@@ -432,5 +559,44 @@ export class OrdensServico implements OnInit {
       dataA.getMonth() === dataB.getMonth() &&
       dataA.getFullYear() === dataB.getFullYear()
     );
+  }
+
+  private obterNomeTecnicoSelecionado() {
+    return this.tecnicosDisponiveis.find((tecnico) => tecnico.id === this.tecnicoId)?.nome || this.tecnicoNome || '';
+  }
+
+  private sincronizarClienteSelecionado(preservarVeiculo: boolean) {
+    const cliente = this.clientesDisponiveis.find((item) => item.id === this.clienteId);
+
+    if (!cliente) {
+      this.veiculosDisponiveis = [];
+
+      if (!preservarVeiculo) {
+        this.veiculoId = '';
+        this.veiculo = '';
+      }
+
+      return;
+    }
+
+    this.nomeCliente = cliente.nome;
+    this.veiculosDisponiveis = cliente.veiculos;
+
+    if (!preservarVeiculo) {
+      this.veiculoId = '';
+      this.veiculo = '';
+      return;
+    }
+
+    this.sincronizarVeiculoSelecionado();
+  }
+
+  private sincronizarVeiculoSelecionado() {
+    const veiculoSelecionado = this.veiculosDisponiveis.find((item) => item.id === this.veiculoId);
+    this.veiculo = veiculoSelecionado ? this.formatarVeiculo(veiculoSelecionado) : '';
+  }
+
+  private formatarVeiculo(veiculo: Veiculo) {
+    return [veiculo.marca, veiculo.modelo, veiculo.placa].filter(Boolean).join(' - ');
   }
 }

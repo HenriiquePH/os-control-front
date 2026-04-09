@@ -24,7 +24,15 @@ export class OrdensServicoImportar implements OnInit {
   }
 
   ngOnInit() {
-    this.orcamentos = this.orcamentosService.listarImportacao();
+    this.orcamentosService.listarImportacao().subscribe({
+      next: (orcamentos) => {
+        this.orcamentos = orcamentos;
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar os orçamentos.', erro);
+        this.orcamentos = [];
+      },
+    });
   }
 
   get orcamentosFiltrados(): OrcamentoImportacao[] {

@@ -244,20 +244,6 @@
     </div>
   </div>
 
-  <div class="sobreposicao-modal" *ngIf="modalPdfAberto" (click)="fecharModalPdf()">
-    <div class="modal-pdf" (click)="$event.stopPropagation()">
-      <button class="botao-fechar-modal" type="button" (click)="fecharModalPdf()" aria-label="Fechar confirmacao de PDF">
-        <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
-      </button>
-
-      <h2 class="titulo-modal-pdf">Voc&ecirc; deseja?</h2>
-
-      <button class="botao-abrir-pdf" type="button" (click)="abrirPdf()">
-        Abrir PDF
-      </button>
-    </div>
-  </div>
-
   <div class="sobreposicao-modal" *ngIf="modalServicoAberto" (click)="fecharModalServico()">
     <div class="modal-selecao-servico" (click)="$event.stopPropagation()">
       <button class="botao-fechar-modal botao-fechar-modal-servico" type="button" (click)="fecharModalServico()" aria-label="Fechar selecao de servico">
@@ -270,7 +256,18 @@
         <span>Valor do servi&ccedil;o</span>
       </div>
 
-      <div class="corpo-lista-modal-servico"></div>
+      <div class="corpo-lista-modal-servico">
+        <button
+          class="linha-modal grade-modal-servico"
+          type="button"
+          *ngFor="let item of servicosDisponiveisFiltrados"
+          (click)="selecionarServico(item)"
+        >
+          <span>{{ item.id }}</span>
+          <span>{{ item.nome }}</span>
+          <span class="coluna-valor">{{ item.valor }}</span>
+        </button>
+      </div>
 
       <div class="rodape-modal-servico">
         <label class="campo-modal-servico campo-modal-servico-id">
@@ -307,7 +304,20 @@
         <span>Valor total</span>
       </div>
 
-      <div class="corpo-lista-modal-peca"></div>
+      <div class="corpo-lista-modal-peca">
+        <button
+          class="linha-modal grade-modal-peca"
+          type="button"
+          *ngFor="let item of pecasDisponiveisFiltradas"
+          (click)="selecionarPeca(item)"
+        >
+          <span>{{ item.id }}</span>
+          <span>{{ item.nome }}</span>
+          <span class="coluna-quantidade">--</span>
+          <span class="coluna-unitario">{{ item.valor }}</span>
+          <span class="coluna-valor">--</span>
+        </button>
+      </div>
 
       <div class="rodape-modal-peca">
         <label class="campo-modal-peca campo-modal-id">

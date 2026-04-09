@@ -53,11 +53,23 @@ export class TecnicosLista implements OnInit {
       return;
     }
 
-    this.tecnicosService.excluir(id);
-    this.atualizarTecnicos();
+    this.tecnicosService.excluir(id).subscribe({
+      next: () => this.atualizarTecnicos(),
+      error: (erro) => {
+        console.error('Não foi possível excluir o técnico.', erro);
+      },
+    });
   }
 
   private atualizarTecnicos() {
-    this.tecnicos = this.tecnicosService.listarLista();
+    this.tecnicosService.listarLista().subscribe({
+      next: (tecnicos) => {
+        this.tecnicos = tecnicos;
+      },
+      error: (erro) => {
+        console.error('Não foi possível carregar os técnicos.', erro);
+        this.tecnicos = [];
+      },
+    });
   }
 }
