@@ -10,13 +10,7 @@
 
     <form class="formulario-pecas" (ngSubmit)="salvarPeca()">
       <h1 class="titulo-modal">{{ titulo }}</h1>
-
-      <div class="grade-campos">
-        <label class="campo-formulario campo-id" for="peca-id">
-          <span class="rotulo-campo">ID</span>
-          <input class="entrada-campo entrada-campo-bloqueada" id="peca-id" type="text" [value]="pecaId" readonly />
-        </label>
-
+      <div class="campos-formulario">
         <label class="campo-formulario campo-nome" for="peca-nome">
           <span class="rotulo-campo">Nome</span>
           <input class="entrada-campo" id="peca-nome" type="text" [(ngModel)]="peca.nome" name="pecaNome" />

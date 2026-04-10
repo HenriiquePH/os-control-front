@@ -4,56 +4,56 @@ import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' }) //
 export class AuthService {
-  private readonly chaveUsuario = 'usuario';
-  private readonly chaveToken = 'token';
-  private readonly apiUrl = 'http://localhost:8080/auth/login';
+  private readonly API_URL = 'http://localhost:8080/auth/login'; // URL do endpoint de autenticação no backend
+  private readonly CHAVE_USUARIO = 'usuario'; // chaves para armazenar usuário e token
+  private readonly CHAVE_TOKEN = 'token'; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {} // define o HttpClient como dependência para fazer requisições HTTP ao backend
 
-  entrar(usuario: string, senha: string): Observable<boolean> {
+ 
+  entrar(usuario: string, senha: string): Observable<boolean> { // 
     const login = usuario.trim();
     const password = senha.trim();
 
-    if (!login || !password) {
+    if (!login || !password) { // se login ou senha estiverem vazios, retorna um Observable de false sem fazer a requisição
       return of(false);
     }
 
-    // O backend atual espera exatamente { login, password } em /auth/login
-    // e responde com { token }. Mantemos o login digitado salvo na sessao
-    // para o topo continuar funcionando enquanto o backend nao devolve os dados do usuario.
-    const dados: LoginRequest = { login, password };
-
-    return this.http.post<LoginResponse>(this.apiUrl, dados).pipe(
-      tap((resposta) => this.salvarSessao(login, resposta.token)),
-      map(() => true)
-    );
+    return this.http // se login e senha forem válidos, faz a requisição POST para o backend
+      .post<LoginResponse>(this.API_URL, { login, password }) // envia login e senha no corpo da requisição
+      .pipe( // usa pipe para processar a resposta
+        tap(response => this.salvarSessao(login, response.token)), // se a resposta for bem-sucedida, salva a sessão com o login e token retornados
+        map(() => true) // mapeia a resposta para true, indicando que o login foi bem-sucedido
+      );
   }
 
-  salvarSessao(usuario: string, token = '') {
-    localStorage.setItem(this.chaveUsuario, usuario);
-
-    if (token) {
-      localStorage.setItem(this.chaveToken, token);
-      return;
+  // Salva usuário e token no localStorage
+   
+  private salvarSessao(usuario: string, token?: string): void {
+    localStorage.setItem(this.CHAVE_USUARIO, usuario);
+    
+    if (token) { // se tiver token, salva no localStorage, caso contrário remove qualquer token existente para evitar inconsistências
+      localStorage.setItem(this.CHAVE_TOKEN, token);
+    } else { // se não tiver token, remove qualquer token existente para evitar inconsistências
+      localStorage.removeItem(this.CHAVE_TOKEN);
     }
-
-    localStorage.removeItem(this.chaveToken);
   }
 
-  obterUsuario() {
-    return localStorage.getItem(this.chaveUsuario) || 'Usuario';
+  //Retorna o usuário salvo ou 'Usuario' padrão
+  obterUsuario(): string {
+    return localStorage.getItem(this.CHAVE_USUARIO) || 'Usuario';
   }
 
-  obterToken() {
-    return localStorage.getItem(this.chaveToken) || '';
+  // Retorna o token salvo ou string vazia
+  obterToken(): string {
+    return localStorage.getItem(this.CHAVE_TOKEN) || '';
   }
 
-  sair() {
-    localStorage.removeItem(this.chaveUsuario);
-    localStorage.removeItem(this.chaveToken);
+  // Limpa a sessão removendo usuário e token do localStorage
+  sair(): void {
+    localStorage.removeItem(this.CHAVE_USUARIO);
+    localStorage.removeItem(this.CHAVE_TOKEN);
   }
 }

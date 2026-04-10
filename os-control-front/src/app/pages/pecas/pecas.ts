@@ -75,13 +75,13 @@ export class Pecas implements OnInit {
   }
 
   private prepararNovoCadastro() {
-    this.pecaId = '';
+    this.pecaId = ''; // Garante que o ID esteja vazio para novo cadastro
   }
 
-  private converterEmNumero(valor: string) {
-    const texto = valor.trim().replace(/[R$\s]/g, '');
+  private converterEmNumero(valor: string) { // converte o valor string para numero, removendo simbolos de moeda e tratando virgula como decimal
+    const texto = valor.trim().replace(/[R$\s]/g, ''); // remove simbolos de moeda e espaços, e trim para garantir que nao tenha espacos sobrando
 
-    if (!texto) {
+    if (!texto) { // se o texto for vazio apos remover simbolos, retorna null para indicar valor invalido
       return null;
     }
 
@@ -91,10 +91,10 @@ export class Pecas implements OnInit {
     return Number.isFinite(numero) ? numero : null;
   }
 
-  private formatarMoeda(valor: number) {
+  private formatarMoeda(valor: number) { // formata o numero para o formato de moeda brasileira, usando Intl.NumberFormat
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(valor);
+    }).format(valor); 
   }
 }

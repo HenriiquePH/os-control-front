@@ -1,19 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-
 import { TecnicoApi, TecnicoLista, TecnicoSalvo } from '../models/tecnico.model';
 import { AuthService } from './auth.service';
 
-@Injectable({
+@Injectable({ // marca a classe como um serviço injetável e disponível em toda a aplicação
   providedIn: 'root',
 })
-export class TecnicosService {
-  private readonly apiUrl = 'http://localhost:8080/usuario';
+export class TecnicosService { // responsável por gerenciar as operações relacionadas aos técnicos, como listar, buscar por ID, salvar e excluir
+  private readonly apiUrl = 'http://localhost:8080/usuario'; // URL base para as requisições relacionadas aos técnicos, apontando para o endpoint de usuários no backend
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) {} //
 
-  listar(): Observable<TecnicoSalvo[]> {
+  listar(): Observable<TecnicoSalvo[]> { // retorna a lista completa de técnicos, filtrando os usuários e mapeando para o formato de TecnicoSalvo
     return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
       map((usuarios) =>
         usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoSalvo(usuario))
@@ -21,7 +20,7 @@ export class TecnicosService {
     );
   }
 
-  listarLista(): Observable<TecnicoLista[]> {
+  listarLista(): Observable<TecnicoLista[]> { // retorna a lista de técnicos para exibição na tabela, filtrando os usuários e mapeando para o formato de lista
     return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
       map((usuarios) =>
         usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoLista(usuario))
@@ -29,7 +28,7 @@ export class TecnicosService {
     );
   }
 
-  listarNomes(): Observable<string[]> {
+  listarNomes(): Observable<string[]> { // retorna apenas os nomes dos técnicos, filtrando os usuários e mapeando para o nome
     return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
       map((usuarios) =>
         usuarios

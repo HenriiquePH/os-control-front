@@ -55,7 +55,7 @@
 .grade-campos {
   display: grid;
   width: 100%;
-  grid-template-columns: 88px minmax(0, 1fr) minmax(188px, 0.56fr);
+  grid-template-columns: minmax(0, 1fr) minmax(188px, 0.56fr);
   gap: 16px;
   align-items: end;
 }
