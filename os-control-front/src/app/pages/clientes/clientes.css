@@ -103,8 +103,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr) minmax(0, 0.62fr) 126px;
   grid-template-areas:
-    'rua bairro cidade estado'
-    'cep complemento acao acao';
+    'cep rua bairro cidade'
+    'estado complemento acao acao';
   gap: 28px 20px;
   align-items: end;
 }

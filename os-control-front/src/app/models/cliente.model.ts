@@ -77,3 +77,13 @@ export interface ClienteApi {
   endereco: EnderecoApi | null;
   veiculos: VeiculoApi[];
 }
+
+export interface CepApi{
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean;
+}

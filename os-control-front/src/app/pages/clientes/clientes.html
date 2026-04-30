@@ -91,6 +91,12 @@
         <h2 class="titulo-secao">Endere&ccedil;o</h2>
 
         <div class="grade-endereco">
+          
+          <div class="campo-formulario area-cep">
+            <label class="rotulo-campo" for="cep-cliente">CEP</label>
+            <input class="entrada-campo" id="cep-cliente" maxlength="8" type="text" inputmode="numeric" [ngModel]="cliente.cep" (ngModelChange)="atualizarCep($event)" name="cepCliente"/>
+          </div>
+          
           <div class="campo-formulario area-rua">
             <label class="rotulo-campo" for="rua-cliente">Rua</label>
             <input class="entrada-campo" id="rua-cliente" type="text" [(ngModel)]="cliente.rua" name="ruaCliente" />
@@ -109,11 +115,6 @@
           <div class="campo-formulario area-estado">
             <label class="rotulo-campo" for="estado-cliente">Estado</label>
             <input class="entrada-campo" id="estado-cliente" type="text" [(ngModel)]="cliente.estado" name="estadoCliente" />
-          </div>
-
-          <div class="campo-formulario area-cep">
-            <label class="rotulo-campo" for="cep-cliente">CEP</label>
-            <input class="entrada-campo" id="cep-cliente" type="text" [(ngModel)]="cliente.cep" name="cepCliente" />
           </div>
 
           <div class="campo-formulario area-complemento">

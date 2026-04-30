@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/r
 import { ClienteFormulario, ClienteSalvo, NovoVeiculo, Veiculo } from '../../models/cliente.model';
 import { AuthService } from '../../services/auth.service';
 import { ClientesService } from '../../services/clientes.service';
+import { CepService } from '../../services/cep.service';
 
 @Component({
   selector: 'app-clientes',
@@ -42,7 +43,8 @@ export class Clientes implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private clientesService: ClientesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cepService: CepService
   ) {
     this.usuarioLogado = this.authService.obterUsuario();
   }
@@ -148,6 +150,41 @@ export class Clientes implements OnInit {
         console.error('Não foi possível carregar o cliente.', erro);
       },
     });
+  }
+
+  private normalizarCep(valor: string){
+    return (valor ?? '').replace(/\D/g, '').slice(0, 8);
+  }
+
+  private buscarEnderecoPorCep(cep: string) {
+  this.cepService.buscarPorCep(cep).subscribe({
+    next: (endereco) => {
+      if (endereco.erro){
+        return;
+      } 
+
+    this.cliente.rua = endereco.logradouro || '';
+    this.cliente.bairro = endereco.bairro || '';
+    this.cliente.cidade = endereco.localidade || '';
+    this.cliente.complemento = endereco.complemento || '';
+  },
+    error: (erro) => {
+      console.error('Não foi possível buscar o CEP.', erro);
+    },
+  });
+}
+
+
+  atualizarCep(valor: string){
+    const cep = this.normalizarCep(valor);
+    this.cliente.cep = cep;
+
+    if (cep.length !== 8){
+      return;
+    }
+
+    this.buscarEnderecoPorCep(cep);
+
   }
 
   private limparNovoVeiculo() {
