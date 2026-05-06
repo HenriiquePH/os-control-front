@@ -166,6 +166,7 @@ export class Clientes implements OnInit {
     this.cliente.rua = endereco.logradouro || '';
     this.cliente.bairro = endereco.bairro || '';
     this.cliente.cidade = endereco.localidade || '';
+    this.cliente.estado = endereco.uf || '';
     this.cliente.complemento = endereco.complemento || '';
   },
     error: (erro) => {
