@@ -117,7 +117,11 @@ export class Clientes implements OnInit {
       next: () => this.router.navigate(['/clientes']),
       error: (erro) => {
         console.error('Não foi possível salvar o cliente.', erro);
-        window.alert('Não foi possível salvar o cliente. Verifique se a cidade e o estado existem no backend.');
+        const mensagem =
+          erro?.error?.message ||
+          erro?.message ||
+          'Não foi possível salvar o cliente. Verifique se a cidade e o estado existem no backend.';
+        window.alert(mensagem);
       },
     });
   }

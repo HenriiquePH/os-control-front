@@ -52,6 +52,9 @@ export class ClientesService {
   }
 
   private montarPayload(cliente: ClienteSalvo) {
+    const cidade = cliente.cidade.trim();
+    const estado = cliente.estado.trim().toUpperCase();
+
     return {
       nome: cliente.nome.trim(),
       cpf: cliente.cpf.trim(),
@@ -63,8 +66,12 @@ export class ClientesService {
         bairro: cliente.bairro.trim(),
         cep: cliente.cep.trim(),
         complemento: cliente.complemento.trim(),
-        cidade: cliente.cidade.trim(),
-        estado: cliente.estado.trim(),
+        cidade: cidade
+          ? {
+              nome: cidade,
+              estado: estado ? { uf: estado } : null,
+            }
+          : null,
       },
       veiculos: cliente.veiculos.map((veiculo) => this.mapearVeiculoApi(veiculo)),
     };
