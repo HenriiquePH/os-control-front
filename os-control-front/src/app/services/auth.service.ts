@@ -51,6 +51,11 @@ export class AuthService {
     return localStorage.getItem(this.CHAVE_TOKEN) || '';
   }
 
+  // Informa se existe uma sessão autenticada no front
+  estaAutenticado(): boolean {
+    return this.obterToken().trim().length > 0;
+  }
+
   // Limpa a sessão removendo usuário e token do localStorage
   sair(): void {
     localStorage.removeItem(this.CHAVE_USUARIO);

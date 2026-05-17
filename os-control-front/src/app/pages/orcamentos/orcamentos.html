@@ -178,6 +178,11 @@
           <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-pecas" type="text" [value]="totalPecas" readonly />
         </label>
 
+        <label class="campo-formulario" for="desconto-orcamento">
+          <span class="rotulo-campo">Valor desconto</span>
+          <input class="entrada-campo" id="desconto-orcamento" type="text" inputmode="decimal" [(ngModel)]="desconto" name="descontoOrcamento" />
+        </label>
+
         <label class="campo-formulario campo-total-orcamento" for="total-orcamento">
           <span class="rotulo-campo">Valor total do or&ccedil;amento</span>
           <input class="entrada-campo entrada-campo-bloqueada entrada-total" id="total-orcamento" type="text" [value]="totalOrcamento" readonly />
@@ -194,6 +199,24 @@
       </div>
     </form>
   </main>
+
+  <div class="sobreposicao-modal" *ngIf="modalConfirmacaoPdfAberto" (click)="cancelarExibicaoPdf()">
+    <div class="modal-confirmacao-pdf" (click)="$event.stopPropagation()">
+      <button class="botao-fechar-modal" type="button" (click)="cancelarExibicaoPdf()" aria-label="Fechar confirmacao do PDF">
+        <img class="icone-fechar-modal" src="assets/icone-fechar.png" alt="" />
+      </button>
+
+      <div class="conteudo-modal-confirmacao-pdf">
+        <p class="texto-modal-confirmacao-pdf">{{ mensagemConfirmacaoPdf }}</p>
+        <p class="texto-modal-confirmacao-pdf">Deseja exibir o PDF do or&ccedil;amento?</p>
+      </div>
+
+      <div class="acoes-modal-confirmacao-pdf">
+        <button class="botao-modal-confirmacao-secundario" type="button" (click)="cancelarExibicaoPdf()">N&atilde;o</button>
+        <button class="botao-modal-confirmacao-primario" type="button" (click)="confirmarExibicaoPdf()">Sim</button>
+      </div>
+    </div>
+  </div>
 
   <div class="sobreposicao-modal" *ngIf="calendarioAberto" (click)="fecharCalendario()">
     <div class="modal-calendario" (click)="$event.stopPropagation()">
@@ -257,16 +280,11 @@
       </div>
 
       <div class="corpo-lista-modal-servico">
-        <button
-          class="linha-modal grade-modal-servico"
-          type="button"
-          *ngFor="let item of servicosDisponiveisFiltrados"
-          (click)="selecionarServico(item)"
-        >
+        <div class="linha-modal linha-modal-selecionada grade-modal-servico" *ngFor="let item of servicosSelecionados">
           <span>{{ item.id }}</span>
           <span>{{ item.nome }}</span>
-          <span class="coluna-valor">{{ item.valor }}</span>
-        </button>
+          <span class="coluna-valor">{{ formatarMoeda(item.valor) }}</span>
+        </div>
       </div>
 
       <div class="rodape-modal-servico">
@@ -277,15 +295,63 @@
 
         <label class="campo-modal-servico campo-modal-servico-nome">
           <span>Servi&ccedil;os</span>
-          <input class="entrada-campo" type="text" [(ngModel)]="novoServico.nome" name="novoServicoNome" />
+          <div class="campo-pesquisa-container">
+            <span class="campo-pesquisa-modal" *ngIf="!novoServico.id; else servicoSelecionado">
+              <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
+              <input
+                class="entrada-pesquisa-modal"
+                type="text"
+                placeholder="Nome"
+                [(ngModel)]="novoServico.nome"
+                name="novoServicoNome"
+                autocomplete="off"
+                (focus)="abrirDropdownServicos()"
+                (input)="abrirDropdownServicos()"
+              />
+            </span>
+
+            <ng-template #servicoSelecionado>
+              <span class="campo-pesquisa-modal campo-pesquisa-modal-selecionada">
+                <span class="texto-item-selecionado">{{ novoServico.nome }}</span>
+                <button
+                  class="botao-limpar-selecao"
+                  type="button"
+                  (click)="limparSelecaoServico()"
+                  aria-label="Remover servico selecionado"
+                >
+                  x
+                </button>
+              </span>
+            </ng-template>
+
+            <div class="dropdown-pesquisa-modal" *ngIf="dropdownServicosAberto && servicosDisponiveisFiltrados.length > 0">
+              <button
+                class="item-dropdown-modal"
+                type="button"
+                *ngFor="let item of servicosDisponiveisFiltrados"
+                (click)="selecionarServico(item)"
+              >
+                <span class="item-dropdown-modal-id">{{ item.id }}</span>
+                <span class="item-dropdown-modal-nome">{{ item.nome }}</span>
+                <span class="item-dropdown-modal-valor">{{ item.valor }}</span>
+              </button>
+            </div>
+          </div>
         </label>
 
         <label class="campo-modal-servico campo-modal-servico-valor">
           <span>Valor do servi&ccedil;o</span>
-          <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novoServico.valor" name="novoServicoValor" />
+          <input
+            class="entrada-campo"
+            type="text"
+            inputmode="decimal"
+            [(ngModel)]="novoServico.valor"
+            name="novoServicoValor"
+            (focus)="fecharDropdownServicos()"
+          />
         </label>
 
-        <button class="botao-ok-modal botao-ok-modal-servico" type="button" (click)="confirmarServico()">Confirmar</button>
+        <button class="botao-ok-modal botao-ok-modal-servico" type="button" (click)="confirmarServico()">Ok</button>
       </div>
     </div>
   </div>
@@ -305,18 +371,13 @@
       </div>
 
       <div class="corpo-lista-modal-peca">
-        <button
-          class="linha-modal grade-modal-peca"
-          type="button"
-          *ngFor="let item of pecasDisponiveisFiltradas"
-          (click)="selecionarPeca(item)"
-        >
+        <div class="linha-modal linha-modal-selecionada grade-modal-peca" *ngFor="let item of pecasSelecionadas">
           <span>{{ item.id }}</span>
           <span>{{ item.nome }}</span>
-          <span class="coluna-quantidade">--</span>
-          <span class="coluna-unitario">{{ item.valor }}</span>
-          <span class="coluna-valor">--</span>
-        </button>
+          <span class="coluna-quantidade">{{ item.quantidade }}</span>
+          <span class="coluna-unitario">{{ formatarMoeda(item.valorUnitario) }}</span>
+          <span class="coluna-valor">{{ formatarMoeda(item.valorTotal) }}</span>
+        </div>
       </div>
 
       <div class="rodape-modal-peca">
@@ -327,20 +388,72 @@
 
         <label class="campo-modal-peca campo-modal-nome">
           <span>Pesquisar</span>
-          <span class="campo-pesquisa-modal">
-            <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
-            <input class="entrada-pesquisa-modal" type="text" placeholder="Nome" [(ngModel)]="novaPeca.nome" name="novaPecaNome" />
-          </span>
+          <div class="campo-pesquisa-container">
+            <span class="campo-pesquisa-modal" *ngIf="!novaPeca.id; else pecaSelecionada">
+              <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
+              <input
+                class="entrada-pesquisa-modal"
+                type="text"
+                placeholder="Nome"
+                [(ngModel)]="novaPeca.nome"
+                name="novaPecaNome"
+                autocomplete="off"
+                (focus)="abrirDropdownPecas()"
+                (input)="abrirDropdownPecas()"
+              />
+            </span>
+
+            <ng-template #pecaSelecionada>
+              <span class="campo-pesquisa-modal campo-pesquisa-modal-selecionada">
+                <span class="texto-item-selecionado">{{ novaPeca.nome }}</span>
+                <button
+                  class="botao-limpar-selecao"
+                  type="button"
+                  (click)="limparSelecaoPeca()"
+                  aria-label="Remover peca selecionada"
+                >
+                  x
+                </button>
+              </span>
+            </ng-template>
+
+            <div class="dropdown-pesquisa-modal" *ngIf="dropdownPecasAberto && pecasDisponiveisFiltradas.length > 0">
+              <button
+                class="item-dropdown-modal"
+                type="button"
+                *ngFor="let item of pecasDisponiveisFiltradas"
+                (click)="selecionarPeca(item)"
+              >
+                <span class="item-dropdown-modal-id">{{ item.id }}</span>
+                <span class="item-dropdown-modal-nome">{{ item.nome }}</span>
+                <span class="item-dropdown-modal-valor">{{ item.valor }}</span>
+              </button>
+            </div>
+          </div>
         </label>
 
         <label class="campo-modal-peca campo-modal-qtd">
           <span>qtd</span>
-          <input class="entrada-campo" type="number" min="1" [(ngModel)]="novaPeca.quantidade" name="novaPecaQuantidade" />
+          <input
+            class="entrada-campo"
+            type="number"
+            min="1"
+            [(ngModel)]="novaPeca.quantidade"
+            name="novaPecaQuantidade"
+            (focus)="fecharDropdownPecas()"
+          />
         </label>
 
         <label class="campo-modal-peca campo-modal-unitario">
           <span>valor unit&aacute;rio</span>
-          <input class="entrada-campo" type="text" inputmode="decimal" [(ngModel)]="novaPeca.valorUnitario" name="novaPecaValorUnitario" />
+          <input
+            class="entrada-campo"
+            type="text"
+            inputmode="decimal"
+            [(ngModel)]="novaPeca.valorUnitario"
+            name="novaPecaValorUnitario"
+            (focus)="fecharDropdownPecas()"
+          />
         </label>
 
         <label class="campo-modal-peca campo-modal-total">
@@ -348,7 +461,7 @@
           <input class="entrada-campo entrada-campo-bloqueada" type="text" [value]="totalNovaPeca" readonly />
         </label>
 
-        <button class="botao-ok-modal botao-ok-modal-peca" type="button" (click)="confirmarPeca()">Confirmar</button>
+        <button class="botao-ok-modal botao-ok-modal-peca" type="button" (click)="confirmarPeca()">Ok</button>
       </div>
     </div>
   </div>

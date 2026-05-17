@@ -42,7 +42,7 @@
       <hr class="linha-menu" />
 
       <a class="item-menu" routerLink="/servicos" routerLinkActive="item-menu-ativo">
-        <img class="icone-menu-lateral" src="assets/icone-servi%C3%A7o.png" alt="" />
+        <img class="icone-menu-lateral" src="assets/icone-servico.png" alt="" />
         <span>Servi&ccedil;os</span>
       </a>
       <hr class="linha-menu" />
@@ -84,24 +84,34 @@
 
       <div class="bloco-filtro">
         <label class="rotulo-campo" for="filtro-tecnico-os">T&eacute;cnico</label>
-        <input
-          class="entrada-campo"
-          id="filtro-tecnico-os"
-          type="text"
-          [(ngModel)]="filtroTecnico"
-          [ngModelOptions]="{ standalone: true }"
-        />
+        <span class="controle-select">
+          <select
+            class="entrada-campo entrada-select"
+            id="filtro-tecnico-os"
+            [(ngModel)]="filtroTecnico"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="">Todos</option>
+            <option *ngFor="let tecnico of tecnicosDisponiveis" [value]="tecnico">{{ tecnico }}</option>
+          </select>
+          <img class="icone-dropdown-campo" src="assets/icone-dropdown.png" alt="" />
+        </span>
       </div>
 
       <div class="bloco-filtro bloco-filtro-status">
         <label class="rotulo-campo" for="filtro-status-os">Status</label>
-        <input
-          class="entrada-campo"
-          id="filtro-status-os"
-          type="text"
-          [(ngModel)]="filtroStatus"
-          [ngModelOptions]="{ standalone: true }"
-        />
+        <span class="controle-select">
+          <select
+            class="entrada-campo entrada-select"
+            id="filtro-status-os"
+            [(ngModel)]="filtroStatus"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="">Todos</option>
+            <option *ngFor="let status of statusDisponiveis" [value]="status">{{ status }}</option>
+          </select>
+          <img class="icone-dropdown-campo" src="assets/icone-dropdown.png" alt="" />
+        </span>
       </div>
 
       <button class="botao-filtro" type="button" aria-label="Filtrar ordens de servico">

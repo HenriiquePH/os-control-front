@@ -8,21 +8,21 @@
       <img class="icone-fechar" src="assets/icone-fechar.png" alt="" />
     </a>
 
-    <form class="formulario-pecas" (ngSubmit)="salvarPeca()">
+    <form class="formulario-pecas" (ngSubmit)="salvarPeca()"> <!-- chama o metodo salvarPeca do componente quando o formulario for enviado -->
       <h1 class="titulo-modal">{{ titulo }}</h1>
-      <div class="campos-formulario">
+      <div class="grade-campos">
         <label class="campo-formulario campo-nome" for="peca-nome">
           <span class="rotulo-campo">Nome</span>
           <input class="entrada-campo" id="peca-nome" type="text" [(ngModel)]="peca.nome" name="pecaNome" />
         </label>
 
-        <label class="campo-formulario campo-valor" for="peca-valor">
+        <label class="campo-formulario campo-valor" for="peca-valor"> 
           <span class="rotulo-campo">Valor unitario</span>
           <input class="entrada-campo" id="peca-valor" type="text" inputmode="decimal" [(ngModel)]="peca.valor" name="pecaValor" />
         </label>
       </div>
 
-      <button class="botao-cadastrar" type="submit">{{ textoBotao }}</button>
+      <button class="botao-cadastrar" type="submit">{{ textoBotao }}</button> 
     </form>
   </div>
 </section>

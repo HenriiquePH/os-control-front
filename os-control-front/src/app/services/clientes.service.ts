@@ -1,8 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, of, switchMap } from 'rxjs';
-
-import { AuthService } from './auth.service';
 import {
   CidadeApi,
   ClienteApi,
@@ -19,12 +17,10 @@ export class ClientesService {
   private readonly apiUrl = 'http://localhost:8080/cliente';
   private readonly cidadesUrl = 'http://localhost:8080/cidade';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   listar(): Observable<ClienteSalvo[]> {
-    return this.http.get<ClienteApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
-      map((clientes) => clientes.map((cliente) => this.mapearCliente(cliente)))
-    );
+    return this.http.get<ClienteApi[]>(this.apiUrl).pipe(map((clientes) => clientes.map((cliente) => this.mapearCliente(cliente))));
   }
 
   listarLista(): Observable<ClienteLista[]> {
@@ -32,26 +28,24 @@ export class ClientesService {
   }
 
   buscarPorId(id: string): Observable<ClienteSalvo> {
-    return this.http.get<ClienteApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
-      map((cliente) => this.mapearCliente(cliente))
-    );
+    return this.http.get<ClienteApi>(`${this.apiUrl}/${id}`).pipe(map((cliente) => this.mapearCliente(cliente)));
   }
 
   salvar(cliente: ClienteSalvo): Observable<ClienteSalvo> {
     return this.montarPayload(cliente).pipe(
       switchMap((dados) => {
         if (!cliente.id) {
-          return this.http.post<ClienteApi>(this.apiUrl, dados, { headers: this.obterHeaders() });
+          return this.http.post<ClienteApi>(this.apiUrl, dados);
         }
 
-        return this.http.put<ClienteApi>(`${this.apiUrl}/${cliente.id}`, dados, { headers: this.obterHeaders() });
+        return this.http.put<ClienteApi>(`${this.apiUrl}/${cliente.id}`, dados);
       }),
       map((clienteSalvo) => this.mapearCliente(clienteSalvo))
     );
   }
 
   excluir(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   private montarPayload(cliente: ClienteSalvo): Observable<Omit<ClienteApi, 'id'>> {
@@ -82,14 +76,11 @@ export class ClientesService {
       return of(null);
     }
 
-    // Cliente no backend precisa receber a cidade pelo id. Aqui o service
-    // procura a cidade cadastrada antes de montar o payload final.
-    return this.http.get<CidadeApi[]>(this.cidadesUrl, { headers: this.obterHeaders() }).pipe(
+    return this.http.get<CidadeApi[]>(this.cidadesUrl).pipe(
       map((cidades) => {
         const cidadeEncontrada = cidades.find((item) => {
           const mesmoNome = this.normalizar(item.nome) === this.normalizar(cidade);
-          const mesmoEstado =
-            !estado || this.normalizar(item.estado?.nome) === this.normalizar(estado);
+          const mesmoEstado = !estado || this.normalizar(item.estado?.nome) === this.normalizar(estado);
 
           return mesmoNome && mesmoEstado;
         });
@@ -163,13 +154,5 @@ export class ClientesService {
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
-  }
-
-  private obterHeaders() {
-    // Por enquanto o token vai direto no service. Depois, o ponto certo para
-    // centralizar isso no projeto inteiro e um interceptor.
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.authService.obterToken()}`,
-    });
   }
 }

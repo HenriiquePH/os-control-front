@@ -10,17 +10,17 @@ import { PecasService } from '../../services/pecas.service';
   templateUrl: './pecas.html',
   styleUrl: './pecas.css',
 })
-export class Pecas implements OnInit {
+export class Pecas implements OnInit { // responsavel por mostrar cadastro e edição de peças
   modoEdicao: boolean = false;
-  pecaId: string = '';
+  pecaId: string = ''; 
   peca: PecaFormulario = {
     nome: '',
     valor: '',
   };
-
+  // o construtor recebe as dependências necessárias para o componente, como o Router para navegação, o ActivatedRoute para acessar os parâmetros da rota e o PecasService para acessar os dados das peças e realizar operações de CRUD
   constructor(private router: Router, private route: ActivatedRoute, private pecasService: PecasService) {}
 
-  ngOnInit() {
+  ngOnInit() { // o método ngOnInit é chamado automaticamente quando o componente é inicializado, e é responsável por verificar se há um ID de peça nos parâmetros da rota para determinar se está em modo de edição ou cadastro, e carregar os dados da peça correspondente caso esteja em modo de edição, ou preparar um novo cadastro caso contrário
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
@@ -31,43 +31,43 @@ export class Pecas implements OnInit {
     this.carregarPeca(id);
   }
 
-  get titulo() {
+  get titulo() { // retorna o titulo da página, dependendo se está em modo de edição ou cadastro
     return this.modoEdicao ? 'Editar peca' : 'Cadastro de peças';
   }
 
-  get textoBotao() {
+  get textoBotao() { // retorna o texto do botão, dependendo se está em modo de edição ou cadastro
     return this.modoEdicao ? 'Salvar' : 'Cadastrar';
   }
 
-  salvarPeca() {
-    const nome = this.peca.nome.trim();
+  salvarPeca() { // pega dados e prepara para salvar, se for valido ele salva.
+    const nome = this.peca.nome.trim(); // trim remove espaços em branco se tiver
     const valor = this.converterEmNumero(this.peca.valor);
 
     if (!nome || valor === null) {
       return;
     }
 
-    const pecaSalva: PecaSalva = {
-      id: this.pecaId,
+    const pecaSalva: PecaSalva = { // prepara para salvar
+      id: this.pecaId,  // usa o id da peça carregada para editar, ou vazio para novo cadastro
       nome,
       valor: this.formatarMoeda(valor),
       valorUnitario: valor,
     };
 
-    this.pecasService.salvar(pecaSalva).subscribe({
-      next: () => this.router.navigate(['/pecas']),
+    this.pecasService.salvar(pecaSalva).subscribe({ // chama o metodo de salvar do pecasService 
+      next: () => this.router.navigate(['/pecas']), //quando salva, retorna para a lista de peças
       error: (erro) => console.error('Erro ao salvar peca no backend.', erro),
     });
   }
 
-  private carregarPeca(id: string) {
-    this.pecasService.buscarPorId(id).subscribe({
-      next: (peca) => {
-        this.modoEdicao = true;
-        this.pecaId = peca.id;
-        this.peca = {
-          nome: peca.nome,
-          valor: typeof peca.valorUnitario === 'number' ? String(peca.valorUnitario) : peca.valor,
+  private carregarPeca(id: string) { // carrega a peça do backend para edição, e preenche o formulário com os dados retornados
+    this.pecasService.buscarPorId(id).subscribe({ // chama o método buscarPorId do PecasService, passando o id da peça, e se inscreve para receber o resultado
+      next: (peca) => { // se a peça for carregada com sucesso, preenche o formulário e ativa o modo de edição
+        this.modoEdicao = true; // ativa o modo de edição
+        this.pecaId = peca.id; // guarda o id da peça para usar na hora de salvar, caso seja edição
+        this.peca = {  // preenche o formulário com os dados da peça, convertendo o valorUnitario para string formatada, e garantindo que o nome seja preenchido
+          nome: peca.nome, // garante que o nome seja preenchido
+          valor: typeof peca.valorUnitario === 'number' ? String(peca.valorUnitario) : peca.valor, // converte o valorUnitario para string, caso seja numero, ou usa o valor original caso já seja string
         };
       },
       error: (erro) => console.error('Erro ao carregar peca do backend.', erro),
@@ -85,7 +85,7 @@ export class Pecas implements OnInit {
       return null;
     }
 
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
+    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto; // se 
     const numero = Number(normalizado);
 
     return Number.isFinite(numero) ? numero : null;

@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-
 import {
   OrdemServicoApi,
   OrdemServicoLista,
@@ -10,7 +9,6 @@ import {
   OsServicoApi,
 } from '../models/ordem-servico.model';
 import { PecaSelecionada, ServicoSelecionado } from '../models/orcamento.model';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,12 +16,10 @@ import { AuthService } from './auth.service';
 export class OrdensServicoService {
   private readonly apiUrl = 'http://localhost:8080/os';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   listar(): Observable<OrdemServicoSalva[]> {
-    return this.http.get<OrdemServicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
-      map((ordens) => ordens.map((ordem) => this.mapearOrdemSalva(ordem)))
-    );
+    return this.http.get<OrdemServicoApi[]>(this.apiUrl).pipe(map((ordens) => ordens.map((ordem) => this.mapearOrdemSalva(ordem))));
   }
 
   listarVisualizacao(): Observable<OrdemServicoLista[]> {
@@ -42,27 +38,21 @@ export class OrdensServicoService {
   }
 
   buscarPorId(id: string): Observable<OrdemServicoSalva> {
-    return this.http.get<OrdemServicoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
-      map((ordem) => this.mapearOrdemSalva(ordem))
-    );
+    return this.http.get<OrdemServicoApi>(`${this.apiUrl}/${id}`).pipe(map((ordem) => this.mapearOrdemSalva(ordem)));
   }
 
   buscarParaImportacao(orcamentoId: string): Observable<OrdemServicoSalva> {
-    return this.http
-      .get<OrdemServicoApi>(`${this.apiUrl}/importar-orcamento/${orcamentoId}`, { headers: this.obterHeaders() })
-      .pipe(map((ordem) => this.mapearOrdemSalva(ordem)));
+    return this.http.get<OrdemServicoApi>(`${this.apiUrl}/importar-orcamento/${orcamentoId}`).pipe(map((ordem) => this.mapearOrdemSalva(ordem)));
   }
 
   salvar(ordem: OrdemServicoSalva): Observable<OrdemServicoSalva> {
     const dados = this.mapearPayload(ordem);
 
     if (!ordem.id) {
-      return this.http.post<OrdemServicoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
-        map((novaOrdem) => this.mapearOrdemSalva(novaOrdem))
-      );
+      return this.http.post<OrdemServicoApi>(this.apiUrl, dados).pipe(map((novaOrdem) => this.mapearOrdemSalva(novaOrdem)));
     }
 
-    return this.http.put<OrdemServicoApi>(`${this.apiUrl}/${ordem.id}`, dados, { headers: this.obterHeaders() }).pipe(
+    return this.http.put<OrdemServicoApi>(`${this.apiUrl}/${ordem.id}`, dados).pipe(
       map((ordemAtualizada) => this.mapearOrdemSalva(ordemAtualizada))
     );
   }
@@ -250,11 +240,5 @@ export class OrdensServicoService {
     }
 
     return `${String(ano).padStart(4, '0')}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}T00:00:00`;
-  }
-
-  private obterHeaders() {
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.authService.obterToken()}`,
-    });
   }
 }

@@ -31,6 +31,7 @@ export interface OrcamentoSalvo {
   nomeOrcamento: string;
   dataAbertura: string;
   observacao: string;
+  desconto: string;
   servicos: ServicoSelecionado[];
   pecas: PecaSelecionada[];
   valorTotal: string;

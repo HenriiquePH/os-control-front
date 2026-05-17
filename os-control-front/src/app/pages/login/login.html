@@ -4,6 +4,7 @@
       <h1 class="login-titulo">Login</h1>
 
       <form class="login-formulario" (ngSubmit)="entrar()">
+        <!-- chama o método entrar do componente quando o formulário for enviado -->
         <div class="login-campo">
           <label class="login-label" for="usuario">Usuário</label>
           <input class="login-input" id="usuario" type="text" [(ngModel)]="usuario" name="usuario" />
@@ -26,3 +27,4 @@
     </div>
   </div>
 </section>
+

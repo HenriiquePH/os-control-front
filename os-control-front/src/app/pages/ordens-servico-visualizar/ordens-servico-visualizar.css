@@ -27,6 +27,30 @@
   right: auto;
 }
 
+.controle-select {
+  position: relative;
+  display: block;
+}
+
+.entrada-select {
+  padding-right: 46px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.icone-dropdown-campo {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  object-fit: contain;
+}
+
 .cabecalho-tabela,
 .linha-tabela {
   grid-template-columns: 90px 1.1fr 1.1fr 1fr 0.9fr 1fr 56px;

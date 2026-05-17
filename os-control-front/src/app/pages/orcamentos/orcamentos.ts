@@ -26,13 +26,18 @@ export class Orcamentos implements OnInit {
   usuarioLogado: string = 'Usuario';
   modoEdicao: boolean = false;
   orcamentoId: string = '';
+  orcamentoConfirmadoId: string = '';
   nomeOrcamento: string = '';
   observacao: string = '';
+  desconto: string = '';
 
   abaAtiva: AbaOrcamento = 'servicos';
   calendarioAberto: boolean = false;
+  modalConfirmacaoPdfAberto: boolean = false;
   modalServicoAberto: boolean = false;
   modalPecaAberto: boolean = false;
+  dropdownServicosAberto: boolean = false;
+  dropdownPecasAberto: boolean = false;
 
   dataSelecionada: Date = new Date();
   mesExibido: Date = new Date();
@@ -90,6 +95,10 @@ export class Orcamentos implements OnInit {
     return this.modoEdicao ? 'Salvar orçamento' : 'Confirmar orçamento';
   }
 
+  get mensagemConfirmacaoPdf() {
+    return this.modoEdicao ? 'Orcamento salvo,' : 'Orcamento confirmado,';
+  }
+
   get placeholder() {
     return this.abaAtiva === 'servicos' ? 'Adicionar servico' : 'Adicionar peca/produto';
   }
@@ -112,7 +121,8 @@ export class Orcamentos implements OnInit {
   get totalOrcamento() {
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
-    const total = totalServicos + totalPecas;
+    const desconto = this.converterEmNumero(this.desconto) || 0;
+    const total = Math.max(0, totalServicos + totalPecas - desconto);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
 
@@ -147,7 +157,20 @@ export class Orcamentos implements OnInit {
 
   fecharModalServico() {
     this.modalServicoAberto = false;
+    this.dropdownServicosAberto = false;
     this.limparNovoServico();
+  }
+
+  abrirDropdownServicos() {
+    if (this.novoServico.id) {
+      return;
+    }
+
+    this.dropdownServicosAberto = true;
+  }
+
+  fecharDropdownServicos() {
+    this.dropdownServicosAberto = false;
   }
 
   selecionarServico(servico: ServicoSalvo) {
@@ -156,6 +179,16 @@ export class Orcamentos implements OnInit {
       nome: servico.nome,
       valor: String(servico.preco),
     };
+    this.dropdownServicosAberto = false;
+  }
+
+  limparSelecaoServico() {
+    this.novoServico = {
+      id: '',
+      nome: '',
+      valor: '',
+    };
+    this.dropdownServicosAberto = true;
   }
 
   confirmarServico() {
@@ -176,12 +209,26 @@ export class Orcamentos implements OnInit {
       },
     ];
 
-    this.fecharModalServico();
+    this.limparNovoServico();
+    this.dropdownServicosAberto = false;
   }
 
   fecharModalPeca() {
     this.modalPecaAberto = false;
+    this.dropdownPecasAberto = false;
     this.limparNovaPeca();
+  }
+
+  abrirDropdownPecas() {
+    if (this.novaPeca.id) {
+      return;
+    }
+
+    this.dropdownPecasAberto = true;
+  }
+
+  fecharDropdownPecas() {
+    this.dropdownPecasAberto = false;
   }
 
   selecionarPeca(peca: PecaSalva) {
@@ -191,6 +238,17 @@ export class Orcamentos implements OnInit {
       nome: peca.nome,
       valorUnitario: String(peca.valorUnitario),
     };
+    this.dropdownPecasAberto = false;
+  }
+
+  limparSelecaoPeca() {
+    this.novaPeca = {
+      ...this.novaPeca,
+      id: '',
+      nome: '',
+      valorUnitario: '',
+    };
+    this.dropdownPecasAberto = true;
   }
 
   confirmarPeca() {
@@ -214,7 +272,8 @@ export class Orcamentos implements OnInit {
       },
     ];
 
-    this.fecharModalPeca();
+    this.limparNovaPeca();
+    this.dropdownPecasAberto = false;
   }
 
   abrirCalendario() {
@@ -246,6 +305,40 @@ export class Orcamentos implements OnInit {
     this.salvarOrcamento();
   }
 
+  confirmarExibicaoPdf() {
+    const id = this.orcamentoConfirmadoId || this.orcamentoId;
+
+    if (!id) {
+      this.finalizarConfirmacaoOrcamento();
+      return;
+    }
+
+    const janela = window.open('', '_blank');
+
+    if (!janela) {
+      this.finalizarConfirmacaoOrcamento();
+      return;
+    }
+
+    this.orcamentosService.obterPdf(id).subscribe({
+      next: (pdf) => {
+        const url = URL.createObjectURL(pdf);
+        janela.location.href = url;
+        window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        this.finalizarConfirmacaoOrcamento();
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel abrir o PDF do orcamento.', erro);
+        janela.close();
+        this.finalizarConfirmacaoOrcamento();
+      },
+    });
+  }
+
+  cancelarExibicaoPdf() {
+    this.finalizarConfirmacaoOrcamento();
+  }
+
   formatarMoeda(valor: number) {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -267,7 +360,8 @@ export class Orcamentos implements OnInit {
 
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
-    const total = totalServicos + totalPecas;
+    const desconto = this.converterEmNumero(this.desconto) || 0;
+    const total = Math.max(0, totalServicos + totalPecas - desconto);
 
     const orcamentoSalvo: OrcamentoSalvo = {
       id: this.orcamentoId,
@@ -275,6 +369,7 @@ export class Orcamentos implements OnInit {
       nomeOrcamento: nome,
       dataAbertura: this.dataAbertura,
       observacao: this.observacao.trim(),
+      desconto: this.desconto.trim(),
       servicos: this.servicosSelecionados,
       pecas: this.pecasSelecionadas,
       valorTotal: this.formatarMoeda(total),
@@ -286,8 +381,10 @@ export class Orcamentos implements OnInit {
     };
 
     this.orcamentosService.salvar(orcamentoSalvo).subscribe({
-      next: () => {
-        this.router.navigate(['/orcamentos']);
+      next: (orcamento) => {
+        this.orcamentoId = orcamento.id;
+        this.orcamentoConfirmadoId = orcamento.id;
+        this.modalConfirmacaoPdfAberto = true;
       },
       error: (erro) => {
         console.error('Não foi possível salvar o orçamento.', erro);
@@ -324,6 +421,7 @@ export class Orcamentos implements OnInit {
         this.orcamentoId = orcamento.id;
         this.nomeOrcamento = orcamento.nome || orcamento.nomeOrcamento || '';
         this.observacao = orcamento.observacao || '';
+        this.desconto = orcamento.desconto || '';
         this.servicosSelecionados = Array.isArray(orcamento.servicos) ? orcamento.servicos : [];
         this.pecasSelecionadas = Array.isArray(orcamento.pecas) ? orcamento.pecas : [];
 
@@ -459,5 +557,11 @@ export class Orcamentos implements OnInit {
     const data = new Date(ano, mes, dia);
 
     return Number.isFinite(data.getTime()) ? data : null;
+  }
+
+  private finalizarConfirmacaoOrcamento() {
+    this.modalConfirmacaoPdfAberto = false;
+    this.orcamentoConfirmadoId = '';
+    this.router.navigate(['/orcamentos']);
   }
 }

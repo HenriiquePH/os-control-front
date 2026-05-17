@@ -46,6 +46,8 @@ export class OrdensServico implements OnInit {
   calendarioAberto: boolean = false;
   modalServicoAberto: boolean = false;
   modalPecaAberto: boolean = false;
+  dropdownServicosAberto: boolean = false;
+  dropdownPecasAberto: boolean = false;
 
   dataSelecionada: Date = new Date();
   mesExibido: Date = new Date();
@@ -181,7 +183,20 @@ export class OrdensServico implements OnInit {
 
   fecharModalServico() {
     this.modalServicoAberto = false;
+    this.dropdownServicosAberto = false;
     this.limparNovoServico();
+  }
+
+  abrirDropdownServicos() {
+    if (this.novoServico.id) {
+      return;
+    }
+
+    this.dropdownServicosAberto = true;
+  }
+
+  fecharDropdownServicos() {
+    this.dropdownServicosAberto = false;
   }
 
   selecionarServico(servico: ServicoSalvo) {
@@ -190,6 +205,16 @@ export class OrdensServico implements OnInit {
       nome: servico.nome,
       valor: String(servico.preco),
     };
+    this.dropdownServicosAberto = false;
+  }
+
+  limparSelecaoServico() {
+    this.novoServico = {
+      id: '',
+      nome: '',
+      valor: '',
+    };
+    this.dropdownServicosAberto = true;
   }
 
   confirmarServico() {
@@ -210,12 +235,26 @@ export class OrdensServico implements OnInit {
       },
     ];
 
-    this.fecharModalServico();
+    this.limparNovoServico();
+    this.dropdownServicosAberto = false;
   }
 
   fecharModalPeca() {
     this.modalPecaAberto = false;
+    this.dropdownPecasAberto = false;
     this.limparNovaPeca();
+  }
+
+  abrirDropdownPecas() {
+    if (this.novaPeca.id) {
+      return;
+    }
+
+    this.dropdownPecasAberto = true;
+  }
+
+  fecharDropdownPecas() {
+    this.dropdownPecasAberto = false;
   }
 
   selecionarPeca(peca: PecaSalva) {
@@ -225,6 +264,17 @@ export class OrdensServico implements OnInit {
       nome: peca.nome,
       valorUnitario: String(peca.valorUnitario),
     };
+    this.dropdownPecasAberto = false;
+  }
+
+  limparSelecaoPeca() {
+    this.novaPeca = {
+      ...this.novaPeca,
+      id: '',
+      nome: '',
+      valorUnitario: '',
+    };
+    this.dropdownPecasAberto = true;
   }
 
   confirmarPeca() {
@@ -248,7 +298,8 @@ export class OrdensServico implements OnInit {
       },
     ];
 
-    this.fecharModalPeca();
+    this.limparNovaPeca();
+    this.dropdownPecasAberto = false;
   }
 
   abrirCalendario() {

@@ -19,6 +19,7 @@ export class OrdensServicoVisualizar implements OnInit {
   filtroTecnico = '';
   filtroStatus = '';
   ordens: OrdemServicoLista[] = [];
+  readonly statusDisponiveis = ['Aberto', 'Em andamento', 'Fechada'];
 
   constructor(
     private router: Router,
@@ -47,11 +48,17 @@ export class OrdensServicoVisualizar implements OnInit {
 
     return this.ordens.filter((ordem) => {
       const combinaCliente = !cliente || ordem.cliente.toLowerCase().includes(cliente);
-      const combinaTecnico = !tecnico || ordem.tecnico.toLowerCase().includes(tecnico);
-      const combinaStatus = !status || ordem.status.toLowerCase().includes(status);
+      const combinaTecnico = !tecnico || ordem.tecnico.toLowerCase() === tecnico;
+      const combinaStatus = !status || ordem.status.toLowerCase() === status;
 
       return combinaCliente && combinaTecnico && combinaStatus;
     });
+  }
+
+  get tecnicosDisponiveis(): string[] {
+    return [...new Set(this.ordens.map((ordem) => ordem.tecnico).filter((tecnico) => !!tecnico))].sort((a, b) =>
+      a.localeCompare(b, 'pt-BR')
+    );
   }
 
   get linhasVazias(): undefined[] {

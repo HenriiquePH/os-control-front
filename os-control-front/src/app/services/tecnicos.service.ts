@@ -1,35 +1,30 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { TecnicoApi, TecnicoLista, TecnicoSalvo } from '../models/tecnico.model';
-import { AuthService } from './auth.service';
 
-@Injectable({ // marca a classe como um serviço injetável e disponível em toda a aplicação
+@Injectable({
   providedIn: 'root',
 })
-export class TecnicosService { // responsável por gerenciar as operações relacionadas aos técnicos, como listar, buscar por ID, salvar e excluir
-  private readonly apiUrl = 'http://localhost:8080/usuario'; // URL base para as requisições relacionadas aos técnicos, apontando para o endpoint de usuários no backend
+export class TecnicosService {
+  private readonly apiUrl = 'http://localhost:8080/usuario';
 
-  constructor(private http: HttpClient, private authService: AuthService) {} //
+  constructor(private http: HttpClient) {}
 
-  listar(): Observable<TecnicoSalvo[]> { // retorna a lista completa de técnicos, filtrando os usuários e mapeando para o formato de TecnicoSalvo
-    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
-      map((usuarios) =>
-        usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoSalvo(usuario))
-      )
+  listar(): Observable<TecnicoSalvo[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl).pipe(
+      map((usuarios) => usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoSalvo(usuario)))
     );
   }
 
-  listarLista(): Observable<TecnicoLista[]> { // retorna a lista de técnicos para exibição na tabela, filtrando os usuários e mapeando para o formato de lista
-    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
-      map((usuarios) =>
-        usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoLista(usuario))
-      )
+  listarLista(): Observable<TecnicoLista[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl).pipe(
+      map((usuarios) => usuarios.filter((usuario) => this.ehTecnico(usuario)).map((usuario) => this.mapearTecnicoLista(usuario)))
     );
   }
 
-  listarNomes(): Observable<string[]> { // retorna apenas os nomes dos técnicos, filtrando os usuários e mapeando para o nome
-    return this.http.get<TecnicoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+  listarNomes(): Observable<string[]> {
+    return this.http.get<TecnicoApi[]>(this.apiUrl).pipe(
       map((usuarios) =>
         usuarios
           .filter((usuario) => this.ehTecnico(usuario))
@@ -40,9 +35,7 @@ export class TecnicosService { // responsável por gerenciar as operações rela
   }
 
   buscarPorId(id: string): Observable<TecnicoSalvo> {
-    return this.http.get<TecnicoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
-      map((usuario) => this.mapearTecnicoSalvo(usuario))
-    );
+    return this.http.get<TecnicoApi>(`${this.apiUrl}/${id}`).pipe(map((usuario) => this.mapearTecnicoSalvo(usuario)));
   }
 
   salvar(tecnico: TecnicoSalvo): Observable<TecnicoSalvo> {
@@ -60,18 +53,14 @@ export class TecnicosService { // responsável por gerenciar as operações rela
     }
 
     if (!tecnico.id) {
-      return this.http.post<TecnicoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
-        map((novoTecnico) => this.mapearTecnicoSalvo(novoTecnico))
-      );
+      return this.http.post<TecnicoApi>(this.apiUrl, dados).pipe(map((novoTecnico) => this.mapearTecnicoSalvo(novoTecnico)));
     }
 
-    return this.http.put<TecnicoApi>(`${this.apiUrl}/${tecnico.id}`, dados, { headers: this.obterHeaders() }).pipe(
-      map((tecnicoAtualizado) => this.mapearTecnicoSalvo(tecnicoAtualizado))
-    );
+    return this.http.put<TecnicoApi>(`${this.apiUrl}/${tecnico.id}`, dados).pipe(map((tecnicoAtualizado) => this.mapearTecnicoSalvo(tecnicoAtualizado)));
   }
 
   excluir(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   private mapearTecnicoSalvo(usuario: TecnicoApi): TecnicoSalvo {
@@ -95,13 +84,5 @@ export class TecnicosService { // responsável por gerenciar as operações rela
 
   private ehTecnico(usuario: TecnicoApi) {
     return usuario.perfil === 'ROLE_USUARIO';
-  }
-
-  private obterHeaders() {
-    // Por enquanto o token vai direto no service. Depois, o ponto certo para
-    // centralizar isso no projeto inteiro e um interceptor.
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.authService.obterToken()}`,
-    });
   }
 }

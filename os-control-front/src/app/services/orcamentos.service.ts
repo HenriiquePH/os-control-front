@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-
 import {
   OrcamentoApi,
   OrcamentoImportacao,
@@ -12,44 +11,40 @@ import {
   PecaSelecionada,
   ServicoSelecionado,
 } from '../models/orcamento.model';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrcamentosService {
   private readonly apiUrl = 'http://localhost:8080/orcamentos';
+  private readonly relatorioUrl = 'http://localhost:8080/relatorio-orcamento';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   listar(): Observable<OrcamentoSalvo[]> {
-    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+    return this.http.get<OrcamentoApi[]>(this.apiUrl).pipe(
       map((orcamentos) => orcamentos.map((orcamento) => this.mapearOrcamentoSalvo(orcamento)))
     );
   }
 
   listarLista(): Observable<OrcamentoLista[]> {
-    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+    return this.http.get<OrcamentoApi[]>(this.apiUrl).pipe(
       map((orcamentos) => orcamentos.map((orcamento) => this.mapearLista(orcamento)))
     );
   }
 
   listarImportacao(): Observable<OrcamentoImportacao[]> {
-    return this.http.get<OrcamentoApi[]>(this.apiUrl, { headers: this.obterHeaders() }).pipe(
+    return this.http.get<OrcamentoApi[]>(this.apiUrl).pipe(
       map((orcamentos) => orcamentos.map((orcamento) => this.mapearImportacao(orcamento)))
     );
   }
 
   buscarPorId(id: string): Observable<OrcamentoSalvo> {
-    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
-      map((orcamento) => this.mapearOrcamentoSalvo(orcamento))
-    );
+    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`).pipe(map((orcamento) => this.mapearOrcamentoSalvo(orcamento)));
   }
 
   buscarParaImportacao(id: string): Observable<OrcamentoImportacao> {
-    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() }).pipe(
-      map((orcamento) => this.mapearImportacao(orcamento))
-    );
+    return this.http.get<OrcamentoApi>(`${this.apiUrl}/${id}`).pipe(map((orcamento) => this.mapearImportacao(orcamento)));
   }
 
   salvar(orcamento: OrcamentoSalvo): Observable<OrcamentoSalvo> {
@@ -62,18 +57,22 @@ export class OrcamentosService {
     };
 
     if (!orcamento.id) {
-      return this.http.post<OrcamentoApi>(this.apiUrl, dados, { headers: this.obterHeaders() }).pipe(
-        map((novoOrcamento) => this.mapearOrcamentoSalvo(novoOrcamento))
-      );
+      return this.http.post<OrcamentoApi>(this.apiUrl, dados).pipe(map((novoOrcamento) => this.mapearOrcamentoSalvo(novoOrcamento)));
     }
 
-    return this.http.put<OrcamentoApi>(`${this.apiUrl}/${orcamento.id}`, dados, { headers: this.obterHeaders() }).pipe(
+    return this.http.put<OrcamentoApi>(`${this.apiUrl}/${orcamento.id}`, dados).pipe(
       map((orcamentoAtualizado) => this.mapearOrcamentoSalvo(orcamentoAtualizado))
     );
   }
 
   excluir(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.obterHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  obterPdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.relatorioUrl}/pdf/${id}`, {
+      responseType: 'blob',
+    });
   }
 
   private mapearOrcamentoSalvo(orcamento: OrcamentoApi): OrcamentoSalvo {
@@ -86,6 +85,7 @@ export class OrcamentosService {
       nomeOrcamento: nome,
       dataAbertura: this.formatarData(orcamento.dataCriacao),
       observacao: orcamento.observacao?.trim() || '',
+      desconto: '',
       servicos: this.mapearListaServicos(orcamento.itensServicos),
       pecas: this.mapearListaPecas(orcamento.itensPecas),
       valorTotal: this.formatarMoeda(total),
@@ -211,13 +211,5 @@ export class OrcamentosService {
       style: 'currency',
       currency: 'BRL',
     }).format(valor);
-  }
-
-  private obterHeaders() {
-    // Por enquanto o token vai direto no service. Depois, o ponto certo para
-    // centralizar isso no projeto inteiro e um interceptor.
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.authService.obterToken()}`,
-    });
   }
 }
