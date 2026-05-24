@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map, of, switchMap } from 'rxjs';
+import { Observable, map } from 'rxjs';
+
 import {
-  CidadeApi,
   ClienteApi,
   ClienteLista,
   ClienteSalvo,
+  EnderecoApi,
+  EstadoApi,
   Veiculo,
   VeiculoApi,
 } from '../models/cliente.model';
@@ -15,12 +17,13 @@ import {
 })
 export class ClientesService {
   private readonly apiUrl = 'http://localhost:8080/cliente';
-  private readonly cidadesUrl = 'http://localhost:8080/cidade';
 
   constructor(private http: HttpClient) {}
 
   listar(): Observable<ClienteSalvo[]> {
-    return this.http.get<ClienteApi[]>(this.apiUrl).pipe(map((clientes) => clientes.map((cliente) => this.mapearCliente(cliente))));
+    return this.http.get<ClienteApi[]>(this.apiUrl).pipe(
+      map((clientes) => clientes.map((cliente) => this.mapearCliente(cliente)))
+    );
   }
 
   listarLista(): Observable<ClienteLista[]> {
@@ -28,86 +31,66 @@ export class ClientesService {
   }
 
   buscarPorId(id: string): Observable<ClienteSalvo> {
-    return this.http.get<ClienteApi>(`${this.apiUrl}/${id}`).pipe(map((cliente) => this.mapearCliente(cliente)));
+    return this.http.get<ClienteApi>(`${this.apiUrl}/${id}`).pipe(
+      map((cliente) => this.mapearCliente(cliente))
+    );
   }
 
   salvar(cliente: ClienteSalvo): Observable<ClienteSalvo> {
-    return this.montarPayload(cliente).pipe(
-      switchMap((dados) => {
-        if (!cliente.id) {
-          return this.http.post<ClienteApi>(this.apiUrl, dados);
-        }
+    const dados = this.montarPayload(cliente);
+    const requisicao = !cliente.id
+      ? this.http.post<ClienteApi>(this.apiUrl, dados)
+      : this.http.put<ClienteApi>(`${this.apiUrl}/${cliente.id}`, dados);
 
-        return this.http.put<ClienteApi>(`${this.apiUrl}/${cliente.id}`, dados);
-      }),
-      map((clienteSalvo) => this.mapearCliente(clienteSalvo))
-    );
+    return requisicao.pipe(map((clienteSalvo) => this.mapearCliente(clienteSalvo)));
   }
 
   excluir(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  private montarPayload(cliente: ClienteSalvo): Observable<Omit<ClienteApi, 'id'>> {
-    return this.resolverCidade(cliente.cidade, cliente.estado).pipe(
-      map((cidade) => ({
-        nome: cliente.nome.trim(),
-        cpf: cliente.cpf.trim(),
-        telefone: cliente.telefone.trim(),
-        email: '',
-        endereco: {
-          ...(cliente.enderecoId ? { id: cliente.enderecoId } : {}),
-          rua: cliente.rua.trim(),
-          bairro: cliente.bairro.trim(),
-          cep: cliente.cep.trim(),
-          complemento: cliente.complemento.trim(),
-          cidade,
-        },
-        veiculos: cliente.veiculos.map((veiculo) => this.mapearVeiculoApi(veiculo)),
-      }))
-    );
-  }
+  private montarPayload(cliente: ClienteSalvo) {
+    const cidade = cliente.cidade.trim();
+    const estado = cliente.estado.trim().toUpperCase();
 
-  private resolverCidade(nomeCidade: string, nomeEstado: string): Observable<CidadeApi | null> {
-    const cidade = nomeCidade.trim();
-    const estado = nomeEstado.trim();
-
-    if (!cidade) {
-      return of(null);
-    }
-
-    return this.http.get<CidadeApi[]>(this.cidadesUrl).pipe(
-      map((cidades) => {
-        const cidadeEncontrada = cidades.find((item) => {
-          const mesmoNome = this.normalizar(item.nome) === this.normalizar(cidade);
-          const mesmoEstado = !estado || this.normalizar(item.estado?.nome) === this.normalizar(estado);
-
-          return mesmoNome && mesmoEstado;
-        });
-
-        if (!cidadeEncontrada) {
-          throw new Error('Cidade não encontrada no backend.');
-        }
-
-        return cidadeEncontrada;
-      })
-    );
+    return {
+      nome: cliente.nome.trim(),
+      cpf: cliente.cpf.trim(),
+      telefone: cliente.telefone.trim(),
+      email: '',
+      endereco: {
+        ...(cliente.enderecoId ? { id: cliente.enderecoId } : {}),
+        rua: cliente.rua.trim(),
+        bairro: cliente.bairro.trim(),
+        cep: cliente.cep.trim(),
+        complemento: cliente.complemento.trim(),
+        cidade: cidade
+          ? {
+              nome: cidade,
+              estado: estado ? { uf: estado } : null,
+            }
+          : null,
+      },
+      veiculos: cliente.veiculos.map((veiculo) => this.mapearVeiculoApi(veiculo)),
+    };
   }
 
   private mapearCliente(cliente: ClienteApi): ClienteSalvo {
+    const endereco = cliente.endereco;
+
     return {
       id: String(cliente.id).padStart(2, '0'),
       nome: cliente.nome ?? '',
       cpf: cliente.cpf ?? '',
       telefone: cliente.telefone ?? '',
-      rua: cliente.endereco?.rua ?? '',
-      bairro: cliente.endereco?.bairro ?? '',
-      cidade: cliente.endereco?.cidade?.nome ?? '',
-      estado: cliente.endereco?.cidade?.estado?.nome ?? '',
-      cep: cliente.endereco?.cep ?? '',
-      complemento: cliente.endereco?.complemento ?? '',
+      rua: endereco?.rua ?? '',
+      bairro: endereco?.bairro ?? '',
+      cidade: this.extrairNomeCidade(endereco),
+      estado: this.extrairEstado(endereco),
+      cep: endereco?.cep ?? '',
+      complemento: endereco?.complemento ?? '',
       veiculos: Array.isArray(cliente.veiculos) ? cliente.veiculos.map((veiculo) => this.mapearVeiculo(veiculo)) : [],
-      enderecoId: cliente.endereco?.id,
+      enderecoId: endereco?.id,
     };
   }
 
@@ -148,11 +131,37 @@ export class ClientesService {
     };
   }
 
-  private normalizar(valor?: string | null) {
-    return (valor ?? '')
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+  private extrairNomeCidade(endereco: EnderecoApi | null | undefined) {
+    const cidade = endereco?.cidade;
+
+    if (!cidade) {
+      return '';
+    }
+
+    return typeof cidade === 'string' ? cidade : cidade.nome ?? '';
+  }
+
+  private extrairEstado(endereco: EnderecoApi | null | undefined) {
+    const estadoDireto = endereco?.estado;
+
+    if (estadoDireto) {
+      return this.formatarEstado(estadoDireto);
+    }
+
+    const cidade = endereco?.cidade;
+
+    if (!cidade || typeof cidade === 'string') {
+      return '';
+    }
+
+    return this.formatarEstado(cidade.estado);
+  }
+
+  private formatarEstado(estado: EstadoApi | string | null | undefined) {
+    if (!estado) {
+      return '';
+    }
+
+    return typeof estado === 'string' ? estado : estado.uf ?? estado.nome ?? '';
   }
 }

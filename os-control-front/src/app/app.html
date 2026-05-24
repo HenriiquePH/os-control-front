@@ -1,1 +1,12 @@
+@if (mensagemService.visivel()) {
+  <div
+    class="mensagem-topo"
+    [class.mensagem-sucesso]="mensagemService.tipo() === 'sucesso'"
+    [class.mensagem-erro]="mensagemService.tipo() === 'erro'"
+    (click)="mensagemService.fechar()"
+  >
+    {{ mensagemService.texto() }}
+  </div>
+}
+
 <router-outlet></router-outlet>

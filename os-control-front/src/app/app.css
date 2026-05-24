@@ -9,3 +9,39 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+
+.mensagem-topo {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  max-width: 360px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  animation: aparecerMensagem 0.2s ease-out;
+}
+
+.mensagem-sucesso {
+  background: #15803d;
+}
+
+.mensagem-erro {
+  background: #b91c1c;
+}
+
+@keyframes aparecerMensagem {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

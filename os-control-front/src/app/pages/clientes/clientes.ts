@@ -4,8 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ClienteFormulario, ClienteSalvo, NovoVeiculo, Veiculo } from '../../models/cliente.model';
 import { AuthService } from '../../services/auth.service';
-import { ClientesService } from '../../services/clientes.service';
 import { CepService } from '../../services/cep.service';
+import { ClientesService } from '../../services/clientes.service';
+import { MensagemService } from '../../services/mensagem.service';
 
 @Component({
   selector: 'app-clientes',
@@ -44,7 +45,8 @@ export class Clientes implements OnInit {
     private route: ActivatedRoute,
     private clientesService: ClientesService,
     private authService: AuthService,
-    private cepService: CepService
+    private cepService: CepService,
+    private mensagemService: MensagemService
   ) {
     this.usuarioLogado = this.authService.obterUsuario();
   }
@@ -77,10 +79,10 @@ export class Clientes implements OnInit {
   }
 
   adicionarVeiculo() {
-    const marca = this.novoVeiculo.marca.trim();
-    const placa = this.novoVeiculo.placa.trim();
-    const modelo = this.novoVeiculo.modelo.trim();
-    const ano = this.novoVeiculo.ano.trim();
+    const marca = this.formatarTextoMaiusculo(this.novoVeiculo.marca);
+    const placa = this.formatarTextoMaiusculo(this.novoVeiculo.placa);
+    const modelo = this.formatarTextoMaiusculo(this.novoVeiculo.modelo);
+    const ano = this.formatarTextoMaiusculo(this.novoVeiculo.ano);
 
     if (!marca && !placa && !modelo && !ano) {
       return;
@@ -112,12 +114,18 @@ export class Clientes implements OnInit {
       veiculos: this.veiculos,
       enderecoId: this.modoEdicao ? this.clienteEnderecoId : undefined,
     };
+    const novoCadastro = !this.modoEdicao;
 
     this.clientesService.salvar(clienteSalvo).subscribe({
-      next: () => this.router.navigate(['/clientes']),
+      next: () => {
+        if (novoCadastro) {
+          this.mensagemService.mostrarSucesso('Cliente cadastrado com sucesso.');
+        }
+
+        this.router.navigate(['/clientes']);
+      },
       error: (erro) => {
-        console.error('Não foi possível salvar o cliente.', erro);
-        window.alert('Não foi possível salvar o cliente. Verifique se a cidade e o estado existem no backend.');
+        console.error('Nao foi possivel salvar o cliente.', erro);
       },
     });
   }
@@ -147,44 +155,55 @@ export class Clientes implements OnInit {
         this.veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
       },
       error: (erro) => {
-        console.error('Não foi possível carregar o cliente.', erro);
+        console.error('Nao foi possivel carregar o cliente.', erro);
       },
     });
   }
 
-  private normalizarCep(valor: string){
+  private normalizarCep(valor: string) {
     return (valor ?? '').replace(/\D/g, '').slice(0, 8);
   }
 
   private buscarEnderecoPorCep(cep: string) {
-  this.cepService.buscarPorCep(cep).subscribe({
-    next: (endereco) => {
-      if (endereco.erro){
-        return;
-      } 
+    this.cepService.buscarPorCep(cep).subscribe({
+      next: (endereco) => {
+        if (endereco.erro) {
+          return;
+        }
 
-    this.cliente.rua = endereco.logradouro || '';
-    this.cliente.bairro = endereco.bairro || '';
-    this.cliente.cidade = endereco.localidade || '';
-    this.cliente.complemento = endereco.complemento || '';
-  },
-    error: (erro) => {
-      console.error('Não foi possível buscar o CEP.', erro);
-    },
-  });
-}
+        this.cliente.rua = endereco.logradouro || '';
+        this.cliente.bairro = endereco.bairro || '';
+        this.cliente.cidade = endereco.localidade || '';
+        this.cliente.estado = endereco.uf || '';
+        this.cliente.complemento = endereco.complemento || '';
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel buscar o CEP.', erro);
+      },
+    });
+  }
 
-
-  atualizarCep(valor: string){
+  atualizarCep(valor: string) {
     const cep = this.normalizarCep(valor);
     this.cliente.cep = cep;
 
-    if (cep.length !== 8){
+    if (cep.length !== 8) {
       return;
     }
 
     this.buscarEnderecoPorCep(cep);
+  }
 
+  atualizarCpf(valor: string) {
+    this.cliente.cpf = this.formatarCpf(valor);
+  }
+
+  atualizarTelefone(valor: string) {
+    this.cliente.telefone = this.formatarTelefone(valor);
+  }
+
+  atualizarVeiculo(campo: keyof NovoVeiculo, valor: string) {
+    this.novoVeiculo[campo] = this.formatarTextoMaiusculo(valor);
   }
 
   private limparNovoVeiculo() {
@@ -194,5 +213,45 @@ export class Clientes implements OnInit {
       modelo: '',
       ano: '',
     };
+  }
+
+  private formatarCpf(valor: string) {
+    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
+
+    if (numeros.length <= 3) {
+      return numeros;
+    }
+
+    if (numeros.length <= 6) {
+      return `${numeros.slice(0, 3)}.${numeros.slice(3)}`;
+    }
+
+    if (numeros.length <= 9) {
+      return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`;
+    }
+
+    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`;
+  }
+
+  private formatarTelefone(valor: string) {
+    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
+
+    if (numeros.length <= 2) {
+      return numeros ? `(${numeros}` : '';
+    }
+
+    if (numeros.length <= 6) {
+      return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+    }
+
+    if (numeros.length <= 10) {
+      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
+    }
+
+    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+  }
+
+  private formatarTextoMaiusculo(valor: string) {
+    return (valor ?? '').toUpperCase().trimStart();
   }
 }

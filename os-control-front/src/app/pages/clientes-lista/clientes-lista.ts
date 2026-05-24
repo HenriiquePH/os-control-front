@@ -56,7 +56,7 @@ export class ClientesLista implements OnInit {
     this.clientesService.excluir(id).subscribe({
       next: () => this.atualizarClientes(),
       error: (erro) => {
-        console.error('Não foi possível excluir o cliente.', erro);
+        console.error('Nao foi possivel excluir o cliente.', erro);
       },
     });
   }
@@ -67,7 +67,7 @@ export class ClientesLista implements OnInit {
         this.clientes = clientes;
       },
       error: (erro) => {
-        console.error('Não foi possível carregar os clientes.', erro);
+        console.error('Nao foi possivel carregar os clientes.', erro);
         this.clientes = [];
       },
     });

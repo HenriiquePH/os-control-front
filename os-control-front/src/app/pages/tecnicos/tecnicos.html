@@ -15,8 +15,26 @@
         <input class="entrada-campo" type="text" placeholder="Nome" [(ngModel)]="tecnico.nome" name="tecnicoNome" />
 
         <div class="linha-campos">
-          <input class="entrada-campo" type="text" placeholder="CPF" [(ngModel)]="tecnico.cpf" name="tecnicoCpf" />
-          <input class="entrada-campo" type="text" placeholder="Telefone" [(ngModel)]="tecnico.telefone" name="tecnicoTelefone" />
+          <input
+            class="entrada-campo"
+            type="text"
+            placeholder="CPF"
+            maxlength="14"
+            inputmode="numeric"
+            [ngModel]="tecnico.cpf"
+            (ngModelChange)="atualizarCpf($event)"
+            name="tecnicoCpf"
+          />
+          <input
+            class="entrada-campo"
+            type="text"
+            placeholder="Telefone"
+            maxlength="15"
+            inputmode="numeric"
+            [ngModel]="tecnico.telefone"
+            (ngModelChange)="atualizarTelefone($event)"
+            name="tecnicoTelefone"
+          />
         </div>
       </div>
 

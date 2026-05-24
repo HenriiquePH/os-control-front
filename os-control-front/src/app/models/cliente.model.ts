@@ -42,6 +42,7 @@ export interface ClienteLista {
 export interface EstadoApi {
   id: number;
   nome: string;
+  uf?: string;
 }
 
 export interface CidadeApi {
@@ -56,7 +57,8 @@ export interface EnderecoApi {
   bairro: string;
   cep: string;
   complemento: string;
-  cidade: CidadeApi | null;
+  cidade: CidadeApi | string | null;
+  estado?: EstadoApi | string | null;
 }
 
 export interface VeiculoApi {
@@ -78,7 +80,7 @@ export interface ClienteApi {
   veiculos: VeiculoApi[];
 }
 
-export interface CepApi{
+export interface CepApi {
   cep: string;
   logradouro: string;
   complemento: string;

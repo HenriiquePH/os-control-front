@@ -290,6 +290,10 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
 
+.entrada-maiuscula {
+  text-transform: uppercase;
+}
+
 .entrada-modal::placeholder {
   color: #7a7070;
 }

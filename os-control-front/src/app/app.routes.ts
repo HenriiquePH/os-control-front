@@ -16,23 +16,24 @@ import { OrdensServicoVisualizar } from './pages/ordens-servico-visualizar/orden
 import { Tecnicos } from './pages/tecnicos/tecnicos';
 import { TecnicosLista } from './pages/tecnicos-lista/tecnicos-lista';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: Login },
   { path: 'home', component: Home, canActivate: [authGuard] },
-  { path: 'clientes/novo', component: Clientes, canActivate: [authGuard] },
-  { path: 'clientes/editar/:id', component: Clientes, canActivate: [authGuard] },
-  { path: 'clientes', component: ClientesLista, canActivate: [authGuard] },
-  { path: 'tecnicos/novo', component: Tecnicos, canActivate: [authGuard] },
-  { path: 'tecnicos/editar/:id', component: Tecnicos, canActivate: [authGuard] },
-  { path: 'tecnicos', component: TecnicosLista, canActivate: [authGuard] },
-  { path: 'pecas/novo', component: Pecas, canActivate: [authGuard] },
-  { path: 'pecas/editar/:id', component: Pecas, canActivate: [authGuard] },
-  { path: 'pecas', component: PecasLista, canActivate: [authGuard] },
-  { path: 'servicos/novo', component: Servicos, canActivate: [authGuard] },
-  { path: 'servicos/editar/:id', component: Servicos, canActivate: [authGuard] },
-  { path: 'servicos', component: ServicosLista, canActivate: [authGuard] },
+  { path: 'clientes/novo', component: Clientes, canActivate: [authGuard, adminGuard] },
+  { path: 'clientes/editar/:id', component: Clientes, canActivate: [authGuard, adminGuard] },
+  { path: 'clientes', component: ClientesLista, canActivate: [authGuard, adminGuard] },
+  { path: 'tecnicos/novo', component: Tecnicos, canActivate: [authGuard, adminGuard] },
+  { path: 'tecnicos/editar/:id', component: Tecnicos, canActivate: [authGuard, adminGuard] },
+  { path: 'tecnicos', component: TecnicosLista, canActivate: [authGuard, adminGuard] },
+  { path: 'pecas/novo', component: Pecas, canActivate: [authGuard, adminGuard] },
+  { path: 'pecas/editar/:id', component: Pecas, canActivate: [authGuard, adminGuard] },
+  { path: 'pecas', component: PecasLista, canActivate: [authGuard, adminGuard] },
+  { path: 'servicos/novo', component: Servicos, canActivate: [authGuard, adminGuard] },
+  { path: 'servicos/editar/:id', component: Servicos, canActivate: [authGuard, adminGuard] },
+  { path: 'servicos', component: ServicosLista, canActivate: [authGuard, adminGuard] },
   { path: 'orcamentos/novo', component: Orcamentos, canActivate: [authGuard] },
   { path: 'orcamentos/editar/:orcamentoId', component: Orcamentos, canActivate: [authGuard] },
   { path: 'orcamentos', component: OrcamentosLista, canActivate: [authGuard] },
