@@ -13,5 +13,5 @@ export const adminGuard: CanActivateFn = () => {
   }
 
   mensagemService.mostrarErro('Voce nao tem permissao para acessar esta tela.');
-  return router.createUrlTree(['/orcamentos']);
+  return router.createUrlTree(['/home']);
 };
