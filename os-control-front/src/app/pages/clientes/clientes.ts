@@ -126,6 +126,11 @@ export class Clientes implements OnInit {
       },
       error: (erro) => {
         console.error('Nao foi possivel salvar o cliente.', erro);
+        const mensagem =
+          erro?.error?.message ||
+          erro?.message ||
+          'Nao foi possivel salvar o cliente. Verifique se a cidade e o estado existem no backend.';
+        window.alert(mensagem);
       },
     });
   }
