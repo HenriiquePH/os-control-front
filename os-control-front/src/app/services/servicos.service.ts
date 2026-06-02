@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ServicoApi, ServicoLista, ServicoSalvo } from '../models/servico.model';
+import { formatarMoeda } from '../utils/formatacao';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +51,7 @@ export class ServicosService {
     return {
       id: String(servico.id).padStart(2, '0'),
       nome: servico.descricao,
-      valor: this.formatarMoeda(servico.valor),
+      valor: formatarMoeda(servico.valor),
       preco: servico.valor,
     };
   }
@@ -59,14 +60,7 @@ export class ServicosService {
     return {
       id: String(servico.id).padStart(2, '0'),
       nome: servico.descricao,
-      valor: this.formatarMoeda(servico.valor),
+      valor: formatarMoeda(servico.valor),
     };
-  }
-
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
   }
 }

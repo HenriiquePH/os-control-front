@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { OrcamentoLista } from '../../models/orcamento.model';
 import { AuthService } from '../../services/auth.service';
+import { MensagemService } from '../../services/mensagem.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
 
 @Component({
@@ -17,9 +18,16 @@ export class OrcamentosLista implements OnInit {
   usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
+  filtroNomeAplicado = '';
+  filtroIdAplicado = '';
   orcamentos: OrcamentoLista[] = [];
 
-  constructor(private router: Router, private orcamentosService: OrcamentosService, private authService: AuthService) {
+  constructor(
+    private router: Router,
+    private orcamentosService: OrcamentosService,
+    private authService: AuthService,
+    private mensagemService: MensagemService
+  ) {
     this.usuarioLogado = this.authService.obterUsuario();
   }
 
@@ -28,8 +36,8 @@ export class OrcamentosLista implements OnInit {
   }
 
   get orcamentosFiltrados(): OrcamentoLista[] {
-    const nome = this.filtroNome.trim().toLowerCase();
-    const id = this.filtroId.trim().toLowerCase();
+    const nome = this.filtroNomeAplicado.trim().toLowerCase();
+    const id = this.filtroIdAplicado.trim().toLowerCase();
 
     return this.orcamentos.filter((orcamento) => {
       const combinaNome = !nome || orcamento.nome.toLowerCase().includes(nome);
@@ -48,8 +56,15 @@ export class OrcamentosLista implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  excluirOrcamento(id: string) {
-    if (!window.confirm('Deseja excluir orcamento?')) {
+  aplicarFiltros() {
+    this.filtroNomeAplicado = this.filtroNome;
+    this.filtroIdAplicado = this.filtroId;
+  }
+
+  async excluirOrcamento(id: string) {
+    const confirmado = await this.mensagemService.confirmar('Deseja excluir orcamento?', 'Excluir orcamento');
+
+    if (!confirmado) {
       return;
     }
 
@@ -58,7 +73,7 @@ export class OrcamentosLista implements OnInit {
         this.atualizarOrcamentos();
       },
       error: (erro) => {
-        console.error('Não foi possível excluir o orçamento.', erro);
+        console.error('Nao foi possivel excluir o orcamento.', erro);
       },
     });
   }
@@ -69,7 +84,7 @@ export class OrcamentosLista implements OnInit {
         this.orcamentos = orcamentos;
       },
       error: (erro) => {
-        console.error('Não foi possível carregar os orçamentos.', erro);
+        console.error('Nao foi possivel carregar os orcamentos.', erro);
         this.orcamentos = [];
       },
     });

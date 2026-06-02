@@ -34,6 +34,75 @@ html, body {
   background: #b91c1c;
 }
 
+.sobreposicao-dialogo {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.dialogo-sistema {
+  width: min(100%, 420px);
+  padding: 28px 24px 22px;
+  border-radius: 18px;
+  background: #f7f4f4;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+}
+
+.titulo-dialogo {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 500;
+  color: #4d4646;
+}
+
+.texto-dialogo {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #5d5454;
+}
+
+.acoes-dialogo {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.botao-dialogo {
+  min-width: 110px;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.botao-dialogo-secundario {
+  background: #ddd6d6;
+  color: #544b4b;
+}
+
+.botao-dialogo-primario {
+  background: #0da206;
+  color: #ffffff;
+}
+
+.botao-dialogo-secundario:hover {
+  background: #d0c8c8;
+}
+
+.botao-dialogo-primario:hover {
+  background: #0a8b05;
+}
+
 @keyframes aparecerMensagem {
   from {
     opacity: 0;
@@ -43,5 +112,15 @@ html, body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .acoes-dialogo {
+    flex-direction: column-reverse;
+  }
+
+  .botao-dialogo {
+    width: 100%;
   }
 }

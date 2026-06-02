@@ -9,6 +9,7 @@ import {
   OsServicoApi,
 } from '../models/ordem-servico.model';
 import { PecaSelecionada, ServicoSelecionado } from '../models/orcamento.model';
+import { converterMoedaParaNumero, formatarMoeda } from '../utils/formatacao';
 
 @Injectable({
   providedIn: 'root',
@@ -69,11 +70,13 @@ export class OrdensServicoService {
       tecnicoId: ordem.tecnicoResponsavelId != null ? String(ordem.tecnicoResponsavelId) : '',
       tecnicoNome: ordem.tecnicoResponsavelNome?.trim() || '',
       dataAbertura: this.formatarData(ordem.dataAbertura),
+      dataFechamento: this.formatarData(ordem.dataFechamento),
       observacao: ordem.observacoes?.trim() || '',
       servicos: this.mapearServicos(ordem.servicos),
       pecas: this.mapearPecas(ordem.pecas),
       desconto: this.formatarNumero(ordem.desconto),
-      totalOs: this.formatarMoeda(ordem.valorTotal ?? 0),
+      totalOs: formatarMoeda(ordem.valorTotal ?? 0),
+      totalOsValor: ordem.valorTotal ?? 0,
     };
   }
 
@@ -83,7 +86,7 @@ export class OrdensServicoService {
       statusOs: this.mapearStatusParaApi(ordem.status),
       observacoes: ordem.observacao.trim(),
       orcamentoId: this.converterTextoParaInteiro(ordem.numeroOrcamento),
-      desconto: this.converterTextoParaNumero(ordem.desconto) ?? 0,
+      desconto: converterMoedaParaNumero(ordem.desconto) ?? 0,
       clienteId: this.converterTextoParaInteiro(ordem.clienteId),
       veiculoId: this.converterTextoParaInteiro(ordem.veiculoId),
       tecnicoResponsavelId: this.converterTextoParaInteiro(ordem.tecnicoId),
@@ -195,32 +198,12 @@ export class OrdensServicoService {
     return [modelo?.trim() || '', placa?.trim() || ''].filter(Boolean).join(' - ') || '';
   }
 
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
-  }
-
   private formatarNumero(valor?: number | null) {
     return typeof valor === 'number' && Number.isFinite(valor) ? String(valor) : '';
   }
 
   private converterTextoParaInteiro(valor: string) {
     const numero = Number.parseInt(valor.trim(), 10);
-    return Number.isFinite(numero) ? numero : null;
-  }
-
-  private converterTextoParaNumero(valor: string) {
-    const texto = valor.trim().replace(/[R$\s]/g, '');
-
-    if (!texto) {
-      return null;
-    }
-
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
-    const numero = Number(normalizado);
-
     return Number.isFinite(numero) ? numero : null;
   }
 

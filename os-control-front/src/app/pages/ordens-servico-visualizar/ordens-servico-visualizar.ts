@@ -18,6 +18,9 @@ export class OrdensServicoVisualizar implements OnInit {
   filtroCliente = '';
   filtroTecnico = '';
   filtroStatus = '';
+  filtroClienteAplicado = '';
+  filtroTecnicoAplicado = '';
+  filtroStatusAplicado = '';
   ordens: OrdemServicoLista[] = [];
   readonly statusDisponiveis = ['Aberto', 'Em andamento', 'Fechada'];
 
@@ -42,9 +45,9 @@ export class OrdensServicoVisualizar implements OnInit {
   }
 
   get ordensFiltradas(): OrdemServicoLista[] {
-    const cliente = this.filtroCliente.trim().toLowerCase();
-    const tecnico = this.filtroTecnico.trim().toLowerCase();
-    const status = this.filtroStatus.trim().toLowerCase();
+    const cliente = this.filtroClienteAplicado.trim().toLowerCase();
+    const tecnico = this.filtroTecnicoAplicado.trim().toLowerCase();
+    const status = this.filtroStatusAplicado.trim().toLowerCase();
 
     return this.ordens.filter((ordem) => {
       const combinaCliente = !cliente || ordem.cliente.toLowerCase().includes(cliente);
@@ -68,5 +71,11 @@ export class OrdensServicoVisualizar implements OnInit {
   sair() {
     this.authService.sair();
     this.router.navigate(['/login']);
+  }
+
+  aplicarFiltros() {
+    this.filtroClienteAplicado = this.filtroCliente;
+    this.filtroTecnicoAplicado = this.filtroTecnico;
+    this.filtroStatusAplicado = this.filtroStatus;
   }
 }

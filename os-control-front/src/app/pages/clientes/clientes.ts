@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { CepService } from '../../services/cep.service';
 import { ClientesService } from '../../services/clientes.service';
 import { MensagemService } from '../../services/mensagem.service';
+import { formatarCpf, formatarTelefone } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-clientes',
@@ -130,7 +131,7 @@ export class Clientes implements OnInit {
           erro?.error?.message ||
           erro?.message ||
           'Nao foi possivel salvar o cliente. Verifique se a cidade e o estado existem no backend.';
-        window.alert(mensagem);
+        this.mensagemService.informar(mensagem, 'Nao foi possivel salvar o cliente');
       },
     });
   }
@@ -200,11 +201,11 @@ export class Clientes implements OnInit {
   }
 
   atualizarCpf(valor: string) {
-    this.cliente.cpf = this.formatarCpf(valor);
+    this.cliente.cpf = formatarCpf(valor);
   }
 
   atualizarTelefone(valor: string) {
-    this.cliente.telefone = this.formatarTelefone(valor);
+    this.cliente.telefone = formatarTelefone(valor);
   }
 
   atualizarVeiculo(campo: keyof NovoVeiculo, valor: string) {
@@ -218,42 +219,6 @@ export class Clientes implements OnInit {
       modelo: '',
       ano: '',
     };
-  }
-
-  private formatarCpf(valor: string) {
-    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
-
-    if (numeros.length <= 3) {
-      return numeros;
-    }
-
-    if (numeros.length <= 6) {
-      return `${numeros.slice(0, 3)}.${numeros.slice(3)}`;
-    }
-
-    if (numeros.length <= 9) {
-      return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`;
-    }
-
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`;
-  }
-
-  private formatarTelefone(valor: string) {
-    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
-
-    if (numeros.length <= 2) {
-      return numeros ? `(${numeros}` : '';
-    }
-
-    if (numeros.length <= 6) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
-    }
-
-    if (numeros.length <= 10) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
-    }
-
-    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
   }
 
   private formatarTextoMaiusculo(valor: string) {

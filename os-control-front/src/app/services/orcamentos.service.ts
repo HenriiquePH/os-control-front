@@ -11,6 +11,7 @@ import {
   PecaSelecionada,
   ServicoSelecionado,
 } from '../models/orcamento.model';
+import { formatarMoeda } from '../utils/formatacao';
 
 @Injectable({
   providedIn: 'root',
@@ -88,7 +89,7 @@ export class OrcamentosService {
       desconto: '',
       servicos: this.mapearListaServicos(orcamento.itensServicos),
       pecas: this.mapearListaPecas(orcamento.itensPecas),
-      valorTotal: this.formatarMoeda(total),
+      valorTotal: formatarMoeda(total),
       total,
       cliente: '',
       nomeCliente: '',
@@ -101,7 +102,7 @@ export class OrcamentosService {
     return {
       id: String(orcamento.id).padStart(2, '0'),
       nome: orcamento.nomeOrcamento?.trim() || '',
-      valorTotal: this.formatarMoeda(orcamento.valorTotal ?? 0),
+      valorTotal: formatarMoeda(orcamento.valorTotal ?? 0),
     };
   }
 
@@ -206,10 +207,4 @@ export class OrcamentosService {
     }).format(data);
   }
 
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
-  }
 }

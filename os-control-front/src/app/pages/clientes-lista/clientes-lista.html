@@ -75,8 +75,9 @@
             type="text"
             [(ngModel)]="filtroNome"
             [ngModelOptions]="{ standalone: true }"
+            (keyup.enter)="aplicarFiltros()"
           />
-          <button class="botao-pesquisa" type="button" aria-label="Pesquisar clientes">
+          <button class="botao-pesquisa" type="button" aria-label="Pesquisar clientes" (click)="aplicarFiltros()">
             <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           </button>
         </div>
@@ -90,10 +91,11 @@
           type="text"
           [(ngModel)]="filtroId"
           [ngModelOptions]="{ standalone: true }"
+          (keyup.enter)="aplicarFiltros()"
         />
       </div>
 
-      <button class="botao-filtro" type="button" aria-label="Filtros de clientes">
+      <button class="botao-filtro" type="button" aria-label="Filtros de clientes" (click)="aplicarFiltros()">
         <img class="icone-filtro" src="assets/icone-filtro.png" alt="" />
       </button>
 

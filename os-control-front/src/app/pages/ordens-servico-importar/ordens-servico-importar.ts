@@ -17,6 +17,8 @@ export class OrdensServicoImportar implements OnInit {
   usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
+  filtroNomeAplicado = '';
+  filtroIdAplicado = '';
   orcamentos: OrcamentoImportacao[] = [];
 
   constructor(private router: Router, private orcamentosService: OrcamentosService, private authService: AuthService) {
@@ -29,15 +31,15 @@ export class OrdensServicoImportar implements OnInit {
         this.orcamentos = orcamentos;
       },
       error: (erro) => {
-        console.error('Não foi possível carregar os orçamentos.', erro);
+        console.error('Nao foi possivel carregar os orcamentos.', erro);
         this.orcamentos = [];
       },
     });
   }
 
   get orcamentosFiltrados(): OrcamentoImportacao[] {
-    const nome = this.filtroNome.trim().toLowerCase();
-    const id = this.filtroId.trim().toLowerCase();
+    const nome = this.filtroNomeAplicado.trim().toLowerCase();
+    const id = this.filtroIdAplicado.trim().toLowerCase();
 
     return this.orcamentos.filter((orcamento) => {
       const combinaNome = !nome || orcamento.nome.toLowerCase().includes(nome);
@@ -54,5 +56,10 @@ export class OrdensServicoImportar implements OnInit {
   sair() {
     this.authService.sair();
     this.router.navigate(['/login']);
+  }
+
+  aplicarFiltros() {
+    this.filtroNomeAplicado = this.filtroNome;
+    this.filtroIdAplicado = this.filtroId;
   }
 }

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PecaFormulario, PecaSalva } from '../../models/peca.model';
 import { MensagemService } from '../../services/mensagem.service';
 import { PecasService } from '../../services/pecas.service';
+import { converterMoedaParaNumero, formatarMoeda } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-pecas',
@@ -30,7 +31,6 @@ export class Pecas implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
-      this.prepararNovoCadastro();
       return;
     }
 
@@ -47,7 +47,7 @@ export class Pecas implements OnInit {
 
   salvarPeca() {
     const nome = this.peca.nome.trim();
-    const valor = this.converterEmNumero(this.peca.valor);
+    const valor = converterMoedaParaNumero(this.peca.valor);
 
     if (!nome || valor === null) {
       return;
@@ -56,7 +56,7 @@ export class Pecas implements OnInit {
     const pecaSalva: PecaSalva = {
       id: this.pecaId,
       nome,
-      valor: this.formatarMoeda(valor),
+      valor: formatarMoeda(valor),
       valorUnitario: valor,
     };
     const novoCadastro = !this.modoEdicao;
@@ -87,27 +87,4 @@ export class Pecas implements OnInit {
     });
   }
 
-  private prepararNovoCadastro() {
-    this.pecaId = '';
-  }
-
-  private converterEmNumero(valor: string) {
-    const texto = valor.trim().replace(/[R$\s]/g, '');
-
-    if (!texto) {
-      return null;
-    }
-
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
-    const numero = Number(normalizado);
-
-    return Number.isFinite(numero) ? numero : null;
-  }
-
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
-  }
 }

@@ -195,7 +195,10 @@
           <textarea class="entrada-observacao" id="observacao-orcamento" [(ngModel)]="observacao" name="orcamentoObservacao"></textarea>
         </label>
 
-        <button class="botao-confirmar" type="button" (click)="confirmar()">{{ textoBotao }}</button>
+        <div class="acoes-formulario">
+          <button *ngIf="modoEdicao" class="botao-confirmar botao-pdf" type="button" (click)="emitirPdf()">Emitir PDF</button>
+          <button class="botao-confirmar" type="button" (click)="confirmar()">{{ textoBotao }}</button>
+        </div>
       </div>
     </form>
   </main>

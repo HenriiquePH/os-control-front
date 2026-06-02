@@ -1,4 +1,4 @@
-﻿<section class="pagina-inicial">
+<section class="pagina-inicial">
   <header class="barra-superior">
     <span class="titulo-sistema">OS Control</span>
     <span class="usuario-logado">{{ usuarioLogado }}</span>
@@ -63,7 +63,19 @@
 
   <main class="conteudo-principal">
     <img class="logo-central" src="assets/logo-os-control.png" alt="OS Control" />
+
+    <div *ngIf="carregandoIndicadores" class="estado-home">Carregando cards...</div>
+
+    <div *ngIf="!carregandoIndicadores" class="cards-home">
+      <div *ngIf="houveFalhaNosIndicadores" class="alerta-home">
+        Alguns dados nao puderam ser carregados da API.
+      </div>
+
+      <article *ngFor="let indicador of indicadores" class="card-indicador" [attr.data-tone]="indicador.destaque">
+        <span class="titulo-card">{{ indicador.titulo }}</span>
+        <strong class="valor-card">{{ indicador.valor }}</strong>
+        <p class="descricao-card">{{ indicador.descricao }}</p>
+      </article>
+    </div>
   </main>
 </section>
-
-

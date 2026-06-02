@@ -22,11 +22,13 @@ export interface OrdemServicoSalva {
   tecnicoId: string;
   tecnicoNome: string;
   dataAbertura: string;
+  dataFechamento?: string;
   observacao: string;
   servicos: ServicoSelecionado[];
   pecas: PecaSelecionada[];
   desconto: string;
   totalOs: string;
+  totalOsValor?: number;
 }
 
 export interface OrdemServicoLista {

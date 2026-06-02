@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { PecaApi, PecaLista, PecaSalva } from '../models/peca.model';
+import { formatarMoeda } from '../utils/formatacao';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +45,7 @@ export class PecasService {
     return {
       id: String(peca.id).padStart(2, '0'),
       nome: peca.descricao,
-      valor: this.formatarMoeda(peca.valorUnitario),
+      valor: formatarMoeda(peca.valorUnitario),
       valorUnitario: peca.valorUnitario,
     };
   }
@@ -53,14 +54,7 @@ export class PecasService {
     return {
       id: String(peca.id).padStart(2, '0'),
       nome: peca.descricao,
-      valor: this.formatarMoeda(peca.valorUnitario),
+      valor: formatarMoeda(peca.valorUnitario),
     };
-  }
-
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
   }
 }

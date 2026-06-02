@@ -9,4 +9,25 @@
   </div>
 }
 
+@if (mensagemService.dialogoVisivel()) {
+  <div class="sobreposicao-dialogo" (click)="mensagemService.cancelarDialogo()">
+    <div class="dialogo-sistema" (click)="$event.stopPropagation()">
+      <h2 class="titulo-dialogo">{{ mensagemService.dialogoTitulo() }}</h2>
+      <p class="texto-dialogo">{{ mensagemService.dialogoTexto() }}</p>
+
+      <div class="acoes-dialogo">
+        @if (mensagemService.dialogoTipo() === 'confirmacao') {
+          <button class="botao-dialogo botao-dialogo-secundario" type="button" (click)="mensagemService.cancelarDialogo()">
+            Nao
+          </button>
+        }
+
+        <button class="botao-dialogo botao-dialogo-primario" type="button" (click)="mensagemService.confirmarDialogo()">
+          {{ mensagemService.dialogoTipo() === 'confirmacao' ? 'Sim' : 'Ok' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 <router-outlet></router-outlet>

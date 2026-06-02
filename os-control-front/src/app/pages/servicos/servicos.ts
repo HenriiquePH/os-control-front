@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ServicoFormulario, ServicoSalvo } from '../../models/servico.model';
 import { MensagemService } from '../../services/mensagem.service';
 import { ServicosService } from '../../services/servicos.service';
+import { converterMoedaParaNumero, formatarMoeda } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-servicos',
@@ -30,7 +31,6 @@ export class Servicos implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
-      this.prepararNovoCadastro();
       return;
     }
 
@@ -47,7 +47,7 @@ export class Servicos implements OnInit {
 
   salvarServico() {
     const nome = this.servico.nome.trim();
-    const valor = this.converterEmNumero(this.servico.valor);
+    const valor = converterMoedaParaNumero(this.servico.valor);
 
     if (!nome || valor === null) {
       return;
@@ -56,7 +56,7 @@ export class Servicos implements OnInit {
     const servicoSalvo: ServicoSalvo = {
       id: this.servicoId,
       nome,
-      valor: this.formatarMoeda(valor),
+      valor: formatarMoeda(valor),
       preco: valor,
     };
     const novoCadastro = !this.modoEdicao;
@@ -87,27 +87,4 @@ export class Servicos implements OnInit {
     });
   }
 
-  private prepararNovoCadastro() {
-    this.servicoId = '';
-  }
-
-  private converterEmNumero(valor: string) {
-    const texto = valor.trim().replace(/[R$\s]/g, '');
-
-    if (!texto) {
-      return null;
-    }
-
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
-    const numero = Number(normalizado);
-
-    return Number.isFinite(numero) ? numero : null;
-  }
-
-  private formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
-  }
 }

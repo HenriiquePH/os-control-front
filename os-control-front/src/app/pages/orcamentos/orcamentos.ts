@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 import { OrcamentosService } from '../../services/orcamentos.service';
 import { PecasService } from '../../services/pecas.service';
 import { ServicosService } from '../../services/servicos.service';
+import { converterMoedaParaNumero, formatarMoeda } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-orcamentos',
@@ -23,6 +24,7 @@ import { ServicosService } from '../../services/servicos.service';
   styleUrl: './orcamentos.css',
 })
 export class Orcamentos implements OnInit {
+  readonly formatarMoeda = formatarMoeda;
   usuarioLogado: string = 'Usuario';
   modoEdicao: boolean = false;
   orcamentoId: string = '';
@@ -121,7 +123,7 @@ export class Orcamentos implements OnInit {
   get totalOrcamento() {
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
-    const desconto = this.converterEmNumero(this.desconto) || 0;
+    const desconto = converterMoedaParaNumero(this.desconto) || 0;
     const total = Math.max(0, totalServicos + totalPecas - desconto);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
@@ -194,7 +196,7 @@ export class Orcamentos implements OnInit {
   confirmarServico() {
     const id = Number.parseInt(this.novoServico.id.trim(), 10);
     const nome = this.novoServico.nome.trim();
-    const valor = this.converterEmNumero(this.novoServico.valor);
+    const valor = converterMoedaParaNumero(this.novoServico.valor);
 
     if (!Number.isFinite(id) || !nome || valor === null) {
       return;
@@ -255,7 +257,7 @@ export class Orcamentos implements OnInit {
     const id = Number.parseInt(this.novaPeca.id.trim(), 10);
     const nome = this.novaPeca.nome.trim();
     const quantidade = Number(this.novaPeca.quantidade);
-    const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
+    const valorUnitario = converterMoedaParaNumero(this.novaPeca.valorUnitario);
 
     if (!Number.isFinite(id) || !nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return;
@@ -305,6 +307,14 @@ export class Orcamentos implements OnInit {
     this.salvarOrcamento();
   }
 
+  emitirPdf() {
+    if (!this.orcamentoId) {
+      return;
+    }
+
+    this.abrirPdfOrcamento(this.orcamentoId);
+  }
+
   confirmarExibicaoPdf() {
     const id = this.orcamentoConfirmadoId || this.orcamentoId;
 
@@ -313,37 +323,11 @@ export class Orcamentos implements OnInit {
       return;
     }
 
-    const janela = window.open('', '_blank');
-
-    if (!janela) {
-      this.finalizarConfirmacaoOrcamento();
-      return;
-    }
-
-    this.orcamentosService.obterPdf(id).subscribe({
-      next: (pdf) => {
-        const url = URL.createObjectURL(pdf);
-        janela.location.href = url;
-        window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
-        this.finalizarConfirmacaoOrcamento();
-      },
-      error: (erro) => {
-        console.error('Nao foi possivel abrir o PDF do orcamento.', erro);
-        janela.close();
-        this.finalizarConfirmacaoOrcamento();
-      },
-    });
+    this.abrirPdfOrcamento(id, () => this.finalizarConfirmacaoOrcamento());
   }
 
   cancelarExibicaoPdf() {
     this.finalizarConfirmacaoOrcamento();
-  }
-
-  formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
   }
 
   sair() {
@@ -360,7 +344,7 @@ export class Orcamentos implements OnInit {
 
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
-    const desconto = this.converterEmNumero(this.desconto) || 0;
+    const desconto = converterMoedaParaNumero(this.desconto) || 0;
     const total = Math.max(0, totalServicos + totalPecas - desconto);
 
     const orcamentoSalvo: OrcamentoSalvo = {
@@ -398,7 +382,7 @@ export class Orcamentos implements OnInit {
         this.servicosDisponiveis = servicos;
       },
       error: (erro) => {
-        console.error('NÃ£o foi possÃ­vel carregar os serviÃ§os.', erro);
+        console.error('Nao foi possivel carregar os servicos.', erro);
         this.servicosDisponiveis = [];
       },
     });
@@ -408,7 +392,7 @@ export class Orcamentos implements OnInit {
         this.pecasDisponiveis = pecas;
       },
       error: (erro) => {
-        console.error('NÃ£o foi possÃ­vel carregar as peÃ§as.', erro);
+        console.error('Nao foi possivel carregar as pecas.', erro);
         this.pecasDisponiveis = [];
       },
     });
@@ -456,30 +440,13 @@ export class Orcamentos implements OnInit {
 
   private calcularTotalNovaPeca() {
     const quantidade = Number(this.novaPeca.quantidade);
-    const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
+    const valorUnitario = converterMoedaParaNumero(this.novaPeca.valorUnitario);
 
     if (!Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return 0;
     }
 
     return quantidade * valorUnitario;
-  }
-
-  private converterEmNumero(valor: string | number) {
-    if (typeof valor === 'number') {
-      return Number.isFinite(valor) ? valor : null;
-    }
-
-    const texto = valor.trim().replace(/[R$\s]/g, '');
-
-    if (!texto) {
-      return null;
-    }
-
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
-    const numero = Number(normalizado);
-
-    return Number.isFinite(numero) ? numero : null;
   }
 
   private sincronizarCalendario(dataBase: Date) {
@@ -563,5 +530,28 @@ export class Orcamentos implements OnInit {
     this.modalConfirmacaoPdfAberto = false;
     this.orcamentoConfirmadoId = '';
     this.router.navigate(['/orcamentos']);
+  }
+
+  private abrirPdfOrcamento(id: string, aoConcluir?: () => void) {
+    const janela = window.open('', '_blank');
+
+    if (!janela) {
+      aoConcluir?.();
+      return;
+    }
+
+    this.orcamentosService.obterPdf(id).subscribe({
+      next: (pdf) => {
+        const url = URL.createObjectURL(pdf);
+        janela.location.href = url;
+        window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        aoConcluir?.();
+      },
+      error: (erro) => {
+        console.error('Nao foi possivel abrir o PDF do orcamento.', erro);
+        janela.close();
+        aoConcluir?.();
+      },
+    });
   }
 }

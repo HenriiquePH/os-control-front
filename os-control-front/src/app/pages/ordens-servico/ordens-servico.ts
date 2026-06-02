@@ -13,6 +13,7 @@ import { OrdensServicoService } from '../../services/ordens-servico.service';
 import { PecasService } from '../../services/pecas.service';
 import { ServicosService } from '../../services/servicos.service';
 import { TecnicosService } from '../../services/tecnicos.service';
+import { converterMoedaParaNumero, formatarMoeda } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-ordens-servico',
@@ -21,6 +22,7 @@ import { TecnicosService } from '../../services/tecnicos.service';
   styleUrl: './ordens-servico.css',
 })
 export class OrdensServico implements OnInit {
+  readonly formatarMoeda = formatarMoeda;
   usuarioLogado: string = 'Usuario';
   modoEdicao: boolean = false;
   numeroOs: string = '';
@@ -137,7 +139,7 @@ export class OrdensServico implements OnInit {
   get totalOs() {
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
-    const desconto = this.converterEmNumero(this.desconto) || 0;
+    const desconto = converterMoedaParaNumero(this.desconto) || 0;
     const total = Math.max(0, totalServicos + totalPecas - desconto);
     return total > 0 ? this.formatarMoeda(total) : '';
   }
@@ -220,7 +222,7 @@ export class OrdensServico implements OnInit {
   confirmarServico() {
     const id = Number.parseInt(this.novoServico.id.trim(), 10);
     const nome = this.novoServico.nome.trim();
-    const valor = this.converterEmNumero(this.novoServico.valor);
+    const valor = converterMoedaParaNumero(this.novoServico.valor);
 
     if (!Number.isFinite(id) || !nome || valor === null) {
       return;
@@ -281,7 +283,7 @@ export class OrdensServico implements OnInit {
     const id = Number.parseInt(this.novaPeca.id.trim(), 10);
     const nome = this.novaPeca.nome.trim();
     const quantidade = Number(this.novaPeca.quantidade);
-    const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
+    const valorUnitario = converterMoedaParaNumero(this.novaPeca.valorUnitario);
 
     if (!Number.isFinite(id) || !nome || !Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return;
@@ -325,13 +327,6 @@ export class OrdensServico implements OnInit {
   proximoMes() {
     this.mesExibido = new Date(this.mesExibido.getFullYear(), this.mesExibido.getMonth() + 1, 1);
     this.atualizarCalendario();
-  }
-
-  formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
   }
 
   salvarOs() {
@@ -509,30 +504,13 @@ export class OrdensServico implements OnInit {
 
   private calcularTotalNovaPeca() {
     const quantidade = Number(this.novaPeca.quantidade);
-    const valorUnitario = this.converterEmNumero(this.novaPeca.valorUnitario);
+    const valorUnitario = converterMoedaParaNumero(this.novaPeca.valorUnitario);
 
     if (!Number.isFinite(quantidade) || quantidade <= 0 || valorUnitario === null) {
       return 0;
     }
 
     return quantidade * valorUnitario;
-  }
-
-  private converterEmNumero(valor: string | number) {
-    if (typeof valor === 'number') {
-      return Number.isFinite(valor) ? valor : null;
-    }
-
-    const texto = valor.trim().replace(/[R$\s]/g, '');
-
-    if (!texto) {
-      return null;
-    }
-
-    const normalizado = texto.includes(',') ? texto.replace(/\./g, '').replace(',', '.') : texto;
-    const numero = Number(normalizado);
-
-    return Number.isFinite(numero) ? numero : null;
   }
 
   private converterDataTexto(valor: string) {

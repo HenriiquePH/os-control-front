@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TecnicoFormulario, TecnicoSalvo } from '../../models/tecnico.model';
 import { MensagemService } from '../../services/mensagem.service';
 import { TecnicosService } from '../../services/tecnicos.service';
+import { formatarCpf, formatarTelefone } from '../../utils/formatacao';
 
 @Component({
   selector: 'app-tecnicos',
@@ -79,11 +80,11 @@ export class Tecnicos implements OnInit {
   }
 
   atualizarCpf(valor: string) {
-    this.tecnico.cpf = this.formatarCpf(valor);
+    this.tecnico.cpf = formatarCpf(valor);
   }
 
   atualizarTelefone(valor: string) {
-    this.tecnico.telefone = this.formatarTelefone(valor);
+    this.tecnico.telefone = formatarTelefone(valor);
   }
 
   private carregarTecnico(id: string) {
@@ -105,39 +106,4 @@ export class Tecnicos implements OnInit {
     });
   }
 
-  private formatarCpf(valor: string) {
-    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
-
-    if (numeros.length <= 3) {
-      return numeros;
-    }
-
-    if (numeros.length <= 6) {
-      return `${numeros.slice(0, 3)}.${numeros.slice(3)}`;
-    }
-
-    if (numeros.length <= 9) {
-      return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`;
-    }
-
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`;
-  }
-
-  private formatarTelefone(valor: string) {
-    const numeros = (valor ?? '').replace(/\D/g, '').slice(0, 11);
-
-    if (numeros.length <= 2) {
-      return numeros ? `(${numeros}` : '';
-    }
-
-    if (numeros.length <= 6) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
-    }
-
-    if (numeros.length <= 10) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
-    }
-
-    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
-  }
 }

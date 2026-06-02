@@ -64,10 +64,6 @@
   color: #4d4747;
 }
 
-.entrada-campo[readonly] {
-  cursor: default;
-}
-
 .grade-inicial {
   display: grid;
   grid-template-columns: 74px minmax(360px, 1fr) minmax(242px, 0.53fr);
@@ -84,10 +80,6 @@
   padding-right: 50px;
 }
 
-.entrada-data {
-  cursor: pointer;
-}
-
 .botao-abrir-calendario {
   position: absolute;
   top: 50%;
@@ -102,13 +94,6 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-}
-
-.icone-calendario {
-  display: block;
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
 }
 
 .abas-itens {
@@ -229,43 +214,10 @@
   margin-top: 46px;
 }
 
-.entrada-total {
-  max-width: 244px;
-}
-
-.campo-total-orcamento {
-  justify-self: end;
-}
-
-.rodape-formulario {
+.acoes-formulario {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 190px;
-  gap: 22px;
-  align-items: end;
-  margin-top: 18px;
-}
-
-.campo-observacao {
-  min-width: 0;
-  gap: 8px;
-}
-
-.rotulo-observacao {
-  margin-top: 2px;
-}
-
-.entrada-observacao {
-  width: 100%;
-  min-height: 98px;
-  padding: 18px 22px;
-  border: 0;
-  border-radius: 18px;
-  outline: none;
-  resize: none;
-  background: #fbfbfb;
-  font-size: 18px;
-  color: #544b4b;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+  gap: 14px;
+  justify-items: end;
 }
 
 .botao-confirmar {
@@ -274,19 +226,24 @@
   padding: 0 22px;
   border: 0;
   border-radius: 22px;
+  background: #0da206;
   font-size: 22px;
   line-height: 1.1;
+  color: #ffffff;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
 }
 
-.botao-confirmar {
-  background: #0da206;
-  color: #ffffff;
+.botao-pdf {
+  background: #c45855;
 }
 
 .botao-confirmar:hover {
   background: #0a8b05;
+}
+
+.botao-pdf:hover {
+  background: #ad4946;
 }
 
 .botao-confirmar:active {
@@ -405,7 +362,6 @@
   right: 18px;
   width: 28px;
   height: 28px;
-  font-size: 0;
 }
 
 .icone-fechar-calendario {
@@ -746,10 +702,6 @@
   background: rgba(216, 211, 211, 0.36);
 }
 
-.item-dropdown-modal-id {
-  white-space: nowrap;
-}
-
 .item-dropdown-modal-nome {
   min-width: 0;
   overflow: hidden;
@@ -791,10 +743,6 @@
 
 .entrada-pesquisa-modal::placeholder {
   color: #7d7575;
-}
-
-.linha-modal-selecionada {
-  cursor: default;
 }
 
 .linha-modal-selecionada:hover {
@@ -859,6 +807,10 @@
 
   .rodape-formulario {
     grid-template-columns: 1fr;
+  }
+
+  .acoes-formulario {
+    justify-self: end;
   }
 
   .grade-servicos {
@@ -958,6 +910,10 @@
 
   .botao-confirmar {
     width: 100%;
+  }
+
+  .acoes-formulario {
+    justify-items: stretch;
   }
 
   .painel-itens {

@@ -5,6 +5,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ClienteLista } from '../../models/cliente.model';
 import { AuthService } from '../../services/auth.service';
 import { ClientesService } from '../../services/clientes.service';
+import { MensagemService } from '../../services/mensagem.service';
 
 @Component({
   selector: 'app-clientes-lista',
@@ -17,9 +18,16 @@ export class ClientesLista implements OnInit {
   usuarioLogado: string = 'Usuario';
   filtroNome = '';
   filtroId = '';
+  filtroNomeAplicado = '';
+  filtroIdAplicado = '';
   clientes: ClienteLista[] = [];
 
-  constructor(private router: Router, private clientesService: ClientesService, private authService: AuthService) {
+  constructor(
+    private router: Router,
+    private clientesService: ClientesService,
+    private authService: AuthService,
+    private mensagemService: MensagemService
+  ) {
     this.usuarioLogado = this.authService.obterUsuario();
   }
 
@@ -28,8 +36,8 @@ export class ClientesLista implements OnInit {
   }
 
   get clientesFiltrados(): ClienteLista[] {
-    const nome = this.filtroNome.trim().toLowerCase();
-    const id = this.filtroId.trim().toLowerCase();
+    const nome = this.filtroNomeAplicado.trim().toLowerCase();
+    const id = this.filtroIdAplicado.trim().toLowerCase();
 
     return this.clientes.filter((cliente) => {
       const combinaNome = !nome || cliente.nome.toLowerCase().includes(nome);
@@ -48,8 +56,15 @@ export class ClientesLista implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  excluirCliente(id: string) {
-    if (!window.confirm('Deseja excluir cliente?')) {
+  aplicarFiltros() {
+    this.filtroNomeAplicado = this.filtroNome;
+    this.filtroIdAplicado = this.filtroId;
+  }
+
+  async excluirCliente(id: string) {
+    const confirmado = await this.mensagemService.confirmar('Deseja excluir cliente?', 'Excluir cliente');
+
+    if (!confirmado) {
       return;
     }
 

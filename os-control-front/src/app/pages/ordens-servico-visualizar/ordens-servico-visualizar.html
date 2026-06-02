@@ -75,8 +75,9 @@
             type="text"
             [(ngModel)]="filtroCliente"
             [ngModelOptions]="{ standalone: true }"
+            (keyup.enter)="aplicarFiltros()"
           />
-          <button class="botao-pesquisa" type="button" aria-label="Pesquisar por cliente">
+          <button class="botao-pesquisa" type="button" aria-label="Pesquisar por cliente" (click)="aplicarFiltros()">
             <img class="icone-pesquisa" src="assets/icone-lupa.png" alt="" />
           </button>
         </div>
@@ -90,6 +91,7 @@
             id="filtro-tecnico-os"
             [(ngModel)]="filtroTecnico"
             [ngModelOptions]="{ standalone: true }"
+            (change)="aplicarFiltros()"
           >
             <option value="">Todos</option>
             <option *ngFor="let tecnico of tecnicosDisponiveis" [value]="tecnico">{{ tecnico }}</option>
@@ -106,6 +108,7 @@
             id="filtro-status-os"
             [(ngModel)]="filtroStatus"
             [ngModelOptions]="{ standalone: true }"
+            (change)="aplicarFiltros()"
           >
             <option value="">Todos</option>
             <option *ngFor="let status of statusDisponiveis" [value]="status">{{ status }}</option>
@@ -114,7 +117,7 @@
         </span>
       </div>
 
-      <button class="botao-filtro" type="button" aria-label="Filtrar ordens de servico">
+      <button class="botao-filtro" type="button" aria-label="Filtrar ordens de servico" (click)="aplicarFiltros()">
         <img class="icone-filtro" src="assets/icone-filtro.png" alt="" />
       </button>
     </section>
