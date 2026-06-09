@@ -31,6 +31,7 @@ export class Servicos implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
+      this.prepararNovoCadastro();
       return;
     }
 
@@ -65,6 +66,8 @@ export class Servicos implements OnInit {
       next: () => {
         if (novoCadastro) {
           this.mensagemService.mostrarSucesso('Servico cadastrado com sucesso.');
+        } else {
+          this.mensagemService.mostrarSucesso('Servico editado com sucesso.');
         }
 
         this.router.navigate(['/servicos']);
@@ -87,4 +90,7 @@ export class Servicos implements OnInit {
     });
   }
 
+  private prepararNovoCadastro() {
+    this.servicoId = '';
+  }
 }

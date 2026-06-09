@@ -338,10 +338,6 @@ export class Orcamentos implements OnInit {
   private salvarOrcamento() {
     const nome = this.nomeOrcamento.trim();
 
-    if (!nome) {
-      return;
-    }
-
     const totalServicos = this.servicosSelecionados.reduce((soma, item) => soma + item.valor, 0);
     const totalPecas = this.pecasSelecionadas.reduce((soma, item) => soma + item.valorTotal, 0);
     const desconto = converterMoedaParaNumero(this.desconto) || 0;
@@ -555,3 +551,4 @@ export class Orcamentos implements OnInit {
     });
   }
 }
+
